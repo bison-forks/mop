@@ -7,11 +7,11 @@ import i18n from '../../i18n/config.js';
 import * as Mechanics from '../constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui';
 import { Player } from '../player';
-import { Class, GemColor, ItemSlot, Profession, PseudoStat, Race, ReforgeStat, Spec, Stat } from '../proto/common';
+import { Class, GemColor, ItemSlot, Profession, PseudoStat, Race, Spec, Stat } from '../proto/common';
 import { UIGem as Gem, IndividualSimSettings, ReforgeSettings, StatCapType } from '../proto/ui';
-import { isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
+import { EquippedItem, isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
 import { Gear } from '../proto_utils/gear';
-import { gemMatchesSocket, gemMatchesStats } from '../proto_utils/gems';
+import { gemMatchesSocket, gemMatchesStats, getEmptyGemSocketIconUrl } from '../proto_utils/gems';
 import { statCapTypeNames } from '../proto_utils/names';
 import { translateSlotName, translateStat } from '../../i18n/localization';
 import { pseudoStatIsCapped, StatCap, statIsCapped, Stats, UnitStat, UnitStatPresets } from '../proto_utils/stats';
@@ -29,6 +29,7 @@ import { trackEvent, trackPageView } from '../../tracking/utils';
 import { ReforgeWorkerPool, getReforgeWorkerPool } from '../reforge_worker_pool';
 import type { LPModel, LPSolution, SerializedConstraints, SerializedVariables } from '../../worker/reforge_types';
 import { ProgressTrackerModal } from './progress_tracker_modal';
+import { getEmptySlotIconUrl } from './gear_picker/utils';
 
 type YalpsCoefficients = Map<string, number>;
 type YalpsVariables = Map<string, YalpsCoefficients>;
@@ -225,6 +226,7 @@ export class ReforgeOptimizer {
 	protected readonly isTankSpec: boolean;
 	protected readonly sim: Sim;
 	protected readonly defaults: IndividualSimUI<any>['individualConfig']['defaults'];
+	protected reforgeDoneToast: Toast | null = null;
 	protected getEPDefaults: ReforgeOptimizerOptions['getEPDefaults'];
 	protected _statCaps: Stats = new Stats();
 	protected breakpointLimits: Stats = new Stats();
@@ -331,6 +333,9 @@ export class ReforgeOptimizer {
 			label: i18n.t('sidebar.buttons.suggest_reforges.title'),
 			cssClass: 'suggest-reforges-action-button flex-grow-1',
 			onClick: async () => {
+				this.reforgeDoneToast?.hide();
+				this.reforgeDoneToast = null;
+
 				this.progressTrackerModal.show();
 				trackEvent({
 					action: 'settings',
@@ -2048,12 +2053,14 @@ export class ReforgeOptimizer {
 	}
 
 	onReforgeDone() {
-		const itemSlots = this.player.getGear().getItemSlots();
-		const changedSlots = new Map<ItemSlot, ReforgeData | undefined>();
+		const currentGear = this.player.getGear();
+		const itemSlots = currentGear.getItemSlots();
+		const changedSlots = new Map<ItemSlot, EquippedItem | undefined>();
 		for (const slot of itemSlots) {
-			const prev = this.previousReforges.get(slot);
-			const current = this.currentReforges.get(slot);
-			if (!ReforgeStat.equals(prev?.reforge, current?.reforge)) changedSlots.set(slot, current);
+			const prev = this.previousGear?.getEquippedItem(slot);
+			const current = currentGear?.getEquippedItem(slot);
+
+			if ((!prev && current) || (prev && current && !prev?.equals(current))) changedSlots.set(slot, current);
 		}
 		const hasReforgeChanges = changedSlots.size;
 
@@ -2061,25 +2068,112 @@ export class ReforgeOptimizer {
 		const changedReforgeMessage = (
 			<>
 				<p className="mb-0">{i18n.t('gear_tab.reforge_success.title')}</p>
-				<ul>
-					{[...changedSlots].map(([slot, reforge]) => {
-						if (reforge) {
-							const slotName = translateSlotName(slot);
-							const { fromStat, toStat } = reforge;
-							const fromText = translateStat(fromStat);
-							const toText = translateStat(toStat);
-							return (
-								<li>
-									{slotName}: {fromText} → {toText}
-								</li>
-							);
-						} else {
-							return (
-								<li>
-									{translateSlotName(slot)}: {i18n.t('gear_tab.reforge_success.removed_reforge')}
-								</li>
-							);
+				<ul className="suggest-reforges-gear-list list-reset">
+					{itemSlots.map(slot => {
+						const item = changedSlots.get(slot);
+						const slotName = translateSlotName(slot);
+						const iconRef = ref<HTMLDivElement>();
+						const reforgeRef = ref<HTMLDivElement>();
+						const socketsContainerRef = ref<HTMLDivElement>();
+						const itemElement = (
+							<div className="item-picker-root">
+								<div
+									ref={iconRef}
+									className="item-picker-icon-wrapper"
+									style={{
+										backgroundImage: `url('${getEmptySlotIconUrl(slot)}')`,
+									}}>
+									<div ref={reforgeRef} className="suggest-reforges-gear-reforge interactive d-none"></div>
+									<div ref={socketsContainerRef} className="item-picker-sockets-container"></div>
+								</div>
+							</div>
+						);
+
+						if (item) {
+							item.asActionId()
+								.fill(undefined)
+								.then(filledId => {
+									filledId.setBackground(iconRef.value!);
+								});
+
+							const previousItem = this.previousGear?.getEquippedItem(slot);
+							const previousReforge = previousItem?.reforge;
+							const previousGems = previousItem?.gems;
+
+							const { reforge, gems } = item;
+
+							if (reforge || previousReforge) {
+								let message: Element;
+								if (reforge) {
+									const { fromStat, toStat } = reforge;
+									const fromText = translateStat(fromStat);
+									const toText = translateStat(toStat);
+									message = (
+										<>
+											{fromText} → {toText}
+										</>
+									);
+								} else {
+									message = <>{i18n.t('gear_tab.reforge_success.removed_reforge')}</>;
+								}
+
+								reforgeRef.value?.classList.remove('d-none');
+								tippy(reforgeRef.value!, {
+									content: (
+										<>
+											<strong>{slotName}</strong>
+											<br />
+											{message}
+										</>
+									),
+								});
+							}
+
+							if (gems || previousGems) {
+								const changedGems: number[] = [];
+								previousItem?.gemSockets.forEach((_, socketIdx) => {
+									const previousGem = previousGems ? previousGems[socketIdx] : undefined;
+									const currentGem = gems ? gems[socketIdx] : undefined;
+									if (previousGem?.id !== currentGem?.id) {
+										changedGems.push(socketIdx);
+									}
+								});
+
+								item.allSocketColors().forEach((socketColor, gemIdx) => {
+									const hasChangedSocket = changedGems.includes(gemIdx);
+									const socketRef = ref<HTMLDivElement>();
+									const gemName = gems[gemIdx]?.name;
+									socketsContainerRef.value?.appendChild(
+										<div
+											ref={socketRef}
+											className={clsx('gem-socket-container', hasChangedSocket && 'interactive')}
+											style={{
+												backgroundImage: `url(${getEmptyGemSocketIconUrl(socketColor)})`,
+											}}>
+											{hasChangedSocket && (
+												<>
+													<i className={'d-block fas fa-exclamation-circle'}></i>
+												</>
+											)}
+										</div>,
+									);
+									if (hasChangedSocket && gemName)
+										tippy(socketRef.value!, {
+											content: (
+												<>
+													<strong>
+														{slotName} - Socket {gemIdx + 1}
+													</strong>
+													<br />
+													{gemName}
+												</>
+											),
+										});
+								});
+							}
 						}
+
+						return <li>{itemElement}</li>;
 					})}
 				</ul>
 				<div ref={copyButtonContainerRef} />
@@ -2093,6 +2187,7 @@ export class ReforgeOptimizer {
 					extraCssClasses: ['btn-outline-primary'],
 					getContent: () => JSON.stringify(settingsExport),
 					text: i18n.t('gear_tab.reforge_success.copy_to_reforge_lite'),
+					postClickEvent: () => this.reforgeDoneToast?.hide(),
 				});
 		}
 
@@ -2101,10 +2196,12 @@ export class ReforgeOptimizer {
 			category: 'reforging',
 			label: 'suggest_success',
 		});
-		new Toast({
+		this.reforgeDoneToast = new Toast({
+			additionalClasses: ['suggest-reforges-toast'],
 			variant: 'success',
 			body: hasReforgeChanges ? changedReforgeMessage : <>{i18n.t('gear_tab.reforge_success.no_changes')}</>,
-			delay: hasReforgeChanges ? 5000 : 3000,
+			autohide: !hasReforgeChanges,
+			delay: 3000,
 		});
 	}
 

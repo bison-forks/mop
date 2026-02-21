@@ -82,8 +82,8 @@ dps_results: {
 dps_results: {
  key: "TestSubtlety-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 109048.97469
-  tps: 76874.07198
+  dps: 108876.27613
+  tps: 76751.45601
  }
 }
 dps_results: {

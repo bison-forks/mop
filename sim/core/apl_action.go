@@ -216,6 +216,8 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionCancelAura(config.GetCancelAura())
 	case *proto.APLAction_TriggerIcd:
 		return rot.newActionTriggerICD(config.GetTriggerIcd())
+	case *proto.APLAction_DamageAmplifier:
+		return rot.newActionDamageAmplifier(config.GetDamageAmplifier())
 	case *proto.APLAction_ItemSwap:
 		return rot.newActionItemSwap(config.GetItemSwap())
 	case *proto.APLAction_Move:

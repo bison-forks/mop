@@ -82,8 +82,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 105776.48677
-  tps: 74558.88192
+  dps: 105931.55015
+  tps: 74668.97693
  }
 }
 dps_results: {

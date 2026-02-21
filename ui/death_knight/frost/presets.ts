@@ -36,9 +36,9 @@ export const TWOHAND_OBLITERATE_EP_PRESET = PresetUtils.makePresetEpWeights(
 	Stats.fromMap(
 		{
 			[Stat.StatStrength]: 1.0,
-			[Stat.StatHitRating]: 0.82,
-			[Stat.StatExpertiseRating]: 0.82,
-			[Stat.StatHasteRating]: 0.45,
+			[Stat.StatHitRating]: 0.52,
+			[Stat.StatExpertiseRating]: 0.52,
+			[Stat.StatHasteRating]: 0.51,
 			[Stat.StatCritRating]: 0.44,
 			[Stat.StatAttackPower]: 0.36,
 			[Stat.StatMasteryRating]: 0.35,

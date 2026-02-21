@@ -114,8 +114,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 107633.55803
-  tps: 75755.61923
+  dps: 108222.2685
+  tps: 76171.97443
  }
 }
 dps_results: {

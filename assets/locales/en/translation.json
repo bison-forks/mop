@@ -284,7 +284,7 @@
 			"copy_to_reforge_lite": "Copy to Reforge Lite"
 		},
 		"reforge_success": {
-			"title": "The following items were reforged:",
+			"title": "The following items were changed:",
 			"removed_reforge": "Removed reforge",
 			"no_changes": "No reforge changes were made!",
 			"copy_to_reforge_lite": "Copy to Reforge Lite"
@@ -1070,6 +1070,13 @@
 					"label": "Trigger ICD",
 					"tooltip": "Triggers the specified internal cooldown."
 				},
+				"damage_amplification": {
+					"label": "Damage Amplification",
+					"tooltip": "Multiplies Damage Done % by the specified percentage.",
+					"amount": {
+						"label": "Percentage"
+					}
+				},
 				"item_swap": {
 					"label": "Item Swap",
 					"tooltip": "Swaps items, using the swap set specified in Settings."
@@ -1685,7 +1692,8 @@
 					"include_reaction_time_tooltip": "If checked, will use the configured reaction time.",
 					"use_base_value": "Use base value",
 					"use_base_value_tooltip": "If checked, will compare the current DoT to the the base value (on encounter start) of the DoT.",
-					"variable_assignment_tooltip": "Value to assign to variable '{{variableName}}'"
+					"variable_assignment_tooltip": "Value to assign to variable '{{variableName}}'",
+					"amplification_type": "Amplification Type"
 				},
 				"eclipse_types": {
 					"lunar": "Lunar",
@@ -1714,6 +1722,20 @@
 					"caster": "Caster",
 					"cat": "Cat",
 					"hybrid": "Hybrid"
+				},
+				"amplification_types": {
+					"caster_buff": {
+						"label": "Caster Buff",
+						"tooltip": "Buff is on caster; snapshots DoTs and affect pets (not guardians)"
+					},
+					"environment_buff": {
+						"label": "Environment Buff",
+						"tooltip": "Buff is on the environment (ie. Jin'Rokh' pool); snapshots DoTs and affect pets (not guardians)"
+					},
+					"target_debuff": {
+						"label": "Target Debuff",
+						"tooltip": "Debuff is on target; doesn't snapshot DoTs and affects pets/guardians"
+					}
 				},
 				"unit_labels": {
 					"self": "Self",

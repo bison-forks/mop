@@ -861,10 +861,10 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-EssenceofTerror-87175"
  value: {
-  dps: 221342.77751
-  tps: 1.1115278575e+06
+  dps: 220959.31479
+  tps: 1.10884900975e+06
   dtps: 65497.31347
-  hps: 75148.77989
+  hps: 75244.01626
  }
 }
 dps_results: {
@@ -1977,10 +1977,10 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-PhaseFingers-4697"
  value: {
-  dps: 216530.41154
-  tps: 1.09592384667e+06
+  dps: 216448.52098
+  tps: 1.09472396979e+06
   dtps: 65340.55983
-  hps: 77887.83765
+  hps: 77820.25412
  }
 }
 dps_results: {
@@ -2004,10 +2004,10 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-PlateoftheLostCatacomb"
  value: {
-  dps: 206194.37904
-  tps: 1.04391607776e+06
+  dps: 206289.32716
+  tps: 1.0444848343e+06
   dtps: 69733.3762
-  hps: 83403.5959
+  hps: 83317.35933
  }
 }
 dps_results: {
@@ -2184,10 +2184,10 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
-  dps: 222522.07303
-  tps: 1.13700032401e+06
+  dps: 222639.21539
+  tps: 1.13738991284e+06
   dtps: 65501.94312
-  hps: 77051.43884
+  hps: 77087.89491
  }
 }
 dps_results: {
@@ -2364,19 +2364,19 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-RuneofSwordbreaking-3594"
  value: {
-  dps: 209839.64377
-  tps: 1.06720357127e+06
+  dps: 209864.15746
+  tps: 1.0683475303e+06
   dtps: 64984.70313
-  hps: 72815.24325
+  hps: 72868.7662
  }
 }
 dps_results: {
  key: "TestBlood-AllItems-RuneofSwordshattering-3365"
  value: {
-  dps: 211785.36739
-  tps: 1.07785498228e+06
+  dps: 211809.88108
+  tps: 1.07899894131e+06
   dtps: 63437.01107
-  hps: 72839.21702
+  hps: 72892.73996
  }
 }
 dps_results: {
@@ -2760,10 +2760,10 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-SynapseSprings(MarkII)-4898"
  value: {
-  dps: 218352.09357
-  tps: 1.10863598216e+06
+  dps: 218465.80933
+  tps: 1.10947025407e+06
   dtps: 64965.54903
-  hps: 78006.7543
+  hps: 77980.68281
  }
 }
 dps_results: {
@@ -3228,8 +3228,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-Average-Default"
  value: {
-  dps: 204690.13412
-  tps: 1.05432628739e+06
+  dps: 204690.33734
+  tps: 1.05432770987e+06
   dtps: 61071.88955
   hps: 75863.07654
  }

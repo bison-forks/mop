@@ -19,6 +19,10 @@ func init() {
 		character := agent.GetCharacter()
 		label := "Xing-Ho, Breath of Yu'lon"
 
+		if character.Back().ChallengeMode {
+			return
+		}
+
 		parentAura := core.MakePermanent(character.RegisterAura(core.Aura{
 			Label:    "Essence of Yu'lon - Dummy Aura",
 			Duration: core.NeverExpires,
@@ -84,6 +88,10 @@ func init() {
 	newXuenCloakEffect := func(label string, itemID int32) {
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
+
+			if character.Back().ChallengeMode {
+				return
+			}
 
 			flurrySpell := character.RegisterSpell(core.SpellConfig{
 				ActionID:    core.ActionID{SpellID: 147891},
@@ -179,6 +187,10 @@ func init() {
 	newNiuzaoCloakEffect := func(label string, itemID int32) {
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
+
+			if character.Back().ChallengeMode {
+				return
+			}
 
 			dummyAura := core.MakePermanent(character.RegisterAura(core.Aura{
 				Label:    label,
