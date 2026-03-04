@@ -9,7 +9,7 @@ import { IndividualSimUI } from '../individual_sim_ui';
 import { Player } from '../player';
 import { Class, GemColor, ItemSlot, Profession, PseudoStat, Race, Spec, Stat } from '../proto/common';
 import { UIGem as Gem, IndividualSimSettings, ReforgeSettings, StatCapType } from '../proto/ui';
-import { EquippedItem, isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
+import { EquippedItem, isRebornWeapon, isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
 import { Gear } from '../proto_utils/gear';
 import { gemMatchesSocket, gemMatchesStats, getEmptyGemSocketIconUrl } from '../proto_utils/gems';
 import { statCapTypeNames } from '../proto_utils/names';
@@ -1382,7 +1382,7 @@ export class ReforgeOptimizer {
 			}
 			const uiItem = item.item;
 			const socketColors = item.curSocketColors(this.player.isBlacksmithing());
-			if (!this.includeEOTBPGemSocket && (isShaTouchedWeapon(uiItem) || isThroneOfThunderWeapon(uiItem))) {
+			if (!this.includeEOTBPGemSocket && (isShaTouchedWeapon(uiItem) || isThroneOfThunderWeapon(uiItem) || isRebornWeapon(uiItem))) {
 				socketColors.pop();
 			}
 
