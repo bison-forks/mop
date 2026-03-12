@@ -12,7 +12,7 @@
 		{ "id": 95007, "enchant": 4428, "gems": [76697, 76641], "reforging": 159, "upgradeStep": "UpgradeStepTwo" },
 		{ "id": 95021, "gems": [76641], "reforging": 137, "upgradeStep": "UpgradeStepTwo" },
 		{ "id": 96513, "gems": [76697], "reforging": 154, "upgradeStep": "UpgradeStepTwo" },
-		{ "id": 96918, "upgradeStep": "UpgradeStepTwo" },
+		{ "id": 96546, "upgradeStep": "UpgradeStepTwo" },
 		{ "id": 96369, "reforging": 159, "upgradeStep": "UpgradeStepTwo" },
 		{ "id": 96535, "enchant": 4444, "gems": [76659, 76697], "reforging": 151, "upgradeStep": "UpgradeStepTwo" },
 		{ "id": 96535, "enchant": 4444, "gems": [76659, 76697], "reforging": 154, "upgradeStep": "UpgradeStepTwo" }
