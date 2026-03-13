@@ -232,10 +232,9 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 				ProcChance:     0.15,
 				Callback:       core.CallbackOnSpellHitDealt,
 				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					amProcAura := mage.GetAuraByID(core.ActionID{SpellID: 79683})
-					if amProcAura != nil {
-						amProcAura.Activate(sim)
-						amProcAura.AddStack(sim)
+					if mage.ArcaneMissilesProcAura != nil {
+						mage.ArcaneMissilesProcAura.Activate(sim)
+						mage.ArcaneMissilesProcAura.AddStack(sim)
 					}
 				},
 			})

@@ -20,6 +20,7 @@ func (arcane *ArcaneMage) registerArcaneMissilesSpell() {
 		Duration:  time.Second * 20,
 		MaxStacks: 2,
 	}))
+	arcane.ArcaneMissilesProcAura = arcaneMissilesProcAura
 
 	arcaneMissilesTickSpell := arcane.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:       actionID.WithTag(1),

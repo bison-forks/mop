@@ -19,9 +19,7 @@ const livingBombBreakpoints = [
 	mageBombBreakpoints.get('7-tick - Living Bomb')!,
 	mageBombBreakpoints.get('8-tick - Living Bomb')!,
 ];
-const softcapBreakpoints = [
-	mageBombBreakpoints.get('GCD Soft Cap')!,
-];
+const softcapBreakpoints = [mageBombBreakpoints.get('GCD Soft Cap')!];
 const netherTempestBreakpoints = [
 	mageBombBreakpoints.get('15-tick - Nether Tempest')!,
 	mageBombBreakpoints.get('16-tick - Nether Tempest')!,
@@ -39,14 +37,16 @@ const P2CritPostCapEPs = [
 	0.45 * Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
 	0.35 * Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
 ];
-const P2HastePostCapEPs = [0.46 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
+
+const P2HastePostCapEPs = [0.46 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT, 0.44 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
 
 const P3CritPostCapEPs = [
 	0.51 * Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
 	0.44 * Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
 	0.38 * Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
 ];
-const P3HastePostCapEPs = [0.48 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
+
+const P3HastePostCapEPs = [0.48 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT, 0.46 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFrostMage, {
 	cssClass: 'frost-mage-sim-ui',

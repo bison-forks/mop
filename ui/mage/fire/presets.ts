@@ -23,9 +23,9 @@ import P4BISGear from './gear_sets/p4_bis.gear.json';
 // export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
 // export const P1_BIS = PresetUtils.makePresetGear('P1 - BIS', P1BISGear);
 // export const P2_BIS = PresetUtils.makePresetGear('P2 - BIS', P2BISGear);
-export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
+// export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
 export const P3_MASTERY = PresetUtils.makePresetGear('P3 - Mastery BiS', P3MasteryGear);
-export const P4_BIS = PresetUtils.makePresetGear('P4 - BIS', P4BISGear);
+export const P4_BIS = PresetUtils.makePresetGear('P3/P4 - BIS', P4BISGear);
 
 export const P1TrollDefaultSimpleRotation = FireMage_Rotation.create({
 	combustAlwaysSend: 4000000,
@@ -229,7 +229,7 @@ export const MASTERY_SETTINGS: PresetUtils.PresetSettings = {
 };
 
 export const P3_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P3 - Crit', {
-	gear: P3_BIS,
+	gear: P4_BIS,
 	rotation: P3_SIMPLE_ROTATION_PRESET_DEFAULT,
 	talents: FireTalents,
 	epWeights: DEFAULT_EP_PRESET,
