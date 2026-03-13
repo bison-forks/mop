@@ -15,6 +15,7 @@ import FireApl from './apls/fire.apl.json';
 import MasteryApl from './apls/mastery_fire.apl.json';
 import P3BISGear from './gear_sets/p3_bis.gear.json';
 import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
+import P4BISGear from './gear_sets/p4_bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -24,6 +25,7 @@ import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
 // export const P2_BIS = PresetUtils.makePresetGear('P2 - BIS', P2BISGear);
 export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
 export const P3_MASTERY = PresetUtils.makePresetGear('P3 - Mastery BiS', P3MasteryGear);
+export const P4_BIS = PresetUtils.makePresetGear('P4 - BIS', P4BISGear);
 
 export const P1TrollDefaultSimpleRotation = FireMage_Rotation.create({
 	combustAlwaysSend: 4000000,
