@@ -1641,6 +1641,15 @@ export class ReforgeOptimizer {
 			amount *= 1.03;
 		}
 
+		if (stat == Stat.StatHasteRating || stat == Stat.StatMasteryRating || stat == Stat.StatSpirit) {
+			this.player.getAmplificationTrinkets().forEach(trinket => {
+				const randPropPoints = this.sim.db.getItemEffectRandPropPoints(trinket.ilvl)?.randPropPoints;
+				if (!randPropPoints) return;
+				const statScalingCoeff = 0.00176999997;
+				amount *= 1 + (statScalingCoeff * randPropPoints) / 100;
+			});
+		}
+
 		// Handle Spirit to Spell Hit conversion for hybrid casters separately from standard dependencies
 		if ((stat == Stat.StatSpirit && this.isHybridCaster) || stat == Stat.StatExpertiseRating) {
 			this.setPseudoStatCoefficient(coefficients, PseudoStat.PseudoStatSpellHitPercent, amount / Mechanics.SPELL_HIT_RATING_PER_HIT_PERCENT);
