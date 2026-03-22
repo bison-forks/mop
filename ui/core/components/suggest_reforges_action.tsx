@@ -1636,7 +1636,6 @@ export class ReforgeOptimizer {
 
 	// Apply stat dependencies before setting optimization coefficients
 	applyReforgeStat(coefficients: YalpsCoefficients, stat: Stat, amount: number, preCapEPs: Stats) {
-		let EpCoefficientMultiplier: number = 1;
 		if (stat == Stat.StatSpirit && this.player.getRace() == Race.RaceHuman) {
 			amount *= 1.03;
 		}
@@ -1648,13 +1647,12 @@ export class ReforgeOptimizer {
 				const statScalingCoeff = 0.00176999997;
 				const buffValue = 1 + (statScalingCoeff * randPropPoints) / 100;
 				amount *= buffValue;
-				if (stat == Stat.StatSpirit) EpCoefficientMultiplier *= buffValue;
 			});
 		}
 
 		// Handle Spirit to Spell Hit conversion for hybrid casters separately from standard dependencies
 		if ((stat == Stat.StatSpirit && this.isHybridCaster) || stat == Stat.StatExpertiseRating) {
-			this.setPseudoStatCoefficient(coefficients, PseudoStat.PseudoStatSpellHitPercent, amount * EpCoefficientMultiplier / Mechanics.SPELL_HIT_RATING_PER_HIT_PERCENT);
+			this.setPseudoStatCoefficient(coefficients, PseudoStat.PseudoStatSpellHitPercent, amount / Mechanics.SPELL_HIT_RATING_PER_HIT_PERCENT);
 		}
 
 		// If a highest Stat constraint is to be enforced, then update the
