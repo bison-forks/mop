@@ -178,7 +178,6 @@ export class RelativeStatCap {
 	updateConstraints(constraints: YalpsConstraints, gear: Gear, baseStats: Stats) {
 		baseStats = baseStats.addStat(Stat.StatMasteryRating, -this.player.getBaseMastery() * Mechanics.MASTERY_RATING_PER_MASTERY_POINT);
 		const raidBuffs = this.player.getRaid()?.getBuffs();
-		// @TODO: Validate on PTR
 		// Mastery raid buff does not count towards RoRo calculation
 		if (raidBuffs && (raidBuffs.roarOfCourage || raidBuffs.blessingOfMight || raidBuffs.spiritBeastBlessing || raidBuffs.graceOfAir)) {
 			baseStats = baseStats.addStat(Stat.StatMasteryRating, -Mechanics.RAID_BUFF_MASTERY_RATING);
