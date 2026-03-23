@@ -187,8 +187,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CelestialHarmonyRegalia"
  value: {
-  dps: 144569.91807
-  tps: 123211.2786
+  dps: 147814.77227
+  tps: 121963.15267
  }
 }
 dps_results: {
