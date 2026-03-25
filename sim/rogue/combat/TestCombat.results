@@ -82,8 +82,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 105776.48677
-  tps: 74558.88192
+  dps: 105931.55015
+  tps: 74668.97693
  }
 }
 dps_results: {
@@ -311,6 +311,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombat-AllItems-Juggernaut'sFocusingCrystal-105514"
+ value: {
+  dps: 96978.87253
+  tps: 68327.0184
+  hps: 3063.53857
+ }
+}
+dps_results: {
  key: "TestCombat-AllItems-Kardris'ToxicTotem-105540"
  value: {
   dps: 101549.22747
@@ -362,8 +370,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
-  dps: 99499.38878
-  tps: 70128.68642
+  dps: 99000.57613
+  tps: 69777.32104
  }
 }
 dps_results: {
@@ -474,8 +482,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-Thok'sTailTip-105609"
  value: {
-  dps: 105398.07574
-  tps: 74153.35669
+  dps: 104965.42533
+  tps: 73849.86138
  }
 }
 dps_results: {
@@ -501,6 +509,13 @@ dps_results: {
 }
 dps_results: {
  key: "TestCombat-AllItems-UnerringVisionofLeiShen-96930"
+ value: {
+  dps: 96978.87253
+  tps: 68327.0184
+ }
+}
+dps_results: {
+ key: "TestCombat-AllItems-VialofLivingCorruption-105568"
  value: {
   dps: 96978.87253
   tps: 68327.0184

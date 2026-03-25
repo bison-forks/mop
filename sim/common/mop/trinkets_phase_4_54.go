@@ -10,39 +10,38 @@ import (
 	"github.com/wowsims/mop/sim/core/stats"
 )
 
+type buffConfig struct {
+	auraLabel string
+	auraID    int32
+	stat      stats.Stat
+	duration  time.Duration
+	icd       time.Duration
+}
+
 type readinessTrinketConfig struct {
 	itemVersionMap   shared.ItemVersionMap
 	baseTrinketLabel string
-	buffAuraLabel    string
-	buffAuraID       int32
-	buffedStat       stats.Stat
-	buffDuration     time.Duration
-	buffIcd          time.Duration
+	buff             *buffConfig
 	cdrAuraIDs       map[proto.Spec]int32
+	cdrCoefficient   float64
 }
 
 type multistrikeTrinketConfig struct {
 	itemVersionMap   shared.ItemVersionMap
 	baseTrinketLabel string
-	buffAuraLabel    string
-	buffAuraID       int32
-	buffedStat       stats.Stat
+	buff             *buffConfig
 }
 
 type cleaveTrinketConfig struct {
 	itemVersionMap   shared.ItemVersionMap
 	baseTrinketLabel string
-	buffAuraLabel    string
-	buffAuraID       int32
-	buffedStat       stats.Stat
+	buff             *buffConfig
 }
 
 type statAmplificationTrinketConfig struct {
 	itemVersionMap   shared.ItemVersionMap
 	baseTrinketLabel string
-	buffAuraLabel    string
-	buffAuraID       int32
-	buffedStat       stats.Stat
+	buff             *buffConfig
 }
 
 func init() {
@@ -50,11 +49,11 @@ func init() {
 		config.itemVersionMap.RegisterAll(func(version shared.ItemVersion, itemID int32, versionLabel string) {
 			core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 				character := agent.GetCharacter()
+				eligibleSlots := character.ItemSwap.EligibleSlotsForItem(itemID)
 
-				auraID, exists := config.cdrAuraIDs[character.Spec]
 				var cdrAura *core.Aura
-				if exists {
-					cdr := 1.0 / (1.0 + core.GetItemEffectScaling(itemID, 0.00989999995, state)/100)
+				if auraID, exists := config.cdrAuraIDs[character.Spec]; exists {
+					cdr := 1.0 / (1.0 + core.GetItemEffectScalingStatValue(itemID, config.cdrCoefficient, state)/100)
 					cdrAura = core.MakePermanent(character.RegisterAura(core.Aura{
 						Label:    fmt.Sprintf("Readiness (%s)", versionLabel),
 						ActionID: core.ActionID{SpellID: auraID},
@@ -63,36 +62,36 @@ func init() {
 						SpellFlag:  core.SpellFlagReadinessTrinket,
 						FloatValue: cdr,
 					}))
+
+					character.ItemSwap.RegisterProcWithSlots(itemID, cdrAura, eligibleSlots)
 				}
 
-				stats := stats.Stats{}
-				stats[config.buffedStat] = core.GetItemEffectScaling(itemID, 2.97300004959, state)
+				if config.buff != nil {
+					stats := stats.Stats{}
+					stats[config.buff.stat] = core.GetItemEffectScalingStatValue(itemID, 2.97300004959, state)
 
-				aura := character.NewTemporaryStatsAura(
-					fmt.Sprintf("%s (%s)", config.buffAuraLabel, versionLabel),
-					core.ActionID{SpellID: config.buffAuraID},
-					stats,
-					config.buffDuration,
-				)
+					aura := character.NewTemporaryStatsAura(
+						fmt.Sprintf("%s (%s)", config.buff.auraLabel, versionLabel),
+						core.ActionID{SpellID: config.buff.auraID},
+						stats,
+						config.buff.duration,
+					)
 
-				triggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
-					Name:       fmt.Sprintf("%s (%s) - Trigger", config.baseTrinketLabel, versionLabel),
-					ProcChance: 0.15,
-					ICD:        config.buffIcd,
-					ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
-					Outcome:    core.OutcomeLanded,
-					Callback:   core.CallbackOnSpellHitDealt,
-					Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
-						aura.Activate(sim)
-					},
-				})
+					triggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
+						Name:       fmt.Sprintf("%s (%s) - Trigger", config.baseTrinketLabel, versionLabel),
+						ProcChance: 0.15,
+						ICD:        config.buff.icd,
+						ProcMask:   core.ProcMaskDirect | core.ProcMaskProc,
+						Outcome:    core.OutcomeLanded,
+						Callback:   core.CallbackOnSpellHitDealt,
+						Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+							aura.Activate(sim)
+						},
+					})
 
-				aura.Icd = triggerAura.Icd
-				eligibleSlots := character.ItemSwap.EligibleSlotsForItem(itemID)
-				character.AddStatProcBuff(itemID, aura, false, eligibleSlots)
-				character.ItemSwap.RegisterProcWithSlots(itemID, triggerAura, eligibleSlots)
-				if cdrAura != nil {
-					character.ItemSwap.RegisterProcWithSlots(itemID, cdrAura, eligibleSlots)
+					aura.Icd = triggerAura.Icd
+					character.AddStatProcBuff(itemID, aura, false, eligibleSlots)
+					character.ItemSwap.RegisterProcWithSlots(itemID, triggerAura, eligibleSlots)
 				}
 			})
 		})
@@ -114,45 +113,35 @@ func init() {
 			shared.ItemVersionFlexible:        104725,
 		},
 		baseTrinketLabel: "Assurance of Consequence",
-		buffAuraLabel:    "Dextrous",
-		buffAuraID:       146308,
-		buffedStat:       stats.Agility,
-		buffDuration:     time.Second * 20,
-		buffIcd:          time.Second * 115,
+		buff: &buffConfig{
+			auraLabel: "Dextrous",
+			auraID:    146308,
+			stat:      stats.Agility,
+			duration:  time.Second * 20,
+			icd:       time.Second * 115,
+		},
+		cdrCoefficient: 0.00989999995,
 		cdrAuraIDs: map[proto.Spec]int32{
 			// Druid
-			// Missing: Bear Hug, Ironbark, Nature's Swiftness
-			proto.Spec_SpecFeralDruid:       145961,
-			proto.Spec_SpecGuardianDruid:    145962,
-			proto.Spec_SpecRestorationDruid: 145963,
+			proto.Spec_SpecFeralDruid: 145961,
 			// Hunter
 			proto.Spec_SpecBeastMasteryHunter: 145964,
 			proto.Spec_SpecMarksmanshipHunter: 145965,
 			proto.Spec_SpecSurvivalHunter:     145966,
 			// Rogue
-			// Missing: Cloak of Shadows, Evasion, JuJu Escape
 			proto.Spec_SpecAssassinationRogue: 145983,
 			proto.Spec_SpecCombatRogue:        145984,
 			proto.Spec_SpecSubtletyRogue:      145985,
-			// Priest - NOTE: Priests seem to have a Aura for this
-			// Missing: Divine Hymn, Guardian Spirit, Hymn of Hope, Inner Focus, Pain Suppression, Power Word: Barrier, Void Shift
-			// proto.Spec_SpecDisciplinePriest: 145981,
-			// proto.Spec_SpecHolyPriest:       145982,
 			// Shaman
-			// Missing: Mana Tide Totem, Spirit Link Totem
 			proto.Spec_SpecEnhancementShaman: 145986,
-			proto.Spec_SpecRestorationShaman: 145988,
 			// Monk
-			// Missing: Zen Meditation, Life Cocoon, Revival, Thunder Focus Tea, Flying Serpent Kick
-			proto.Spec_SpecBrewmasterMonk: 145967,
-			proto.Spec_SpecMistweaverMonk: 145968,
 			proto.Spec_SpecWindwalkerMonk: 145969,
 		},
 	})
 
 	// Evil Eye of Galakras
-	// Increases the cooldown recovery rate of six of your major abilities by 1%. Effective for Strength-based
-	// damage roles only.
+	// Increases the cooldown recovery rate of six of your major abilities by 1%.
+	// Effective for Strength-based damage roles only.
 	//
 	// Your attacks have a chance to grant you 11761 Strength for 10 sec.
 	// (15% chance, 55 sec cooldown) (Proc chance: 15%, 55s cooldown)
@@ -166,25 +155,50 @@ func init() {
 			shared.ItemVersionFlexible:        104744,
 		},
 		baseTrinketLabel: "Evil Eye of Galakras",
-		buffAuraLabel:    "Outrage",
-		buffAuraID:       146245,
-		buffedStat:       stats.Strength,
-		buffDuration:     time.Second * 10,
-		buffIcd:          time.Second * 55,
+		buff: &buffConfig{
+			auraLabel: "Outrage",
+			auraID:    146245,
+			stat:      stats.Strength,
+			duration:  time.Second * 10,
+			icd:       time.Second * 55,
+		},
+		cdrCoefficient: 0.00989999995,
 		cdrAuraIDs: map[proto.Spec]int32{
 			// Death Knight
-			proto.Spec_SpecBloodDeathKnight:  145958,
 			proto.Spec_SpecFrostDeathKnight:  145959,
 			proto.Spec_SpecUnholyDeathKnight: 145960,
 			// Paladin
-			// Missing: Divine Plea, Hand Of Protection, Divine Shield, Hand Of Purity
-			proto.Spec_SpecHolyPaladin:        145978,
-			proto.Spec_SpecProtectionPaladin:  145976,
 			proto.Spec_SpecRetributionPaladin: 145975,
 			// Warrior
-			// Missing: Die by the Sword, Mocking Banner
-			proto.Spec_SpecArmsWarrior:       145990,
-			proto.Spec_SpecFuryWarrior:       145991,
+			proto.Spec_SpecArmsWarrior: 145990,
+			proto.Spec_SpecFuryWarrior: 145991,
+		},
+	})
+
+	// Vial of Living Corruption
+	// Increases the cooldown recovery rate of six of your major abilities by 22%.
+	// Effective for tank roles only.
+	newReadinessTrinket(&readinessTrinketConfig{
+		itemVersionMap: shared.ItemVersionMap{
+			shared.ItemVersionLFR:             105070,
+			shared.ItemVersionNormal:          102306,
+			shared.ItemVersionHeroic:          104572,
+			shared.ItemVersionWarforged:       105319,
+			shared.ItemVersionHeroicWarforged: 105568,
+			shared.ItemVersionFlexible:        104821,
+		},
+		baseTrinketLabel: "Vial of Living Corruption",
+		cdrCoefficient:   0.00494999997,
+		cdrAuraIDs: map[proto.Spec]int32{
+			// Death Knight
+			proto.Spec_SpecBloodDeathKnight: 145958,
+			// Druid
+			proto.Spec_SpecGuardianDruid: 145962,
+			// Monk
+			proto.Spec_SpecBrewmasterMonk: 145967,
+			// Paladin
+			proto.Spec_SpecProtectionPaladin: 145976,
+			// Warrior
 			proto.Spec_SpecProtectionWarrior: 145992,
 		},
 	})
@@ -263,7 +277,7 @@ func init() {
 
 				multistrikeTriggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
 					Name:               fmt.Sprintf("%s (%s) - Multistrike Trigger", config.baseTrinketLabel, versionLabel),
-					ProcChance:         core.GetItemEffectScaling(itemID, 0.03539999947, state) / 1000,
+					ProcChance:         core.GetItemEffectScalingStatValue(itemID, 0.03539999947, state) / 1000,
 					Outcome:            core.OutcomeLanded,
 					Callback:           core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 					RequireDamageDealt: true,
@@ -287,11 +301,11 @@ func init() {
 				})
 
 				stats := stats.Stats{}
-				stats[config.buffedStat] = core.GetItemEffectScaling(itemID, 2.97300004959, state)
+				stats[config.buff.stat] = core.GetItemEffectScalingStatValue(itemID, 2.97300004959, state)
 
 				statBuffAura := character.NewTemporaryStatsAura(
-					fmt.Sprintf("%s (%s)", config.buffAuraLabel, versionLabel),
-					core.ActionID{SpellID: config.buffAuraID},
+					fmt.Sprintf("%s (%s)", config.buff.auraLabel, versionLabel),
+					core.ActionID{SpellID: config.buff.auraID},
 					stats,
 					time.Second*10,
 				)
@@ -336,9 +350,11 @@ func init() {
 			shared.ItemVersionFlexible:        104780,
 		},
 		baseTrinketLabel: "Haromm's Talisman",
-		buffAuraLabel:    "Vicious",
-		buffAuraID:       148903,
-		buffedStat:       stats.Agility,
+		buff: &buffConfig{
+			auraLabel: "Vicious",
+			auraID:    148903,
+			stat:      stats.Agility,
+		},
 	})
 
 	// Kardris' Toxic Totem
@@ -356,9 +372,11 @@ func init() {
 			shared.ItemVersionFlexible:        104793,
 		},
 		baseTrinketLabel: "Kardris' Toxic Totem",
-		buffAuraLabel:    "Toxic Power",
-		buffAuraID:       148906,
-		buffedStat:       stats.Intellect,
+		buff: &buffConfig{
+			auraLabel: "Toxic Power",
+			auraID:    148906,
+			stat:      stats.Intellect,
+		},
 	})
 
 	newStatAmplificationTrinket := func(config *statAmplificationTrinketConfig) {
@@ -372,7 +390,7 @@ func init() {
 				spiritValue := 1 + core.GetItemEffectScaling(itemID, 0.00176999997, state)/100
 
 				statAura := core.MakePermanent(character.RegisterAura(core.Aura{
-					Label:      fmt.Sprintf("Amplification (%s)", versionLabel),
+					Label:      fmt.Sprintf("Amplification - %s (%s)", config.baseTrinketLabel, versionLabel),
 					ActionID:   core.ActionID{SpellID: 146051},
 					BuildPhase: core.CharacterBuildPhaseGear,
 				})).
@@ -382,11 +400,11 @@ func init() {
 					AttachMultiplicativePseudoStatBuff(&character.PseudoStats.CritDamageMultiplier, critDamageValue)
 
 				stats := stats.Stats{}
-				stats[config.buffedStat] = core.GetItemEffectScaling(itemID, 2.97300004959, state)
+				stats[config.buff.stat] = core.GetItemEffectScalingStatValue(itemID, 2.97300004959, state)
 
 				aura := character.NewTemporaryStatsAura(
-					fmt.Sprintf("%s (%s)", config.buffAuraLabel, versionLabel),
-					core.ActionID{SpellID: config.buffAuraID},
+					fmt.Sprintf("%s (%s)", config.buff.auraLabel, versionLabel),
+					core.ActionID{SpellID: config.buff.auraID},
 					stats,
 					time.Second*20,
 				)
@@ -425,9 +443,11 @@ func init() {
 			shared.ItemVersionFlexible:        104862,
 		},
 		baseTrinketLabel: "Thok's Tail Tip",
-		buffAuraLabel:    "Determination",
-		buffAuraID:       146250,
-		buffedStat:       stats.Strength,
+		buff: &buffConfig{
+			auraLabel: "Determination",
+			auraID:    146250,
+			stat:      stats.Strength,
+		},
 	})
 
 	// Purified Bindings of Immerseus
@@ -444,9 +464,11 @@ func init() {
 			shared.ItemVersionFlexible:        104675,
 		},
 		baseTrinketLabel: "Purified Bindings of Immerseus",
-		buffAuraLabel:    "Expanded Mind",
-		buffAuraID:       146046,
-		buffedStat:       stats.Intellect,
+		buff: &buffConfig{
+			auraLabel: "Expanded Mind",
+			auraID:    146046,
+			stat:      stats.Intellect,
+		},
 	})
 
 	// Ticking Ebon Detonator
@@ -466,7 +488,7 @@ func init() {
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
 
-			statValue := core.GetItemEffectScaling(itemID, 0.27030000091, state)
+			statValue := core.GetItemEffectScalingStatValue(itemID, 0.27030000091, state)
 			statBuffAura, aura := character.NewTemporaryStatBuffWithStacks(core.TemporaryStatBuffWithStacksConfig{
 				AuraLabel:            fmt.Sprintf("Item - Proc Agility (%s)", versionLabel),
 				ActionID:             core.ActionID{SpellID: 146311},
@@ -579,7 +601,7 @@ func init() {
 
 				cleaveTriggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
 					Name:               fmt.Sprintf("%s (%s) - Cleave Trigger", config.baseTrinketLabel, versionLabel),
-					ProcChance:         core.GetItemEffectScaling(itemID, 0.07859999686, state) / 10000,
+					ProcChance:         core.GetItemEffectScalingStatValue(itemID, 0.07859999686, state) / 10000,
 					Outcome:            core.OutcomeLanded,
 					Callback:           core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
 					RequireDamageDealt: true,
@@ -602,11 +624,11 @@ func init() {
 				})
 
 				stats := stats.Stats{}
-				stats[config.buffedStat] = core.GetItemEffectScaling(itemID, 2.97300004959, state)
+				stats[config.buff.stat] = core.GetItemEffectScalingStatValue(itemID, 2.97300004959, state)
 
 				statBuffAura := character.NewTemporaryStatsAura(
-					fmt.Sprintf("%s (%s)", config.buffAuraLabel, versionLabel),
-					core.ActionID{SpellID: config.buffAuraID},
+					fmt.Sprintf("%s (%s)", config.buff.auraLabel, versionLabel),
+					core.ActionID{SpellID: config.buff.auraID},
 					stats,
 					time.Second*15,
 				)
@@ -649,9 +671,11 @@ func init() {
 			shared.ItemVersionFlexible:        104712,
 		},
 		baseTrinketLabel: "Fusion-Fire Core",
-		buffAuraLabel:    "Tenacious",
-		buffAuraID:       148899,
-		buffedStat:       stats.Strength,
+		buff: &buffConfig{
+			auraLabel: "Tenacious",
+			auraID:    148899,
+			stat:      stats.Strength,
+		},
 	})
 
 	// Sigil of Rampage
@@ -669,9 +693,11 @@ func init() {
 			shared.ItemVersionFlexible:        104833,
 		},
 		baseTrinketLabel: "Sigil of Rampage",
-		buffAuraLabel:    "Ferocity",
-		buffAuraID:       148896,
-		buffedStat:       stats.Agility,
+		buff: &buffConfig{
+			auraLabel: "Ferocity",
+			auraID:    148896,
+			stat:      stats.Agility,
+		},
 	})
 
 	// Frenzied Crystal of Rage
@@ -689,9 +715,11 @@ func init() {
 			shared.ItemVersionFlexible:        104825,
 		},
 		baseTrinketLabel: "Frenzied Crystal of Rage",
-		buffAuraLabel:    "Extravagant Visions",
-		buffAuraID:       148897,
-		buffedStat:       stats.Intellect,
+		buff: &buffConfig{
+			auraLabel: "Extravagant Visions",
+			auraID:    148897,
+			stat:      stats.Intellect,
+		},
 	})
 
 	// Time-Lost Artifact
@@ -703,7 +731,7 @@ func init() {
 		aura := character.NewTemporaryStatsAura(
 			"Winds of Time",
 			core.ActionID{SpellID: 148447},
-			stats.Stats{stats.HasteRating: core.GetItemEffectScaling(103678, 1.56799995899, state)},
+			stats.Stats{stats.HasteRating: core.GetItemEffectScalingStatValue(103678, 1.56799995899, state)},
 			time.Second*20,
 		)
 
@@ -744,7 +772,7 @@ func init() {
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
 
-			statValue := core.GetItemEffectScaling(itemID, 0.29699999094, state)
+			statValue := core.GetItemEffectScalingStatValue(itemID, 0.29699999094, state)
 			statBuffAura, aura := character.NewTemporaryStatBuffWithStacks(core.TemporaryStatBuffWithStacksConfig{
 				AuraLabel:            fmt.Sprintf("Item - Proc Critical Strike (%s)", versionLabel),
 				ActionID:             core.ActionID{SpellID: 146286},
@@ -797,7 +825,7 @@ func init() {
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
 
-			statValue := core.GetItemEffectScaling(itemID, 0.59399998188, state)
+			statValue := core.GetItemEffectScalingStatValue(itemID, 0.59399998188, state)
 			statBuffAura, aura := character.NewTemporaryStatBuffWithStacks(core.TemporaryStatBuffWithStacksConfig{
 				AuraLabel:            fmt.Sprintf("Item - Proc Intellect (%s)", versionLabel),
 				ActionID:             core.ActionID{SpellID: 146183},
@@ -830,6 +858,48 @@ func init() {
 			eligibleSlots := character.ItemSwap.EligibleSlotsForItem(itemID)
 			character.AddStatProcBuff(itemID, statBuffAura, false, eligibleSlots)
 			character.ItemSwap.RegisterProcWithSlots(itemID, statBuffTriggerAura, eligibleSlots)
+		})
+	})
+
+	// Juggernaut's Focusing Crystal
+	// Converts 3.16% of all damage you deal into healing on yourself.
+	shared.ItemVersionMap{
+		shared.ItemVersionLFR:             105016,
+		shared.ItemVersionNormal:          102297,
+		shared.ItemVersionHeroic:          104518,
+		shared.ItemVersionWarforged:       105265,
+		shared.ItemVersionHeroicWarforged: 105514,
+		shared.ItemVersionFlexible:        104767,
+	}.RegisterAll(func(version shared.ItemVersion, itemID int32, versionLabel string) {
+		label := "Juggernaut's Focusing Crystal"
+
+		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
+			character := agent.GetCharacter()
+
+			lifeStealSpell := getTrinketSpell(character, 146347, core.SpellSchoolShadow)
+			multiplier := core.GetItemEffectScalingStatValue(itemID, 0.06700000167, state) / 10000
+
+			var baseHealing float64
+			applyEffects := func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealHealing(sim, &character.Unit, baseHealing, spell.OutcomeHealing)
+			}
+
+			lifeStealTriggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
+				Name:               fmt.Sprintf("%s (%s) - Life Steal Trigger", label, versionLabel),
+				Outcome:            core.OutcomeLanded,
+				Callback:           core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
+				RequireDamageDealt: true,
+
+				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					baseHealing = result.Damage * multiplier
+
+					lifeStealSpell.ApplyEffects = applyEffects
+					lifeStealSpell.Cast(sim, result.Target)
+				},
+			})
+
+			eligibleSlots := character.ItemSwap.EligibleSlotsForItem(itemID)
+			character.ItemSwap.RegisterProcWithSlots(itemID, lifeStealTriggerAura, eligibleSlots)
 		})
 	})
 }

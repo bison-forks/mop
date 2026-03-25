@@ -114,8 +114,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 107633.55803
-  tps: 75755.61923
+  dps: 108222.2685
+  tps: 76171.97443
  }
 }
 dps_results: {
@@ -343,6 +343,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-Juggernaut'sFocusingCrystal-105514"
+ value: {
+  dps: 97619.77777
+  tps: 68662.65176
+  hps: 3083.46116
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-Kardris'ToxicTotem-105540"
  value: {
   dps: 103061.64724
@@ -394,8 +402,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
-  dps: 101277.29352
-  tps: 71264.12916
+  dps: 101283.72886
+  tps: 71268.50143
  }
 }
 dps_results: {
@@ -506,8 +514,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Thok'sTailTip-105609"
  value: {
-  dps: 109317.22754
-  tps: 76778.59043
+  dps: 109353.09535
+  tps: 76803.79892
  }
 }
 dps_results: {
@@ -539,6 +547,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassination-AllItems-VialofLivingCorruption-105568"
+ value: {
+  dps: 97619.77777
+  tps: 68662.65176
+ }
+}
+dps_results: {
  key: "TestAssassination-AllItems-Wushoolay'sFinalChoice-96785"
  value: {
   dps: 99023.95046
@@ -548,8 +563,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassination-AllItems-Xing-Ho,BreathofYu'lon-102246"
  value: {
-  dps: 102657.3016
-  tps: 72268.94002
+  dps: 102683.98093
+  tps: 72288.62156
  }
 }
 dps_results: {

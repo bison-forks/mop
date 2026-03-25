@@ -180,8 +180,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-CelestialHarmonyRegalia"
  value: {
-  dps: 95757.52127
-  tps: 81575.86879
+  dps: 98816.81699
+  tps: 81547.01857
  }
 }
 dps_results: {
@@ -1228,6 +1228,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-Juggernaut'sFocusingCrystal-105514"
+ value: {
+  dps: 139746.25558
+  tps: 119345.20438
+  hps: 3969.91935
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-Kardris'ToxicTotem-105540"
  value: {
   dps: 146589.27694
@@ -1692,8 +1700,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
-  dps: 144971.29782
-  tps: 124089.19202
+  dps: 145235.40819
+  tps: 124089.75776
  }
 }
 dps_results: {
@@ -2112,8 +2120,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Thok'sTailTip-105609"
  value: {
-  dps: 152440.98842
-  tps: 129157.19082
+  dps: 152744.51369
+  tps: 129247.6241
  }
 }
 dps_results: {
@@ -2383,6 +2391,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-AllItems-VialofLivingCorruption-105568"
+ value: {
+  dps: 139746.25558
+  tps: 119345.20438
+ }
+}
+dps_results: {
  key: "TestEnhancement-AllItems-ViciousTalismanoftheShado-PanAssault-94511"
  value: {
   dps: 153669.02238
@@ -2427,8 +2442,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-AllItems-Xing-Ho,BreathofYu'lon-102246"
  value: {
-  dps: 169821.27833
-  tps: 147708.16615
+  dps: 154386.08253
+  tps: 132203.02032
  }
 }
 dps_results: {

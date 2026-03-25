@@ -756,6 +756,14 @@ var ItemDenyList = map[int32]struct{}{
 	88167: {}, // Band of the Petrified Pumpkin
 	88168: {}, // Seal of Ghoulish Glee
 	88169: {}, // The Horseman's Ring
+
+	// MOP - Love is in the Air - Old items
+	268554: {}, // Miniature Winter Veil Tree
+	270885: {}, // Winking Eye of Love
+	270889: {}, // Choker of the Pure Heart
+	270891: {}, // Heartbreak Charm
+	270893: {}, // Sweet Perfume Broach
+	270895: {}, // Shard of Pirouetting Happiness
 }
 
 // Item icons to include in the DB, so they don't need to be separately loaded in the UI.

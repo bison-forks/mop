@@ -242,6 +242,7 @@ export class ReforgeWorkerPool {
 	terminate() {
 		this.worker?.terminate();
 		this.worker = null;
+		ReforgeWorkerPool.instance = null;
 	}
 }
 

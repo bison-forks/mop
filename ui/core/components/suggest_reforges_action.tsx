@@ -7,11 +7,11 @@ import i18n from '../../i18n/config.js';
 import * as Mechanics from '../constants/mechanics.js';
 import { IndividualSimUI } from '../individual_sim_ui';
 import { Player } from '../player';
-import { Class, GemColor, ItemSlot, Profession, PseudoStat, Race, ReforgeStat, Spec, Stat } from '../proto/common';
+import { Class, GemColor, ItemSlot, Profession, PseudoStat, Race, Spec, Stat } from '../proto/common';
 import { UIGem as Gem, IndividualSimSettings, ReforgeSettings, StatCapType } from '../proto/ui';
-import { isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
+import { EquippedItem, isRebornWeapon, isShaTouchedWeapon, isThroneOfThunderWeapon, ReforgeData } from '../proto_utils/equipped_item';
 import { Gear } from '../proto_utils/gear';
-import { gemMatchesSocket, gemMatchesStats } from '../proto_utils/gems';
+import { gemMatchesSocket, gemMatchesStats, getEmptyGemSocketIconUrl } from '../proto_utils/gems';
 import { statCapTypeNames } from '../proto_utils/names';
 import { translateSlotName, translateStat } from '../../i18n/localization';
 import { pseudoStatIsCapped, StatCap, statIsCapped, Stats, UnitStat, UnitStatPresets } from '../proto_utils/stats';
@@ -26,8 +26,10 @@ import { NumberPicker, NumberPickerConfig } from './pickers/number_picker';
 import { renderSavedEPWeights } from './saved_data_managers/ep_weights';
 import Toast from './toast';
 import { trackEvent, trackPageView } from '../../tracking/utils';
-import { getReforgeWorkerPool } from '../reforge_worker_pool.js';
+import { ReforgeWorkerPool, getReforgeWorkerPool } from '../reforge_worker_pool';
 import type { LPModel, LPSolution, SerializedConstraints, SerializedVariables } from '../../worker/reforge_types';
+import { ProgressTrackerModal } from './progress_tracker_modal';
+import { getEmptySlotIconUrl } from './gear_picker/utils';
 
 type YalpsCoefficients = Map<string, number>;
 type YalpsVariables = Map<string, YalpsCoefficients>;
@@ -176,7 +178,6 @@ export class RelativeStatCap {
 	updateConstraints(constraints: YalpsConstraints, gear: Gear, baseStats: Stats) {
 		baseStats = baseStats.addStat(Stat.StatMasteryRating, -this.player.getBaseMastery() * Mechanics.MASTERY_RATING_PER_MASTERY_POINT);
 		const raidBuffs = this.player.getRaid()?.getBuffs();
-		// @TODO: Validate on PTR
 		// Mastery raid buff does not count towards RoRo calculation
 		if (raidBuffs && (raidBuffs.roarOfCourage || raidBuffs.blessingOfMight || raidBuffs.spiritBeastBlessing || raidBuffs.graceOfAir)) {
 			baseStats = baseStats.addStat(Stat.StatMasteryRating, -Mechanics.RAID_BUFF_MASTERY_RATING);
@@ -224,6 +225,7 @@ export class ReforgeOptimizer {
 	protected readonly isTankSpec: boolean;
 	protected readonly sim: Sim;
 	protected readonly defaults: IndividualSimUI<any>['individualConfig']['defaults'];
+	protected reforgeDoneToast: Toast | null = null;
 	protected getEPDefaults: ReforgeOptimizerOptions['getEPDefaults'];
 	protected _statCaps: Stats = new Stats();
 	protected breakpointLimits: Stats = new Stats();
@@ -231,6 +233,7 @@ export class ReforgeOptimizer {
 	protected _softCapsConfig: StatCap[];
 	private useCustomEPValues = false;
 	private useSoftCapBreakpoints = true;
+	protected progressTrackerModal: ProgressTrackerModal;
 	protected softCapBreakpoints: StatCap[] = [];
 	protected updateSoftCaps: ReforgeOptimizerOptions['updateSoftCaps'];
 	protected enableBreakpointLimits: ReforgeOptimizerOptions['enableBreakpointLimits'];
@@ -243,6 +246,9 @@ export class ReforgeOptimizer {
 	protected frozenItemSlots = new Set<ItemSlot>();
 	protected includeTimeout = true;
 	protected undershootCaps = new Stats();
+	protected wasCM: boolean = false;
+	protected isCancelling: boolean = false;
+	protected pendingWorker: ReforgeWorkerPool | null = null;
 	protected previousGear: Gear | null = null;
 	protected previousReforges = new Map<ItemSlot, ReforgeData>();
 	protected currentReforges = new Map<ItemSlot, ReforgeData>();
@@ -283,6 +289,41 @@ export class ReforgeOptimizer {
 		this._statCaps = this.defaults.statCaps || new Stats();
 		this.enableBreakpointLimits = !!options?.enableBreakpointLimits;
 		this.relativeStatCapStat = options?.defaultRelativeStatCap ?? -1;
+		this.progressTrackerModal = new ProgressTrackerModal(simUI.rootElem, {
+			id: 'reforge-optimizer-progress-tracker',
+			title: 'Optimizing Reforges',
+			warning: (
+				<>
+					<p>
+						Reforging can be a lengthy process, especially as specific stat caps and breakpoints come into play for classes. This may take a while,
+						but be assured that the calculation will eventually complete.
+					</p>
+					<p className="mb-0">You may cancel this operation at any time using the button below.</p>
+				</>
+			),
+			onCancel: () => {
+				this.isCancelling = true;
+				if (isDevMode()) {
+					console.log('User cancelled reforge optimization');
+				}
+				try {
+					this.pendingWorker?.terminate();
+				} catch {}
+				if (this.previousGear) this.player.setGear(TypedEvent.nextEventID(), this.previousGear);
+				this.progressTrackerModal.hide();
+				trackEvent({
+					action: 'settings',
+					category: 'reforging',
+					label: 'suggest_cancel',
+				});
+
+				new Toast({
+					variant: 'warning',
+					body: i18n.t('sidebar.buttons.suggest_reforges.reforge_optimization_cancelled'),
+					delay: 3000,
+				});
+			},
+		});
 
 		// Pre-warm the worker pool
 		getReforgeWorkerPool().warmUp();
@@ -290,50 +331,30 @@ export class ReforgeOptimizer {
 		const startReforgeOptimizationEntry: ActionGroupItem = {
 			label: i18n.t('sidebar.buttons.suggest_reforges.title'),
 			cssClass: 'suggest-reforges-action-button flex-grow-1',
-			onClick: async ({ currentTarget }) => {
+			onClick: async () => {
+				this.reforgeDoneToast?.hide();
+				this.reforgeDoneToast = null;
+
+				this.progressTrackerModal.show();
 				trackEvent({
 					action: 'settings',
 					category: 'reforging',
 					label: 'suggest_start',
 				});
-				const button = currentTarget as HTMLButtonElement;
-				if (button) {
-					button.classList.add('loading');
-					button.disabled = true;
-				}
 
-				const wasCM = simUI.player.getChallengeModeEnabled();
+				this.wasCM = simUI.player.getChallengeModeEnabled();
 				try {
 					performance.mark('reforge-optimization-start');
-					if (wasCM) {
+					if (this.wasCM) {
 						simUI.player.setChallengeModeEnabled(TypedEvent.nextEventID(), false);
 					}
 					await this.optimizeReforges();
 					this.onReforgeDone();
 				} catch (error) {
+					if (this.isCancelling) return;
 					this.onReforgeError(error);
 				} finally {
-					if (wasCM) {
-						simUI.player.setChallengeModeEnabled(TypedEvent.nextEventID(), true);
-					}
-					performance.mark('reforge-optimization-end');
-					const completionTimeInMs = performance.measure(
-						'reforge-optimization-measure',
-						'reforge-optimization-start',
-						'reforge-optimization-end',
-					).duration;
-					if (isDevMode()) console.log('Reforge optimization took:', `${completionTimeInMs.toFixed(2)}ms`);
-
-					trackEvent({
-						action: 'settings',
-						category: 'reforging',
-						label: 'suggest_duration',
-						value: Math.ceil(completionTimeInMs / 1000),
-					});
-					if (button) {
-						button.classList.remove('loading');
-						button.disabled = false;
-					}
+					this.onReforgeFinally();
 				}
 			},
 		};
@@ -1360,7 +1381,7 @@ export class ReforgeOptimizer {
 			}
 			const uiItem = item.item;
 			const socketColors = item.curSocketColors(this.player.isBlacksmithing());
-			if (!this.includeEOTBPGemSocket && (isShaTouchedWeapon(uiItem) || isThroneOfThunderWeapon(uiItem))) {
+			if (!this.includeEOTBPGemSocket && (isShaTouchedWeapon(uiItem) || isThroneOfThunderWeapon(uiItem) || isRebornWeapon(uiItem))) {
 				socketColors.pop();
 			}
 
@@ -1619,6 +1640,16 @@ export class ReforgeOptimizer {
 			amount *= 1.03;
 		}
 
+		if (stat == Stat.StatHasteRating || stat == Stat.StatMasteryRating || stat == Stat.StatSpirit) {
+			this.player.getAmplificationTrinkets().forEach(trinket => {
+				const randPropPoints = this.sim.db.getItemEffectRandPropPoints(trinket.ilvl)?.randPropPoints;
+				if (!randPropPoints) return;
+				const statScalingCoeff = 0.00176999997;
+				const buffValue = 1 + (statScalingCoeff * randPropPoints) / 100;
+				amount *= buffValue;
+			});
+		}
+
 		// Handle Spirit to Spell Hit conversion for hybrid casters separately from standard dependencies
 		if ((stat == Stat.StatSpirit && this.isHybridCaster) || stat == Stat.StatExpertiseRating) {
 			this.setPseudoStatCoefficient(coefficients, PseudoStat.PseudoStatSpellHitPercent, amount / Mechanics.SPELL_HIT_RATING_PER_HIT_PERCENT);
@@ -1720,8 +1751,8 @@ export class ReforgeOptimizer {
 
 		const startTimeMs: number = Date.now();
 
-		const workerPool = getReforgeWorkerPool();
-		const solution: LPSolution = await workerPool.solve(model, {
+		this.pendingWorker = getReforgeWorkerPool();
+		const solution: LPSolution = await this.pendingWorker.solve(model, {
 			timeout: maxSeconds * 1000,
 			tolerance: 0.005, // unused currently
 		});
@@ -2031,12 +2062,14 @@ export class ReforgeOptimizer {
 	}
 
 	onReforgeDone() {
-		const itemSlots = this.player.getGear().getItemSlots();
-		const changedSlots = new Map<ItemSlot, ReforgeData | undefined>();
+		const currentGear = this.player.getGear();
+		const itemSlots = currentGear.getItemSlots();
+		const changedSlots = new Map<ItemSlot, EquippedItem | undefined>();
 		for (const slot of itemSlots) {
-			const prev = this.previousReforges.get(slot);
-			const current = this.currentReforges.get(slot);
-			if (!ReforgeStat.equals(prev?.reforge, current?.reforge)) changedSlots.set(slot, current);
+			const prev = this.previousGear?.getEquippedItem(slot);
+			const current = currentGear?.getEquippedItem(slot);
+
+			if ((!prev && current) || (prev && current && !prev?.equals(current))) changedSlots.set(slot, current);
 		}
 		const hasReforgeChanges = changedSlots.size;
 
@@ -2044,25 +2077,112 @@ export class ReforgeOptimizer {
 		const changedReforgeMessage = (
 			<>
 				<p className="mb-0">{i18n.t('gear_tab.reforge_success.title')}</p>
-				<ul>
-					{[...changedSlots].map(([slot, reforge]) => {
-						if (reforge) {
-							const slotName = translateSlotName(slot);
-							const { fromStat, toStat } = reforge;
-							const fromText = translateStat(fromStat);
-							const toText = translateStat(toStat);
-							return (
-								<li>
-									{slotName}: {fromText} → {toText}
-								</li>
-							);
-						} else {
-							return (
-								<li>
-									{translateSlotName(slot)}: {i18n.t('gear_tab.reforge_success.removed_reforge')}
-								</li>
-							);
+				<ul className="suggest-reforges-gear-list list-reset">
+					{itemSlots.map(slot => {
+						const item = changedSlots.get(slot);
+						const slotName = translateSlotName(slot);
+						const iconRef = ref<HTMLDivElement>();
+						const reforgeRef = ref<HTMLDivElement>();
+						const socketsContainerRef = ref<HTMLDivElement>();
+						const itemElement = (
+							<div className="item-picker-root">
+								<div
+									ref={iconRef}
+									className="item-picker-icon-wrapper"
+									style={{
+										backgroundImage: `url('${getEmptySlotIconUrl(slot)}')`,
+									}}>
+									<div ref={reforgeRef} className="suggest-reforges-gear-reforge interactive d-none"></div>
+									<div ref={socketsContainerRef} className="item-picker-sockets-container"></div>
+								</div>
+							</div>
+						);
+
+						if (item) {
+							item.asActionId()
+								.fill(undefined)
+								.then(filledId => {
+									filledId.setBackground(iconRef.value!);
+								});
+
+							const previousItem = this.previousGear?.getEquippedItem(slot);
+							const previousReforge = previousItem?.reforge;
+							const previousGems = previousItem?.gems;
+
+							const { reforge, gems } = item;
+
+							if (reforge || previousReforge) {
+								let message: Element;
+								if (reforge) {
+									const { fromStat, toStat } = reforge;
+									const fromText = translateStat(fromStat);
+									const toText = translateStat(toStat);
+									message = (
+										<>
+											{fromText} → {toText}
+										</>
+									);
+								} else {
+									message = <>{i18n.t('gear_tab.reforge_success.removed_reforge')}</>;
+								}
+
+								reforgeRef.value?.classList.remove('d-none');
+								tippy(reforgeRef.value!, {
+									content: (
+										<>
+											<strong>{slotName}</strong>
+											<br />
+											{message}
+										</>
+									),
+								});
+							}
+
+							if (gems || previousGems) {
+								const changedGems: number[] = [];
+								previousItem?.gemSockets.forEach((_, socketIdx) => {
+									const previousGem = previousGems ? previousGems[socketIdx] : undefined;
+									const currentGem = gems ? gems[socketIdx] : undefined;
+									if (previousGem?.id !== currentGem?.id) {
+										changedGems.push(socketIdx);
+									}
+								});
+
+								item.allSocketColors().forEach((socketColor, gemIdx) => {
+									const hasChangedSocket = changedGems.includes(gemIdx);
+									const socketRef = ref<HTMLDivElement>();
+									const gemName = gems[gemIdx]?.name;
+									socketsContainerRef.value?.appendChild(
+										<div
+											ref={socketRef}
+											className={clsx('gem-socket-container', hasChangedSocket && 'interactive')}
+											style={{
+												backgroundImage: `url(${getEmptyGemSocketIconUrl(socketColor)})`,
+											}}>
+											{hasChangedSocket && (
+												<>
+													<i className={'d-block fas fa-exclamation-circle'}></i>
+												</>
+											)}
+										</div>,
+									);
+									if (hasChangedSocket && gemName)
+										tippy(socketRef.value!, {
+											content: (
+												<>
+													<strong>
+														{slotName} - Socket {gemIdx + 1}
+													</strong>
+													<br />
+													{gemName}
+												</>
+											),
+										});
+								});
+							}
 						}
+
+						return <li>{itemElement}</li>;
 					})}
 				</ul>
 				<div ref={copyButtonContainerRef} />
@@ -2076,6 +2196,7 @@ export class ReforgeOptimizer {
 					extraCssClasses: ['btn-outline-primary'],
 					getContent: () => JSON.stringify(settingsExport),
 					text: i18n.t('gear_tab.reforge_success.copy_to_reforge_lite'),
+					postClickEvent: () => this.reforgeDoneToast?.hide(),
 				});
 		}
 
@@ -2084,10 +2205,12 @@ export class ReforgeOptimizer {
 			category: 'reforging',
 			label: 'suggest_success',
 		});
-		new Toast({
+		this.reforgeDoneToast = new Toast({
+			additionalClasses: ['suggest-reforges-toast'],
 			variant: 'success',
 			body: hasReforgeChanges ? changedReforgeMessage : <>{i18n.t('gear_tab.reforge_success.no_changes')}</>,
-			delay: hasReforgeChanges ? 5000 : 3000,
+			autohide: !hasReforgeChanges,
+			delay: 3000,
 		});
 	}
 
@@ -2101,6 +2224,7 @@ export class ReforgeOptimizer {
 			label: 'suggest_error',
 			value: error,
 		});
+
 		new Toast({
 			variant: 'error',
 			body: (
@@ -2113,6 +2237,24 @@ export class ReforgeOptimizer {
 				</>
 			),
 			delay: 10000,
+		});
+	}
+
+	onReforgeFinally() {
+		this.progressTrackerModal.hide();
+
+		if (this.wasCM) {
+			this.simUI.player.setChallengeModeEnabled(TypedEvent.nextEventID(), true);
+		}
+		performance.mark('reforge-optimization-end');
+		const completionTimeInMs = performance.measure('reforge-optimization-measure', 'reforge-optimization-start', 'reforge-optimization-end').duration;
+		if (isDevMode()) console.log('Reforge optimization took:', `${completionTimeInMs.toFixed(2)}ms`);
+
+		trackEvent({
+			action: 'settings',
+			category: 'reforging',
+			label: 'suggest_duration',
+			value: Math.ceil(completionTimeInMs / 1000),
 		});
 	}
 

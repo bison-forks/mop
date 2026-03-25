@@ -77,7 +77,7 @@ export class PresetConfigurationPicker extends Component {
 
 				// Add main categories from build keys
 				Object.keys(build).forEach(c => {
-					if (!['name', 'encounter', 'settings'].includes(c) && build[c as PresetConfigurationCategory]) {
+					if (!['name', 'encounter', 'settings', 'reforgeSettings'].includes(c) && build[c as PresetConfigurationCategory]) {
 						const category = c as PresetConfigurationCategory;
 						categories.push(translatePresetConfigurationCategory(category));
 					}
@@ -89,6 +89,10 @@ export class PresetConfigurationPicker extends Component {
 
 				if (build.epWeights) {
 					categories.push(i18n.t('common.preset.stat_weights'));
+				}
+
+				if (build.reforgeSettings) {
+					categories.push('Reforge Settings');
 				}
 
 				if (build.settings) {
@@ -140,7 +144,7 @@ export class PresetConfigurationPicker extends Component {
 
 	static applyBuild(
 		eventID: number,
-		{ gear, itemSwap, rotation, rotationType, talents, epWeights, encounter, settings }: PresetBuild,
+		{ gear, itemSwap, rotation, rotationType, talents, epWeights, encounter, settings, reforgeSettings }: PresetBuild,
 		simUI: IndividualSimUI<any>,
 	) {
 		TypedEvent.freezeAllAndDo(() => {
@@ -201,6 +205,9 @@ export class PresetConfigurationPicker extends Component {
 				if (encounter.tanks) simUI.sim.raid.setTanks(eventID, encounter.tanks);
 				if (encounter.targetDummies !== undefined) simUI.sim.raid.setTargetDummies(eventID, encounter.targetDummies);
 			}
+			if (reforgeSettings && simUI.reforger) {
+				simUI.reforger.fromProto(eventID, reforgeSettings);
+			}
 		});
 	}
 
@@ -223,7 +230,9 @@ export class PresetConfigurationPicker extends Component {
 			hasRotation = isEqualAPLRotation(this.simUI.player, activeRotation, rotation.rotation.rotation);
 		}
 		const hasEpWeights = epWeights ? this.simUI.player.getEpWeights().equals(epWeights.epWeights) : true;
-		const hasEncounter = encounter?.encounter ? Encounter.equals(encounter.encounter, this.simUI.sim.encounter.toProto()) : true;
+		const hasEncounter = encounter?.encounter
+			? Encounter.equals({ ...encounter.encounter, apiVersion: 0 }, { ...this.simUI.sim.encounter.toProto(), apiVersion: 0 })
+			: true;
 		const hasHealingModel = encounter?.healingModel ? HealingModel.equals(encounter.healingModel, this.simUI.player.getHealingModel()) : true;
 
 		const hasRace = settings?.race ? this.simUI.player.getRace() === settings.race : true;
@@ -237,7 +246,7 @@ export class PresetConfigurationPicker extends Component {
 			this.simUI.player.itemSwapSettings.getEnableItemSwap() === settings.playerOptions.enableItemSwap;
 		const hasItemSwap =
 			settings?.playerOptions?.itemSwap === undefined ||
-			ItemSwap.equals(this.simUI.player.itemSwapSettings?.toProto(), settings?.playerOptions?.itemSwap);
+			ItemSwap.equals(stripItemSwapApiVersion(this.simUI.player.itemSwapSettings?.toProto()), stripItemSwapApiVersion(settings?.playerOptions?.itemSwap));
 		const hasSpecOptions = settings?.specOptions ? JSON.stringify(this.simUI.player.getSpecOptions()) == JSON.stringify(settings.specOptions) : true;
 		const hasConsumables = settings?.consumables ? ConsumesSpec.equals(this.simUI.player.getConsumes(), settings.consumables) : true;
 		const hasRaidBuffs = settings?.raidBuffs ? RaidBuffs.equals(this.simUI.sim.raid.getBuffs(), settings.raidBuffs) : true;
@@ -264,4 +273,13 @@ export class PresetConfigurationPicker extends Component {
 			hasDebuffs
 		);
 	}
+}
+
+/** Strips apiVersion from an ItemSwap and its nested UnitStats so preset comparisons aren't version-sensitive. */
+function stripItemSwapApiVersion(swap: ItemSwap | undefined): ItemSwap | undefined {
+	if (!swap) return swap;
+	return {
+		...swap,
+		prepullBonusStats: swap.prepullBonusStats ? { ...swap.prepullBonusStats, apiVersion: 0 } : swap.prepullBonusStats,
+	};
 }
