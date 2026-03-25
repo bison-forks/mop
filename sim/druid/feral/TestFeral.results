@@ -1975,14 +1975,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestFeral-AllItems-RegaliaoftheShatteredVale"
- value: {
-  dps: 147428.67675
-  tps: 170489.96375
-  hps: 14453.42896
- }
-}
-dps_results: {
  key: "TestFeral-AllItems-RelicofChi-Ji-79330"
  value: {
   dps: 222475.00912

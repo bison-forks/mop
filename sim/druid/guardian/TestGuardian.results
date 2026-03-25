@@ -2218,15 +2218,6 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestGuardian-AllItems-RegaliaoftheShatteredVale"
- value: {
-  dps: 239581.28227
-  tps: 1.46009117021e+06
-  dtps: 63260.38099
-  hps: 34960.22284
- }
-}
-dps_results: {
  key: "TestGuardian-AllItems-RelicofChi-Ji-79330"
  value: {
   dps: 307828.08352
