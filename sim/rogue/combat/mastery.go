@@ -9,7 +9,7 @@ func (comRogue *CombatRogue) applyMastery() {
 	mgAttack := comRogue.RegisterSpell(core.SpellConfig{
 		ActionID:       core.ActionID{SpellID: 86392},
 		SpellSchool:    core.SpellSchoolPhysical,
-		ProcMask:       core.ProcMaskEmpty, // MG Appears to be unable to proc anything EXCEPT poisons. This specific case is handled by Poisons directly.
+		ProcMask:       core.ProcMaskMeleeMHSpecial,
 		Flags:          core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 		ClassSpellMask: rogue.RogueSpellMainGauche,
 
