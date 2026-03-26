@@ -10,7 +10,7 @@ func (comRogue *CombatRogue) applyMastery() {
 		ActionID:       core.ActionID{SpellID: 86392},
 		SpellSchool:    core.SpellSchoolPhysical,
 		ProcMask:       core.ProcMaskMeleeProc,
-		Flags:          core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		Flags:          core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | rogue.SpellFlagMainGauche,
 		ClassSpellMask: rogue.RogueSpellMainGauche,
 
 		DamageMultiplier:         1.2,
@@ -31,6 +31,7 @@ func (comRogue *CombatRogue) applyMastery() {
 		Callback:           core.CallbackOnSpellHitDealt,
 		Outcome:            core.OutcomeLanded,
 		ProcMask:           core.ProcMaskMeleeMH | core.ProcMaskMeleeProc,
+		SpellFlagsExclude:  rogue.SpellFlagMainGauche,
 		TriggerImmediately: true,
 
 		ExtraCondition: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) bool {
