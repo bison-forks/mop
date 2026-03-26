@@ -9,7 +9,7 @@ func (comRogue *CombatRogue) applyMastery() {
 	mgAttack := comRogue.RegisterSpell(core.SpellConfig{
 		ActionID:       core.ActionID{SpellID: 86392},
 		SpellSchool:    core.SpellSchoolPhysical,
-		ProcMask:       core.ProcMaskMeleeMHSpecial,
+		ProcMask:       core.ProcMaskMeleeProc,
 		Flags:          core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 		ClassSpellMask: rogue.RogueSpellMainGauche,
 
