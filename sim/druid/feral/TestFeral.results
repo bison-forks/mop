@@ -1266,7 +1266,7 @@ dps_results: {
  key: "TestFeral-AllItems-Horridon'sLastGasp-96757"
  value: {
   dps: 223125.75057
-  tps: 329197.79855
+  tps: 329198.49284
   hps: 15408.66764
  }
 }
