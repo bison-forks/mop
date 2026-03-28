@@ -580,8 +580,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Orc-p3_bis-Row5_Talent1-Arcane-arcane_t15_4pc-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 513957.39349
-  tps: 490673.07476
+  dps: 513425.88322
+  tps: 490171.91157
  }
 }
 dps_results: {
@@ -1000,8 +1000,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-p3_bis-Row5_Talent1-Arcane-arcane_t15_4pc-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 521505.19189
-  tps: 497341.41266
+  dps: 521936.24174
+  tps: 497771.89283
  }
 }
 dps_results: {
@@ -1021,8 +1021,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-Settings-Troll-p3_bis-Row5_Talent1-Arcane-arcane_t15_4pc-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 349771.43872
-  tps: 350883.14764
+  dps: 348926.20785
+  tps: 350025.02221
  }
 }
 dps_results: {
