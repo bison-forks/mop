@@ -776,9 +776,9 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	}
 
 	for _, attackTable := range unit.AttackTables {
-		attackTable.expectedInitialDamageCache = make(map[*Spell]*ExpectedDamageCalculatorCache)
-		attackTable.expectedTickDamageCache = make(map[*Spell]*ExpectedDamageCalculatorCache)
-		attackTable.expectedTickSnapshotDamageCache = make(map[*Spell]*ExpectedDamageCalculatorCache)
+		clear(attackTable.expectedInitialDamageCache)
+		clear(attackTable.expectedTickDamageCache)
+		clear(attackTable.expectedTickSnapshotDamageCache)
 	}
 
 	unit.manaBar.reset()
