@@ -1,9 +1,11 @@
 {
       "type": "TypeAPL",
       "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":2894}}},"doAtValue":{"const":{"val":"-3.0s"}}},
-        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"const":{"val":"-1.7s"}}},
-        {"action":{"groupReference":{"groupName":"Prepull"}},"doAtValue":{"const":{"val":"-1.7s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":2894}}},"doAtValue":{"variableRef":{"name":"Prepull Fire Ele"}}},
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"doAtValue":{"variableRef":{"name":"Prepull time"}}},
+        {"action":{"groupReference":{"groupName":"Prepull EB"}},"doAtValue":{"variableRef":{"name":"Prepull time"}}},
+        {"action":{"groupReference":{"groupName":"Prepull LaBu"}},"doAtValue":{"variableRef":{"name":"Prepull time"}}},
+        {"action":{"groupReference":{"groupName":"Prepull LiBo"}},"doAtValue":{"variableRef":{"name":"Prepull time"}}}
       ],
       "priorityList": [
         {"action":{"condition":{"and":{"vals":[{"variableRef":{"name":"Unleashed Fury Talented"}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":114049}}}}}]}},"castSpell":{"spellId":{"spellId":73680}}}},
@@ -30,12 +32,16 @@
         {"action":{"castSpell":{"spellId":{"spellId":403}}}}
       ],
       "groups": [
-        {"name":"Prepull","actions":[{"action":{"condition":{"spellIsKnown":{"spellId":{"spellId":117014}}},"castSpell":{"spellId":{"spellId":117014}}}},{"action":{"condition":{"auraIsKnown":{"auraId":{"spellId":117012}}},"castSpell":{"spellId":{"spellId":51505}}}},{"action":{"castSpell":{"spellId":{"spellId":403}}}},{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"numberTargets":{}},"rhs":{"const":{"val":"1"}}}},"castSpell":{"spellId":{"spellId":421}}}}]}
+        {"name":"Prepull LaBu","actions":[{"action":{"condition":{"variableRef":{"name":"Unleashed Fury Talented"}},"castSpell":{"spellId":{"spellId":51505}}}}]},
+        {"name":"Prepull EB","actions":[{"action":{"condition":{"variableRef":{"name":"Elemental Blast Talented"}},"castSpell":{"spellId":{"spellId":117014}}}}]},
+        {"name":"Prepull LiBo","actions":[{"action":{"condition":{"not":{"val":{"or":{"vals":[{"variableRef":{"name":"Elemental Blast Talented"}},{"variableRef":{"name":"Unleashed Fury Talented"}}]}}}},"castSpell":{"spellId":{"spellId":403}}}}]}
       ],
       "valueVariables": [
         {"name":"Unleashed Fury Talented","value":{"auraIsKnown":{"auraId":{"spellId":117012}}}},
         {"name":"Primal Elementalist Talented","value":{"auraIsKnown":{"auraId":{"spellId":117013}}}},
         {"name":"Elemental Blast Talented","value":{"spellIsKnown":{"spellId":{"spellId":117014}}}},
-        {"name":"UVLS Is Active","value":{"and":{"vals":[{"auraIsKnown":{"auraId":{"spellId":138963}}},{"auraIsActive":{"auraId":{"spellId":138963}}}]}}}
+        {"name":"UVLS Is Active","value":{"and":{"vals":[{"auraIsKnown":{"auraId":{"spellId":138963}}},{"auraIsActive":{"auraId":{"spellId":138963}}}]}}},
+        {"name":"Prepull Fire Ele","value":{"math":{"op":"OpSub","lhs":{"variableRef":{"name":"Prepull time"}},"rhs":{"spellGcdHastedDuration":{"spellId":{"spellId":2894}}}}}},
+        {"name":"Prepull time","value":{"math":{"op":"OpSub","lhs":{"const":{"val":"0s"}},"rhs":{"spellCastTime":{"spellId":{"spellId":403}}}}}}
       ]
     }
