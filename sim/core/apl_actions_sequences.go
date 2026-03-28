@@ -174,6 +174,7 @@ func (action *APLActionStrictSequence) IsReady(sim *Simulation) bool {
 	return true
 }
 func (action *APLActionStrictSequence) Execute(sim *Simulation) {
+	action.unit.Rotation.inSequence = true
 	action.unit.Rotation.pushControllingAction(action)
 }
 func (action *APLActionStrictSequence) relinquishControl() {
