@@ -288,64 +288,61 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 		}
 
 		if (this.actionEnabled('move')) {
-			hasActions = true;
 			itemContainer.classList.add('draggable');
 			if (this.config.itemLabel) {
 				itemContainer.classList.add(this.config.itemLabel.toLowerCase().replace(' ', '-'));
 			}
 
-			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'fa-arrows-up-down');
-			popover.appendChild(moveButton);
+			// Direct drag on the container itself
+			const isInteractiveTarget = (target: HTMLElement): boolean => {
+				const interactiveTags = new Set(['INPUT', 'TEXTAREA']);
+				let el: HTMLElement | null = target;
+				while (el && el !== itemContainer) {
+					if (interactiveTags.has(el.tagName)) return true;
+					if (el.getAttribute('contenteditable') === 'true') return true;
+					el = el.parentElement;
+				}
+				return false;
+			};
 
-			const moveButtonTooltip = tippy(moveButton, {
-				allowHTML: false,
-				content: i18n.t('common.list_picker.move_drag_drop'),
-			});
-
-			moveButton.addEventListener(
-				'click',
-				() => {
-					moveButtonTooltip.hide();
-				},
-				{ signal: this.signal },
-			);
-			this.addOnDisposeCallback(() => {
-				moveButtonTooltip?.destroy();
-			});
-
-			this.addHoverListeners(moveButton);
-
-			moveButton.addEventListener(
+			itemContainer.addEventListener(
 				'mousedown',
-				() => {
-					moveButton.setAttribute('draggable', 'true');
+				event => {
+					const target = event.target as HTMLElement;
+					// Don't start drag if clicking within a nested list-picker-item-container
+					const closestContainer = target.closest('.list-picker-item-container');
+					if (closestContainer !== itemContainer) return;
+					// Don't start drag on interactive elements
+					if (isInteractiveTarget(target)) return;
 					itemContainer.setAttribute('draggable', 'true');
 				},
 				{ signal: this.signal },
 			);
 
-			moveButton.addEventListener(
-				'mouseup',
-				() => {
-					moveButton.removeAttribute('draggable');
-					itemContainer.removeAttribute('draggable');
+			itemContainer.addEventListener(
+				'dragstart',
+				event => {
+					// Skip if drag was already initiated
+					if (curDragData) return;
+					if (event.target !== itemContainer) return;
+					const rect = itemContainer.getBoundingClientRect();
+					event.dataTransfer!.setDragImage(itemContainer, 0, event.clientY - rect.top);
+					event.dataTransfer!.dropEffect = 'move';
+					event.dataTransfer!.effectAllowed = 'move';
+					itemContainer.classList.add('dragfrom');
+					curDragData = {
+						listPicker: this,
+						item: item,
+					};
 				},
 				{ signal: this.signal },
 			);
 
-			moveButton.addEventListener(
-				'dragstart',
-				event => {
-					if (event.target == moveButton) {
-						const popoverRect = popover.getBoundingClientRect();
-						event.dataTransfer!.setDragImage(itemContainer, 0, popoverRect.height / 2);
-						event.dataTransfer!.dropEffect = 'move';
-						event.dataTransfer!.effectAllowed = 'move';
-						itemContainer.classList.add('dragfrom');
-						curDragData = {
-							listPicker: this,
-							item: item,
-						};
+			document.addEventListener(
+				'mouseup',
+				() => {
+					if (!curDragData) {
+						itemContainer.removeAttribute('draggable');
 					}
 				},
 				{ signal: this.signal },
@@ -434,7 +431,6 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 				if (!curDragData) {
 					return;
 				}
-				moveButton.removeAttribute('draggable');
 				itemContainer.removeAttribute('draggable');
 				curDragData.item.elem.removeAttribute('draggable');
 				[...document.querySelectorAll('.dragfrom,.dragto')].forEach(elem => {
