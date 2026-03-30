@@ -812,6 +812,12 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 func (unit *Unit) onEncounterStart(sim *Simulation) {
 	if agent := unit.Env.GetAgentFromUnit(unit); agent != nil {
 		agent.OnEncounterStart(sim)
+
+		if character := agent.GetCharacter(); character != nil {
+			for i := range character.OnEncounterStartEffects {
+				character.OnEncounterStartEffects[i]()
+			}
+		}
 	}
 
 	// Reduce Haste fakepoints arising from overly precise swing timings relative to the GCD timer.
