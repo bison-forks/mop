@@ -911,6 +911,8 @@
                     "valueTooltip": "L'expression de la valeur que représente cette variable."
                 },
                 "copyName": "{{variableName}} (Copie)",
+                "enterVariableName": "Nom de la variable:",
+                "extractToVariable": "Extraire vers une variable APL",
                 "header": "Variables",
                 "name": "Variable",
                 "newVariableName": "Nouvelle variable",

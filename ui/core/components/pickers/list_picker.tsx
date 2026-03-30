@@ -22,6 +22,14 @@ export interface ListPickerActionsConfig {
 	};
 }
 
+export interface ListPickerExtraAction {
+	cssClass: string;
+	icon: string;
+	tooltip: string;
+	onClick: (index: number) => void;
+	shouldShow?: (index: number) => boolean;
+}
+
 export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<ModObject, Array<ItemType>>, 'id'> {
 	itemLabel: string;
 	newItem: () => ItemType;
@@ -45,6 +53,8 @@ export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<
 	// If set, only actions included in the list are allowed. Otherwise, all actions are allowed.
 	allowedActions?: Array<ListItemAction>;
 	dragGroup?: string;
+	// Additional custom action buttons to add to the popover menu
+	extraActions?: Array<ListPickerExtraAction>;
 }
 
 const DEFAULT_CONFIG = {
@@ -261,6 +271,37 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 				);
 				this.addOnDisposeCallback(() => deleteButtonTooltip?.destroy());
 				this.addHoverListeners(deleteButton);
+			}
+		}
+
+		const extraActionButtons: Array<{ elem: HTMLElement; shouldShow?: (index: number) => boolean }> = [];
+		if (this.config.extraActions?.length) {
+			for (const extraAction of this.config.extraActions) {
+				hasActions = true;
+				const extraButton = ListPicker.makeActionElem(extraAction.cssClass, extraAction.icon);
+				popover.appendChild(extraButton);
+				const extraTooltip = tippy(extraButton, {
+					allowHTML: false,
+					content: extraAction.tooltip,
+				});
+				extraButton.addEventListener(
+					'click',
+					() => {
+						extraAction.onClick(index);
+						extraTooltip.hide();
+						try {
+							popover.hidePopover();
+						} catch (_) {
+							// popover may already be hidden
+						}
+					},
+					{ signal: this.signal },
+				);
+				this.addOnDisposeCallback(() => extraTooltip?.destroy());
+				this.addHoverListeners(extraButton);
+				if (extraAction.shouldShow) {
+					extraActionButtons.push({ elem: extraButton, shouldShow: extraAction.shouldShow });
+				}
 			}
 		}
 
@@ -501,6 +542,9 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			actionsButton.addEventListener(
 				'mouseover',
 				() => {
+					for (const { elem, shouldShow } of extraActionButtons) {
+						elem.style.display = shouldShow!(index) ? '' : 'none';
+					}
 					popover.showPopover();
 					const actionsButtonRect = actionsButton.getBoundingClientRect();
 					const popoverRect = popover.getBoundingClientRect();

@@ -6,9 +6,11 @@ import { Player, UnitMetadata } from '../../player.js';
 import {
 	APLActionGuardianHotwDpsRotation_Strategy as HotwStrategy,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLValue,
 	APLValueEclipsePhase,
 	APLValueRuneSlot,
 	APLValueRuneType,
+	APLValueVariable,
 	APLActionDamageAmplifier_AmplificationType,
 } from '../../proto/apl.js';
 import { ActionID, OtherAction, Stat, UnitReference, UnitReference_Type as UnitType } from '../../proto/common.js';
@@ -16,12 +18,12 @@ import { FeralDruid_Rotation_AplType } from '../../proto/druid.js';
 import { ActionId, defaultTargetIcon, getPetIconFromName } from '../../proto_utils/action_id.js';
 import { getStatName } from '../../proto_utils/names.js';
 import { translateStat } from '../../../i18n/localization.js';
-import { EventID } from '../../typed_event.js';
+import { EventID, TypedEvent } from '../../typed_event.js';
 import { bucket, getEnumValues, randomUUID } from '../../utils.js';
 import { Input, InputConfig } from '../input.jsx';
 import { BooleanPicker } from '../pickers/boolean_picker.js';
 import { DropdownPicker, DropdownPickerConfig, DropdownValueConfig, TextDropdownPicker } from '../pickers/dropdown_picker.jsx';
-import { ListItemPickerConfig, ListPicker } from '../pickers/list_picker.jsx';
+import { ListItemPickerConfig, ListPicker, ListPickerExtraAction } from '../pickers/list_picker.jsx';
 import { NumberPicker, NumberPickerConfig } from '../pickers/number_picker.js';
 import { AdaptiveStringPicker } from '../pickers/string_picker.js';
 import { UnitPicker, UnitPickerConfig, UnitValue } from '../pickers/unit_picker.jsx';
@@ -1296,5 +1298,51 @@ export function itemSwapSetFieldConfig(field: string): APLPickerBuilderFieldConf
 					{ value: ItemSwapSet.Swap1, label: i18n.t('rotation_tab.apl.item_swap_sets.swapped') },
 				],
 			}),
+	};
+}
+
+/**
+ * Creates a ListPickerExtraAction that extracts an APL value/condition to a named variable,
+ * replacing it with a Variable Reference.
+ */
+export function extractToVariableAction(
+	player: Player<any>,
+	getValue: (index: number) => APLValue | undefined,
+	setValue: (index: number, variableRef: APLValue) => void,
+): ListPickerExtraAction {
+	const isExtractable = (index: number): boolean => {
+		const value = getValue(index);
+		return !!value && !!value.value.oneofKind && value.value.oneofKind !== 'variableRef';
+	};
+
+	return {
+		cssClass: 'list-picker-item-extract-variable',
+		icon: 'fa-arrow-right-from-bracket',
+		tooltip: i18n.t('rotation_tab.apl.variables.extractToVariable'),
+		shouldShow: isExtractable,
+		onClick: (index: number) => {
+			if (!isExtractable(index)) return;
+			const value = getValue(index)!;
+
+			const name = window.prompt(i18n.t('rotation_tab.apl.variables.enterVariableName'));
+			if (!name || !name.trim()) return;
+
+			const trimmedName = name.trim();
+
+			if (!player.aplRotation.valueVariables) {
+				player.aplRotation.valueVariables = [];
+			}
+			player.aplRotation.valueVariables.push(APLValueVariable.create({ name: trimmedName, value: APLValue.clone(value) }));
+
+			setValue(
+				index,
+				APLValue.create({
+					value: { oneofKind: 'variableRef', variableRef: { name: trimmedName } },
+					uuid: { value: randomUUID() },
+				}),
+			);
+
+			player.rotationChangeEmitter.emit(TypedEvent.nextEventID());
+		},
 	};
 }

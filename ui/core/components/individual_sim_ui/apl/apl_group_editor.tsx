@@ -8,6 +8,7 @@ import { Input, InputConfig } from '../../input';
 import { ListItemPickerConfig, ListPicker } from '../../pickers/list_picker';
 import { AdaptiveStringPicker } from '../../pickers/string_picker';
 import { APLActionPicker } from '../apl_actions';
+import * as AplHelpers from '../apl_helpers';
 import { APLHidePicker } from './hide_picker';
 
 export interface APLGroupEditorConfig extends InputConfig<Player<any>, APLGroup> {
@@ -77,6 +78,15 @@ export class APLGroupEditor extends Input<Player<any>, APLGroup> {
 			inlineMenuBar: true,
 			allowedActions: ['create', 'copy', 'delete', 'move'],
 			dragGroup: 'action-group-actions',
+			extraActions: [
+				AplHelpers.extractToVariableAction(
+					player,
+					(actionIndex) => this.getSourceValue()?.actions?.[actionIndex]?.action?.condition,
+					(actionIndex, ref) => {
+						this.getSourceValue()!.actions[actionIndex].action!.condition = ref;
+					},
+				),
+			],
 		});
 
 		this.init();

@@ -3794,6 +3794,12 @@
                 "copyName": {
                   "type": "string"
                 },
+                "enterVariableName": {
+                  "type": "string"
+                },
+                "extractToVariable": {
+                  "type": "string"
+                },
                 "header": {
                   "type": "string"
                 },
@@ -3828,6 +3834,8 @@
               "required": [
                 "attributes",
                 "copyName",
+                "enterVariableName",
+                "extractToVariable",
                 "header",
                 "name",
                 "newVariableName",
