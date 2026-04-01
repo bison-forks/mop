@@ -1987,6 +1987,7 @@
 				"casts": "Casts",
 				"resources": "Resources",
 				"timeline": "Timeline",
+				"replay": "Replay",
 				"log": "Log"
 			},
 			"columns": {
@@ -2470,5 +2471,15 @@
 			"points_suffix": "Points",
 			"percent_suffix": "%"
 		}
+	},
+	"combat_replay": {
+		"empty_title": "Combat Replay",
+		"empty_desc": "Run a simulation to generate an interactive combat replay",
+		"default_player": "Player",
+		"training_dummy": "Training Dummy",
+		"seek_back_5": "Rewind 5s",
+		"seek_back_1": "Rewind 1s",
+		"seek_fwd_1": "Forward 1s",
+		"seek_fwd_5": "Forward 5s"
 	}
 }
