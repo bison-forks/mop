@@ -2,6 +2,7 @@ import { ref } from 'tsx-vanilla';
 
 import { OtherAction } from '../../proto/common';
 import { ResourceType } from '../../proto/spell';
+import { ActionId } from '../../proto_utils/action_id';
 import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
 import { SimResult } from '../../proto_utils/sim_result';
@@ -12,6 +13,7 @@ interface ReplayAction {
 	time: number;
 	name: string;
 	iconUrl: string;
+	actionId: ActionId | null;
 	dmg: number | null;
 	isCrit: boolean;
 	target: Entity | null;
@@ -254,6 +256,7 @@ export class CombatReplay extends ResultComponent {
 			if (!cast.actionId) continue;
 			const castName = cast.actionId.name;
 			const iconUrl = cast.actionId.iconUrl;
+			const actionId = cast.actionId;
 
 			let dmg: number | null = null;
 			let isCrit = false;
@@ -270,7 +273,7 @@ export class CombatReplay extends ResultComponent {
 				}
 			}
 
-			this.actions.push({ time: cast.timestamp, name: castName, iconUrl, dmg, isCrit, target });
+			this.actions.push({ time: cast.timestamp, name: castName, iconUrl, actionId, dmg, isCrit, target });
 		}
 
 		const playerResourceLogs = playerEntity ? resourceLogs.filter(r => r.source?.equals(playerEntity)) : resourceLogs;
@@ -330,6 +333,7 @@ export class CombatReplay extends ResultComponent {
 			img.alt = action.name;
 			img.draggable = false;
 			div.appendChild(img);
+			action.actionId?.setWowheadDataset(div);
 			this.ui.actionGridEl.appendChild(div);
 		}
 
@@ -441,6 +445,8 @@ export class CombatReplay extends ResultComponent {
 				img.alt = cast.name;
 				img.draggable = false;
 				slot.appendChild(img);
+
+				cast.actionId?.setWowheadDataset(slot);
 
 				if (cast.isCrit) {
 					const badge = document.createElement('span');
