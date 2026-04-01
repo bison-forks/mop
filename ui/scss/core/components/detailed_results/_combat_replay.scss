@@ -1,0 +1,470 @@
+.combat-replay-root {
+	display: flex;
+	flex-direction: column;
+	max-height: 90vh;
+	overflow: hidden;
+	background: #0a0c10;
+	color: #e2e8f0;
+	font-family: inherit;
+
+	.cr-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		padding: 60px 20px;
+		text-align: center;
+		color: rgba(255, 255, 255, 0.5);
+		flex: 1;
+	}
+
+	.cr-empty-icon {
+		font-size: 3rem;
+		opacity: 0.3;
+	}
+
+	.cr-empty-title {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.cr-empty-desc {
+		font-size: 0.85rem;
+		max-width: 380px;
+	}
+
+	.cr-scene {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		overflow: hidden;
+	}
+
+	// ── Arena ──
+
+	.cr-arena {
+		position: relative;
+		flex: 1;
+		overflow: hidden;
+		background: radial-gradient(ellipse at 50% 80%, #1a1008 0%, #0a0c10 70%);
+		min-height: 200px;
+	}
+
+	.cr-vignette {
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+		pointer-events: none;
+		z-index: 2;
+	}
+
+	.cr-ticker-outer {
+		position: absolute;
+		top: 10px;
+		left: 0;
+		right: 0;
+		z-index: 10;
+		display: flex;
+		justify-content: center;
+	}
+
+	.cr-ticker-track {
+		display: flex;
+		gap: 4px;
+		align-items: center;
+	}
+
+	.cr-strip-icon {
+		position: relative;
+		width: 42px;
+		height: 42px;
+		border-radius: 6px;
+		overflow: hidden;
+		border: 2px solid rgba(255, 255, 255, 0.15);
+		cursor: pointer;
+		transition: border-color 0.1s;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		&.cr-strip-icon-active {
+			border-color: rgba(255, 255, 255, 0.7);
+			box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+		}
+	}
+
+	.cr-crit-badge {
+		position: absolute;
+		top: 1px;
+		right: 2px;
+		font-size: 9px;
+		font-weight: 900;
+		color: #ff8040;
+		line-height: 1;
+	}
+
+	.cr-dmg-badge {
+		position: absolute;
+		bottom: 1px;
+		left: 0;
+		right: 0;
+		text-align: center;
+		font-size: 9px;
+		font-weight: 700;
+		color: #fff;
+		text-shadow: 0 0 4px #000, 0 0 4px #000;
+		line-height: 1;
+	}
+
+	.cr-enemy-zone {
+		position: absolute;
+		inset: 0;
+		top: 60px;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		z-index: 1;
+	}
+
+	.cr-enemy-row {
+		display: flex;
+		align-items: flex-end;
+		gap: 12px;
+		padding-bottom: 10px;
+	}
+
+	.cr-enemy-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.cr-nameplate {
+		width: 100%;
+		margin-bottom: 6px;
+		background: rgba(0, 0, 0, 0.55);
+		border-radius: 6px;
+		padding: 4px 6px;
+	}
+
+	.cr-enemy-name {
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-align: center;
+		color: #ff6060;
+		margin-bottom: 3px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.cr-hp-bar {
+		position: relative;
+		height: 8px;
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.cr-hp-fill {
+		height: 100%;
+		background: linear-gradient(90deg, #22ba00, #40e020);
+		border-radius: 4px;
+		transition: width 0.05s linear;
+	}
+
+	.cr-hp-text {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 7px;
+		font-weight: 700;
+		color: #fff;
+		text-shadow: 0 0 3px #000;
+	}
+
+	.cr-silhouette {
+		position: relative;
+		width: 100%;
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+			filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.25));
+			user-select: none;
+		}
+	}
+
+	.cr-hit-layer {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.cr-hit-effect {
+		position: absolute;
+		transform: translate(-50%, -50%);
+	}
+
+	.cr-hit-flash {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		border-radius: 50%;
+		background: radial-gradient(circle, #ffffff 0%, rgba(255, 200, 50, 0.6) 50%, transparent 100%);
+	}
+
+	.cr-hit-ring {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		border-radius: 50%;
+		border: 2px solid #c0a060;
+	}
+
+	.cr-dmg-num {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		white-space: nowrap;
+		font-size: 1rem;
+		font-weight: 800;
+		color: #ffe066;
+		text-shadow: 0 0 6px #000, 0 0 6px #000, 0 2px 4px rgba(0, 0, 0, 0.8);
+		pointer-events: none;
+
+		&.cr-dmg-crit {
+			color: #ff8040;
+			font-size: 1.3rem;
+			text-shadow: 0 0 8px #ff4400, 0 0 8px #ff4400;
+		}
+	}
+
+	.cr-enemy-more {
+		font-size: 1.2rem;
+		font-weight: 700;
+		color: rgba(255, 255, 255, 0.5);
+		align-self: center;
+	}
+
+	// ── CDM HUD ──
+
+	.cr-cdm {
+		flex-shrink: 0;
+		background: rgba(0, 0, 0, 0.75);
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+		padding: 8px 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.cr-cdm-player-label {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+	}
+
+	.cr-cast-bar-container {
+		position: relative;
+		height: 18px;
+		background: rgba(255, 255, 255, 0.07);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.cr-cast-bar-fill {
+		height: 100%;
+		width: 0;
+		border-radius: 4px;
+		transition: width 0.05s linear;
+	}
+
+	.cr-cast-bar-label {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.7rem;
+		font-weight: 600;
+		color: #fff;
+		text-shadow: 0 0 4px #000;
+		pointer-events: none;
+	}
+
+	.cr-cast-bar-time {
+		position: absolute;
+		right: 6px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 0.65rem;
+		color: rgba(255, 255, 255, 0.75);
+		pointer-events: none;
+	}
+
+	.cr-resource-bars {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.cr-resource-wrap {
+		display: flex;
+		align-items: center;
+	}
+
+	.cr-res-bar-outer {
+		position: relative;
+		height: 12px;
+		width: 100%;
+		background: rgba(255, 255, 255, 0.07);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.cr-res-bar-fill {
+		height: 100%;
+		border-radius: 4px;
+		transition: width 0.05s linear;
+	}
+
+	.cr-bar-label {
+		position: absolute;
+		left: 6px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 0.6rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.8);
+		pointer-events: none;
+	}
+
+	.cr-bar-val {
+		position: absolute;
+		right: 6px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 0.6rem;
+		color: rgba(255, 255, 255, 0.7);
+		pointer-events: none;
+	}
+
+	.cr-seg-bar {
+		position: relative;
+		display: flex;
+		gap: 3px;
+		align-items: center;
+		height: 14px;
+	}
+
+	.cr-segment {
+		width: 20px;
+		height: 14px;
+		border-radius: 3px;
+	}
+
+	.cr-action-grid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		margin-top: 2px;
+	}
+
+	.cr-action-icon {
+		width: 36px;
+		height: 36px;
+		border-radius: 5px;
+		overflow: hidden;
+		border: 2px solid rgba(255, 255, 255, 0.12);
+		cursor: pointer;
+		transition: border-color 0.1s, box-shadow 0.1s;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		&.cr-action-icon-active {
+			border-color: rgba(255, 255, 255, 0.7);
+		}
+	}
+
+	// ── Controls ──
+
+	.cr-controls {
+		flex-shrink: 0;
+		padding: 6px 12px 8px;
+		background: rgba(0, 0, 0, 0.6);
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
+	}
+
+	.cr-ctrl-row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		flex-wrap: wrap;
+	}
+
+	.cr-ctrl-btn,
+	.cr-play-btn {
+		padding: 4px 8px;
+		background: rgba(255, 255, 255, 0.07);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+		border-radius: 5px;
+		color: #e2e8f0;
+		font-size: 0.8rem;
+		cursor: pointer;
+		transition: background 0.1s;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.15);
+		}
+	}
+
+	.cr-speed-btns {
+		display: flex;
+		gap: 4px;
+	}
+
+	.cr-speed-btn {
+		padding: 3px 8px;
+		background: rgba(255, 255, 255, 0.05);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 4px;
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 0.75rem;
+		cursor: pointer;
+
+		&.active {
+			border-color: rgba(255, 255, 255, 0.5);
+			color: #fff;
+		}
+	}
+
+	.cr-time-display {
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
+		color: rgba(255, 255, 255, 0.6);
+		margin-left: auto;
+	}
+
+	.cr-scrub-row {
+		margin-top: 4px;
+	}
+
+	.cr-scrubber {
+		width: 100%;
+		accent-color: #888;
+		cursor: pointer;
+	}
+}
