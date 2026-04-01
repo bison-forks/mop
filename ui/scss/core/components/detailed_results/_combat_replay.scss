@@ -1,7 +1,18 @@
+// Stretch the replay tab pane so the component fills to the bottom of the viewport.
+.replay-content.dr-tab-content {
+	padding: 0;
+
+	.dr-row {
+		margin: 0;
+	}
+}
+
 .combat-replay-root {
 	display: flex;
 	flex-direction: column;
-	max-height: 90vh;
+	// Fill from the top of the tab content to the bottom of the viewport, with a 16px gap.
+	height: calc(100vh - 175px);
+	padding-bottom: 16px;
 	overflow: hidden;
 	background: #0a0c10;
 	color: #e2e8f0;
@@ -200,7 +211,7 @@
 		align-items: flex-end;
 
 		img {
-			height: min(240px, 55vh);
+			height: min(260px, 50vh);
 			width: auto;
 			max-width: 100%;
 			display: block;
@@ -261,13 +272,15 @@
 		align-self: center;
 	}
 
-	// ── CDM HUD ──
+	// ── CDM HUD — 50% wide, centered ──
 
 	.cr-cdm {
 		flex-shrink: 0;
+		width: 50%;
+		align-self: center;
 		background: rgba(0, 0, 0, 0.75);
 		border-top: 1px solid rgba(255, 255, 255, 0.08);
-		padding: 8px 12px;
+		padding: 8px 16px;
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
@@ -323,6 +336,8 @@
 		gap: 4px;
 	}
 
+	// Regular (continuous) resource bar
+
 	.cr-resource-wrap {
 		display: flex;
 		align-items: center;
@@ -364,10 +379,13 @@
 		pointer-events: none;
 	}
 
+	// Dot/segment resource bar (combo points, runes, chi)
+
 	.cr-resource-dot {
 		display: flex;
 		align-items: center;
 		gap: 6px;
+		width: 100%;
 	}
 
 	.cr-dot-label {
@@ -386,18 +404,21 @@
 	}
 
 	.cr-seg-bar {
+		flex: 1;
 		display: flex;
 		gap: 3px;
-		align-items: center;
-		height: 14px;
+		align-items: stretch;
+		height: 12px;
 	}
 
 	.cr-segment {
-		width: 18px;
-		height: 14px;
+		flex: 1;
+		min-width: 0;
+		height: 100%;
 		border-radius: 3px;
-		flex-shrink: 0;
 	}
+
+	// Action icon grid
 
 	.cr-action-grid {
 		display: flex;
@@ -427,7 +448,7 @@
 		}
 	}
 
-	// ── Controls ──
+	// ── Playback controls ──
 
 	.cr-controls {
 		flex-shrink: 0;
