@@ -3,7 +3,7 @@ import { ref } from 'tsx-vanilla';
 import { OtherAction } from '../../proto/common';
 import { ResourceType } from '../../proto/spell';
 import { ActionId } from '../../proto_utils/action_id';
-import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
+import { AuraUptimeLog, CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
 import { SimResult } from '../../proto_utils/sim_result';
 import i18n from '../../../i18n/config';
@@ -17,6 +17,15 @@ interface ReplayAction {
 	dmg: number | null;
 	isCrit: boolean;
 	target: Entity | null;
+}
+
+interface AuraSnapshot {
+	gainedAt: number;
+	fadedAt: number;
+	name: string;
+	iconUrl: string;
+	actionId: ActionId | null;
+	targetIndex: number; // -1 for player self-buffs
 }
 
 interface ResourceSnapshot {
@@ -69,6 +78,8 @@ export class CombatReplay extends ResultComponent {
 	private actions: ReplayAction[] = [];
 	private resources: ResourceSnapshot[] = [];
 	private hitEffects: HitEffect[] = [];
+	private playerAuras: AuraSnapshot[] = [];
+	private targetAuras: AuraSnapshot[] = [];
 	private enemyNames: string[] = [];
 	private numEnemies = 1;
 	private fightLen = 0;
@@ -79,6 +90,9 @@ export class CombatReplay extends ResultComponent {
 	private rafId: number | null = null;
 	private lastRaf: number | null = null;
 
+	private lastBuffKey = '';
+	private lastDebuffKeys = new Map<number, string>();
+
 	private readonly preloadedUrls = new Set<string>();
 
 	private ui!: {
@@ -86,6 +100,7 @@ export class CombatReplay extends ResultComponent {
 		scene: HTMLElement;
 		tickerTrack: HTMLElement;
 		enemyZone: HTMLElement;
+		buffIconsEl: HTMLElement;
 		castBarFill: HTMLElement;
 		castBarLabel: HTMLElement;
 		castBarTime: HTMLElement;
@@ -108,6 +123,7 @@ export class CombatReplay extends ResultComponent {
 		const sceneRef = ref<HTMLDivElement>();
 		const tickerTrackRef = ref<HTMLDivElement>();
 		const enemyZoneRef = ref<HTMLDivElement>();
+		const buffIconsRef = ref<HTMLDivElement>();
 		const castBarFillRef = ref<HTMLDivElement>();
 		const castBarLabelRef = ref<HTMLDivElement>();
 		const castBarTimeRef = ref<HTMLDivElement>();
@@ -133,7 +149,10 @@ export class CombatReplay extends ResultComponent {
 						<div ref={enemyZoneRef} className="cr-enemy-zone" />
 					</div>
 					<div className="cr-cdm">
-						<div className="cr-cdm-player-label" />
+						<div className="cr-cdm-header">
+							<div className="cr-cdm-player-label" />
+							<div ref={buffIconsRef} className="cr-buff-icons" />
+						</div>
 						<div className="cr-cast-bar-container">
 							<div ref={castBarFillRef} className="cr-cast-bar-fill" />
 							<div ref={castBarLabelRef} className="cr-cast-bar-label" />
@@ -169,6 +188,7 @@ export class CombatReplay extends ResultComponent {
 			scene: sceneRef.value!,
 			tickerTrack: tickerTrackRef.value!,
 			enemyZone: enemyZoneRef.value!,
+			buffIconsEl: buffIconsRef.value!,
 			castBarFill: castBarFillRef.value!,
 			castBarLabel: castBarLabelRef.value!,
 			castBarTime: castBarTimeRef.value!,
@@ -210,6 +230,8 @@ export class CombatReplay extends ResultComponent {
 
 	onSimResult(resultData: SimResultData): void {
 		this.stopPlayback();
+		this.lastBuffKey = '';
+		this.lastDebuffKeys.clear();
 		this.parseResult(resultData.result);
 		this.buildScene(resultData.result);
 		this.ui.emptyEl.style.display = 'none';
@@ -222,6 +244,8 @@ export class CombatReplay extends ResultComponent {
 		this.actions = [];
 		this.resources = [];
 		this.hitEffects = [];
+		this.playerAuras = [];
+		this.targetAuras = [];
 
 		this.enemyNames = result.encounterMetrics.targets.map(t => t.name);
 		this.numEnemies = Math.max(1, this.enemyNames.length);
@@ -300,14 +324,43 @@ export class CombatReplay extends ResultComponent {
 			});
 		}
 
+		if (playerEntity) {
+			const auraUptimeLogs = AuraUptimeLog.fromLogs(result.logs, playerEntity, this.fightLen);
+			for (const aura of auraUptimeLogs) {
+				const id = aura.actionId;
+				if (!id) continue;
+				if (id.otherId !== OtherAction.OtherActionNone) continue;
+				if (!id.spellId && !id.itemId) continue;
+				if (!(id.name ?? '')) continue;
+				const snap: AuraSnapshot = {
+					gainedAt: aura.gainedAt,
+					fadedAt: aura.fadedAt,
+					name: id.name,
+					iconUrl: id.iconUrl,
+					actionId: id,
+					targetIndex: aura.target?.isTarget ? aura.target.index : -1,
+				};
+				if (aura.target?.isTarget) {
+					this.targetAuras.push(snap);
+				} else {
+					this.playerAuras.push(snap);
+				}
+			}
+		}
+
 		this.preloadImages();
 	}
 
 	private preloadImages(): void {
-		for (const a of this.actions) {
-			if (!a.iconUrl || this.preloadedUrls.has(a.iconUrl)) continue;
-			this.preloadedUrls.add(a.iconUrl);
-			new Image().src = a.iconUrl;
+		const allUrls = [
+			...this.actions.map(a => a.iconUrl),
+			...this.playerAuras.map(a => a.iconUrl),
+			...this.targetAuras.map(a => a.iconUrl),
+		];
+		for (const url of allUrls) {
+			if (!url || this.preloadedUrls.has(url)) continue;
+			this.preloadedUrls.add(url);
+			new Image().src = url;
 		}
 	}
 
@@ -365,6 +418,7 @@ export class CombatReplay extends ResultComponent {
 						<div class="cr-hp-fill" style="width:100%"></div>
 						<span class="cr-hp-text">100.0%</span>
 					</div>
+					<div class="cr-debuff-row"></div>
 				</div>
 				<div class="cr-silhouette">
 					<img src="${BOSS_IMAGE_URL}" alt="${this.esc(name)}" draggable="false">
@@ -404,6 +458,7 @@ export class CombatReplay extends ResultComponent {
 		this.renderTicker(this.actions.filter(a => a.time <= t).slice(-MAX_TICKER));
 		this.renderCastBar(actionIdx, t);
 		this.renderResources(t);
+		this.renderPlayerBuffs(t);
 		this.renderActionHighlights(actionIdx, t);
 		this.renderEnemies(t);
 	}
@@ -559,6 +614,38 @@ export class CombatReplay extends ResultComponent {
 		});
 	}
 
+	private renderAuraIcons(container: HTMLElement, auras: AuraSnapshot[], t: number, cacheKey: string): string {
+		const active = auras.filter(a => a.gainedAt <= t && a.fadedAt >= t);
+		const key = active.map(a => a.name).join('|');
+		if (key === cacheKey) return cacheKey;
+
+		container.innerHTML = '';
+		for (const aura of active) {
+			const div = document.createElement('div');
+			div.className = 'cr-aura-icon';
+			div.title = aura.name;
+			const img = document.createElement('img');
+			img.src = aura.iconUrl;
+			img.alt = aura.name;
+			img.draggable = false;
+			div.appendChild(img);
+			aura.actionId?.setWowheadDataset(div, { useBuffAura: true });
+			container.appendChild(div);
+		}
+		return key;
+	}
+
+	private renderPlayerBuffs(t: number): void {
+		this.lastBuffKey = this.renderAuraIcons(this.ui.buffIconsEl, this.playerAuras, t, this.lastBuffKey);
+	}
+
+	private renderTargetDebuffs(targetIdx: number, container: HTMLElement, t: number): void {
+		const debuffs = this.targetAuras.filter(a => a.targetIndex === targetIdx || a.targetIndex === -1 && targetIdx === 0);
+		const prev = this.lastDebuffKeys.get(targetIdx) ?? '';
+		const next = this.renderAuraIcons(container, debuffs, t, prev);
+		this.lastDebuffKeys.set(targetIdx, next);
+	}
+
 	private renderEnemies(t: number): void {
 		const totalDmg: Record<number, number> = {};
 		const cumDmg: Record<number, number> = {};
@@ -577,6 +664,9 @@ export class CombatReplay extends ResultComponent {
 			const hpPct = Math.max(0, 1 - (cumDmg[i] ?? 0) / Math.max(1, totalDmg[i] ?? 1));
 			card.querySelector<HTMLElement>('.cr-hp-fill')!.style.width = `${hpPct * 100}%`;
 			card.querySelector<HTMLElement>('.cr-hp-text')!.textContent = `${(hpPct * 100).toFixed(1)}%`;
+
+			const debuffRow = card.querySelector<HTMLElement>('.cr-debuff-row');
+			if (debuffRow) this.renderTargetDebuffs(i, debuffRow, t);
 
 			const layer = card.querySelector<HTMLElement>('.cr-hit-layer')!;
 			const activeHits = this.hitEffects.filter(h => h.targetIndex === i && t - h.time >= 0 && t - h.time <= DMG_WINDOW_SEC);
