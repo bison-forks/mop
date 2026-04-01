@@ -8330,6 +8330,9 @@
                 "timeline": {
                   "type": "string"
                 },
+                "replay": {
+                  "type": "string"
+                },
                 "log": {
                   "type": "string"
                 }
@@ -8344,6 +8347,7 @@
                 "casts",
                 "resources",
                 "timeline",
+                "replay",
                 "log"
               ]
             },
