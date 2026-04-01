@@ -33,7 +33,7 @@ interface HitEffect {
 	isCrit: boolean;
 }
 
-const BOSS_IMAGE_URL = '/assets/img/boss_patchwerk.png';
+const BOSS_IMAGE_URL = '/mop/assets/img/boss_patchwerk.png';
 
 const RESOURCE_MAX_DEFAULTS: Partial<Record<ResourceType, number>> = {
 	[ResourceType.ResourceTypeMana]: 100,
