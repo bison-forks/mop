@@ -46,10 +46,10 @@
 
 	.cr-arena {
 		position: relative;
-		flex: 1;
+		height: 280px;
+		flex-shrink: 0;
 		overflow: hidden;
 		background: radial-gradient(ellipse at 50% 80%, #1a1008 0%, #0a0c10 70%);
-		min-height: 200px;
 	}
 
 	.cr-vignette {
@@ -194,12 +194,18 @@
 	.cr-silhouette {
 		position: relative;
 		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
 
 		img {
-			width: 100%;
-			height: auto;
+			max-height: 200px;
+			width: auto;
+			max-width: 100%;
 			display: block;
-			filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.25));
+			object-fit: contain;
+			object-position: center bottom;
+			filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.35));
 			user-select: none;
 		}
 	}
