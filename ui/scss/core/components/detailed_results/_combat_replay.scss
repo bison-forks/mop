@@ -143,14 +143,21 @@
 	}
 
 	.cr-enemy-row {
+		display: flex;
+		flex-direction: row;
+		align-items: flex-end;
+		justify-content: center;
+		gap: 16px;
+		width: 100%;
 		height: 100%;
-		padding: 30px;
+		padding: 0 24px 12px;
 	}
 
 	.cr-enemy-card {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		flex-shrink: 0;
 	}
 
 	.cr-nameplate {
@@ -230,9 +237,10 @@
 		align-items: flex-end;
 
 		img {
-			height: min(260px, 50vh);
-			width: auto;
-			max-width: 100%;
+			// Scale with card width; single target gets large, multi-target scales down naturally
+			width: 100%;
+			height: auto;
+			max-height: min(260px, 45vh);
 			display: block;
 			object-fit: contain;
 			object-position: center bottom;
