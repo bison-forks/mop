@@ -5,7 +5,7 @@ import { ResourceType } from '../../proto/spell';
 import { ActionId } from '../../proto_utils/action_id';
 import { AuraUptimeLog, CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
-import { SimResult } from '../../proto_utils/sim_result';
+import { SimResult, SimResultFilter } from '../../proto_utils/sim_result';
 import i18n from '../../../i18n/config';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component';
 
@@ -81,6 +81,7 @@ export class CombatReplay extends ResultComponent {
 	private playerAuras: AuraSnapshot[] = [];
 	private targetAuras: AuraSnapshot[] = [];
 	private enemyNames: string[] = [];
+	private filteredTargetEncounterIndices: number[] = [];
 	private numEnemies = 1;
 	private fightLen = 0;
 
@@ -232,14 +233,14 @@ export class CombatReplay extends ResultComponent {
 		this.stopPlayback();
 		this.lastBuffKey = '';
 		this.lastDebuffKeys.clear();
-		this.parseResult(resultData.result);
-		this.buildScene(resultData.result);
+		this.parseResult(resultData.result, resultData.filter);
+		this.buildScene(resultData.result, resultData.filter);
 		this.ui.emptyEl.style.display = 'none';
 		this.ui.scene.style.display = 'flex';
 		this.seekTo(0);
 	}
 
-	private parseResult(result: SimResult): void {
+	private parseResult(result: SimResult, filter: SimResultFilter): void {
 		this.fightLen = result.result.firstIterationDuration || result.result.avgIterationDuration || 120;
 		this.actions = [];
 		this.resources = [];
@@ -247,10 +248,12 @@ export class CombatReplay extends ResultComponent {
 		this.playerAuras = [];
 		this.targetAuras = [];
 
-		this.enemyNames = result.encounterMetrics.targets.map(t => t.name);
-		this.numEnemies = Math.max(1, this.enemyNames.length);
+		const filteredTargets = result.getTargets(filter);
+		this.enemyNames = filteredTargets.map(t => t.name);
+		this.filteredTargetEncounterIndices = filteredTargets.map(t => t.index);
+		this.numEnemies = Math.max(1, filteredTargets.length);
 
-		const players = result.raidMetrics.parties.map(p => p.players).flat();
+		const players = result.getPlayers(filter);
 		const playerEntity = players[0] ? new Entity(players[0].name, '', players[0].index, false, false) : null;
 
 		const castBeganLogs: CastBeganLog[] = [];
@@ -313,10 +316,12 @@ export class CombatReplay extends ResultComponent {
 		for (const d of playerDmg) {
 			if (d.miss || d.dodge || d.parry) continue;
 			if (d.actionId && d.actionId.otherId !== OtherAction.OtherActionNone) continue;
+			const cardIdx = this.enemyNames.findIndex(n => n === d.target?.name);
+			if (cardIdx === -1 && this.enemyNames.length > 0) continue;
 			const seed = Math.round(Math.abs(d.timestamp) * 1000);
 			this.hitEffects.push({
 				time: d.timestamp,
-				targetIndex: Math.max(0, this.enemyNames.findIndex(n => n === d.target?.name)),
+				targetIndex: Math.max(0, cardIdx),
 				x: 20 + (seed * 23 % 60),
 				y: 10 + (seed * 37 % 60),
 				dmg: d.amount > 0 ? d.amount : null,
@@ -364,8 +369,8 @@ export class CombatReplay extends ResultComponent {
 		}
 	}
 
-	private buildScene(result: SimResult): void {
-		const players = result.raidMetrics.parties.map(p => p.players).flat();
+	private buildScene(result: SimResult, filter: SimResultFilter): void {
+		const players = result.getPlayers(filter);
 		const playerName = players[0]?.name ?? i18n.t('combat_replay.default_player');
 
 		const labelEl = this.rootElem.querySelector<HTMLElement>('.cr-cdm-player-label')!;
@@ -639,11 +644,12 @@ export class CombatReplay extends ResultComponent {
 		this.lastBuffKey = this.renderAuraIcons(this.ui.buffIconsEl, this.playerAuras, t, this.lastBuffKey);
 	}
 
-	private renderTargetDebuffs(targetIdx: number, container: HTMLElement, t: number): void {
-		const debuffs = this.targetAuras.filter(a => a.targetIndex === targetIdx || a.targetIndex === -1 && targetIdx === 0);
-		const prev = this.lastDebuffKeys.get(targetIdx) ?? '';
+	private renderTargetDebuffs(cardIdx: number, container: HTMLElement, t: number): void {
+		const encounterIdx = this.filteredTargetEncounterIndices[cardIdx] ?? cardIdx;
+		const debuffs = this.targetAuras.filter(a => a.targetIndex === encounterIdx);
+		const prev = this.lastDebuffKeys.get(cardIdx) ?? '';
 		const next = this.renderAuraIcons(container, debuffs, t, prev);
-		this.lastDebuffKeys.set(targetIdx, next);
+		this.lastDebuffKeys.set(cardIdx, next);
 	}
 
 	private renderEnemies(t: number): void {
