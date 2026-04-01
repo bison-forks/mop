@@ -97,13 +97,11 @@
 		border: 2px solid rgba(255, 255, 255, 0.15);
 		cursor: pointer;
 		transition: border-color 0.1s;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-		}
+		display: block;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		text-decoration: none;
 
 		&.cr-strip-icon-active {
 			border-color: rgba(255, 255, 255, 0.7);
@@ -179,13 +177,11 @@
 		border: 1px solid rgba(255, 255, 255, 0.2);
 		cursor: pointer;
 		flex-shrink: 0;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-		}
+		display: block;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		text-decoration: none;
 	}
 
 	.cr-enemy-name {
@@ -473,13 +469,12 @@
 		border: 2px solid rgba(255, 255, 255, 0.12);
 		cursor: pointer;
 		transition: border-color 0.1s, box-shadow 0.1s;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			display: block;
-		}
+		display: block;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		text-decoration: none;
+		flex-shrink: 0;
 
 		&.cr-action-icon-active {
 			border-color: rgba(255, 255, 255, 0.7);

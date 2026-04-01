@@ -383,16 +383,14 @@ export class CombatReplay extends ResultComponent {
 
 		this.ui.actionGridEl.innerHTML = '';
 		for (const [, action] of seen) {
-			const div = document.createElement('div');
-			div.className = 'cr-action-icon';
-			div.dataset['key'] = action.name;
-			const img = document.createElement('img');
-			img.src = action.iconUrl;
-			img.alt = action.name;
-			img.draggable = false;
-			div.appendChild(img);
-			action.actionId?.setWowheadDataset(div);
-			this.ui.actionGridEl.appendChild(div);
+			const a = document.createElement('a') as HTMLAnchorElement;
+			a.className = 'cr-action-icon';
+			a.dataset['key'] = action.name;
+			if (action.actionId) {
+				action.actionId.setBackgroundAndHref(a);
+				action.actionId.setWowheadDataset(a);
+			}
+			this.ui.actionGridEl.appendChild(a);
 		}
 
 		this.buildEnemyZone();
@@ -497,16 +495,13 @@ export class CombatReplay extends ResultComponent {
 
 			let slot = reusable.get(key);
 			if (!slot) {
-				slot = document.createElement('div');
+				slot = document.createElement('a');
 				slot.dataset['key'] = key;
 
-				const img = document.createElement('img');
-				img.src = cast.iconUrl;
-				img.alt = cast.name;
-				img.draggable = false;
-				slot.appendChild(img);
-
-				cast.actionId?.setWowheadDataset(slot);
+				if (cast.actionId) {
+					cast.actionId.setBackgroundAndHref(slot as HTMLAnchorElement);
+					cast.actionId.setWowheadDataset(slot as HTMLAnchorElement);
+				}
 
 				if (cast.isCrit) {
 					const badge = document.createElement('span');
@@ -626,16 +621,13 @@ export class CombatReplay extends ResultComponent {
 
 		container.innerHTML = '';
 		for (const aura of active) {
-			const div = document.createElement('div');
-			div.className = 'cr-aura-icon';
-			div.title = aura.name;
-			const img = document.createElement('img');
-			img.src = aura.iconUrl;
-			img.alt = aura.name;
-			img.draggable = false;
-			div.appendChild(img);
-			aura.actionId?.setWowheadDataset(div, { useBuffAura: true });
-			container.appendChild(div);
+			const a = document.createElement('a') as HTMLAnchorElement;
+			a.className = 'cr-aura-icon';
+			if (aura.actionId) {
+				aura.actionId.setBackgroundAndHref(a);
+				aura.actionId.setWowheadDataset(a, { useBuffAura: true });
+			}
+			container.appendChild(a);
 		}
 		return key;
 	}
