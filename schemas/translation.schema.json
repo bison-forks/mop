@@ -3819,9 +3819,6 @@
                     "valueTooltip"
                   ]
                 },
-                "copyName": {
-                  "type": "string"
-                },
                 "enterVariableName": {
                   "type": "string"
                 },
@@ -3861,7 +3858,6 @@
               "additionalProperties": false,
               "required": [
                 "attributes",
-                "copyName",
                 "enterVariableName",
                 "extractToVariable",
                 "header",

@@ -30,11 +30,14 @@ export interface ListPickerExtraAction {
 	shouldShow?: (index: number) => boolean;
 }
 
-export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<ModObject, Array<ItemType>>, 'id'> {
+type CopyItemConfig<ItemType> =
+	| { copyItem: (oldItem: ItemType) => ItemType; onCopyItem?: never }
+	| { copyItem?: never; onCopyItem: (index: number) => void };
+
+export type ListPickerConfig<ModObject, ItemType> = Omit<InputConfig<ModObject, Array<ItemType>>, 'id'> &
+	CopyItemConfig<ItemType> & {
 	itemLabel: string;
 	newItem: () => ItemType;
-	copyItem: (oldItem: ItemType) => ItemType;
-	onCopyItem?: (index: number) => void;
 	newItemPicker: (
 		parent: HTMLElement,
 		listPicker: ListPicker<ModObject, ItemType>,
@@ -318,9 +321,9 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			copyButton.addEventListener(
 				'click',
 				() => {
-					if (this.config.onCopyItem) {
+					if ('onCopyItem' in this.config && this.config.onCopyItem) {
 						this.config.onCopyItem(index);
-					} else {
+					} else if ('copyItem' in this.config && this.config.copyItem) {
 						const newList = this.config.getValue(this.modObject).slice();
 						newList.splice(index, 0, this.config.copyItem(newList[index]));
 						this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);

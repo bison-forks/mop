@@ -30,7 +30,6 @@ export class APLGroupListPicker extends Component {
 					actions: [],
 					variables: [],
 				}),
-			copyItem: (oldItem: APLGroup) => APLGroup.clone(oldItem),
 			onCopyItem: (index: number) => {
 				const groups = simUI.player.aplRotation.groups || [];
 				const oldItem = groups[index];

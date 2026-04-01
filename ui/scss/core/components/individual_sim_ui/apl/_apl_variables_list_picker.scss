@@ -3,19 +3,4 @@
 		width: 100%;
 		display: flex;
 	}
-
-	.apl-variable-name-display {
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-
-		.apl-variable-name-value {
-			font-weight: bold;
-		}
-
-		.apl-variable-name-rename {
-			padding: 0;
-			line-height: 1;
-		}
-	}
 }

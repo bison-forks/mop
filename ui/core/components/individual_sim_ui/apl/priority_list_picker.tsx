@@ -48,7 +48,9 @@ export class APLPriorityListPicker extends Component {
 			],
 		});
 
-		new AplFloatingActionBar(this.rootElem, simUI, listPicker, i18n.t('rotation_tab.apl.priorityList.name'));
+		new AplFloatingActionBar(this.rootElem, simUI, listPicker, {
+			itemName: i18n.t('rotation_tab.apl.priorityList.name'),
+		});
 	}
 }
 

@@ -28,26 +28,21 @@ export class APLGroupEditor extends Input<Player<any>, APLGroup> {
 		const container = this.rootElem.appendChild(<div className="apl-action-picker-root" />) as HTMLElement;
 
 		// Create the group name display with rename button
-		this.nameLabel = (<span className="apl-group-name-value" />) as HTMLElement;
+		this.nameLabel = (<span className="apl-name-value" />) as HTMLElement;
 
-		const renameButton = (
-			<button className="btn btn-link apl-group-name-rename" type="button">
-				<i className="fas fa-pencil-alt" />
-			</button>
-		) as HTMLButtonElement;
-
-		const nameContainer = (
-			<div className="apl-group-name-display">
+		const nameContainer = container.appendChild(
+			<div className="apl-name-display">
 				{this.nameLabel}
-				{renameButton}
-			</div>
+				<button className="btn btn-link apl-name-rename" type="button">
+					<i className="fas fa-pencil-alt" />
+				</button>
+			</div>,
 		) as HTMLElement;
-		container.appendChild(nameContainer);
 
-		renameButton.addEventListener('click', () => {
+		nameContainer.querySelector('.apl-name-rename')!.addEventListener('click', () => {
 			const group = this.getSourceValue();
 			if (!group) return;
-			new APLNameModal(this.rootElem, {
+			new APLNameModal(document.body, {
 				title: i18n.t('rotation_tab.apl.nameModal.rename', { itemName: i18n.t('rotation_tab.apl.actionGroups.name') }),
 				inputLabel: i18n.t('rotation_tab.apl.actionGroups.attributes.name'),
 				confirmButtonLabel: i18n.t('rotation_tab.apl.nameModal.renameConfirm'),
@@ -100,7 +95,7 @@ export class APLGroupEditor extends Input<Player<any>, APLGroup> {
 					(actionIndex, ref) => {
 						this.getSourceValue()!.actions[actionIndex].action!.condition = ref;
 					},
-					this.rootElem,
+					document.body,
 				),
 			],
 		});

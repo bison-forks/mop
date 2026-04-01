@@ -28,7 +28,6 @@ export class APLVariablesListPicker extends Component {
 				player.rotationChangeEmitter.emit(eventID);
 			},
 			newItem: () => this.createValueVariable(i18n.t('rotation_tab.apl.variables.newVariableName')),
-			copyItem: (oldItem: APLValueVariable) => this.copyValueVariable(oldItem),
 			onCopyItem: (index: number) => {
 				const variables = simUI.player.aplRotation.valueVariables || [];
 				const oldItem = variables[index];
@@ -38,8 +37,7 @@ export class APLVariablesListPicker extends Component {
 					inputPlaceholder: oldItem.name,
 					existingNames: variables.map(v => v.name),
 					onSubmit: (name: string) => {
-						const newItem = this.copyValueVariable(oldItem);
-						newItem.name = name;
+						const newItem = APLValueVariable.create({ name, value: oldItem.value });
 						const newList = variables.slice();
 						newList.splice(index, 0, newItem);
 						listPicker.config.setValue(TypedEvent.nextEventID(), simUI.player, newList);
@@ -77,12 +75,6 @@ export class APLVariablesListPicker extends Component {
 		});
 	}
 
-	private copyValueVariable(oldItem: APLValueVariable): APLValueVariable {
-		return APLValueVariable.create({
-			name: i18n.t('rotation_tab.apl.variables.copyName', { variableName: oldItem.name }),
-			value: oldItem.value,
-		});
-	}
 }
 
 class APLValueVariablePicker extends Input<Player<any>, APLValueVariable> {
@@ -109,26 +101,21 @@ class APLValueVariablePicker extends Input<Player<any>, APLValueVariable> {
 			);
 		}
 
-		this.nameLabel = (<span className="apl-variable-name-value" />) as HTMLElement;
+		this.nameLabel = (<span className="apl-name-value" />) as HTMLElement;
 
-		const renameButton = (
-			<button className="btn btn-link apl-variable-name-rename" type="button">
-				<i className="fas fa-pencil-alt" />
-			</button>
-		) as HTMLButtonElement;
-
-		const nameContainer = (
-			<div className="apl-variable-name-display">
+		const nameContainer = container.appendChild(
+			<div className="apl-name-display">
 				{this.nameLabel}
-				{renameButton}
-			</div>
+				<button className="btn btn-link apl-name-rename" type="button">
+					<i className="fas fa-pencil-alt" />
+				</button>
+			</div>,
 		) as HTMLElement;
-		container.appendChild(nameContainer);
 
-		renameButton.addEventListener('click', () => {
+		nameContainer.querySelector('.apl-name-rename')!.addEventListener('click', () => {
 			const sourceValue = this.getSourceValue();
 			if (!sourceValue) return;
-			new APLNameModal(this.rootElem, {
+			new APLNameModal(document.body, {
 				title: i18n.t('rotation_tab.apl.nameModal.rename', { itemName: i18n.t('rotation_tab.apl.variables.name') }),
 				inputLabel: i18n.t('rotation_tab.apl.variables.attributes.name'),
 				confirmButtonLabel: i18n.t('rotation_tab.apl.nameModal.renameConfirm'),

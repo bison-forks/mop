@@ -8,37 +8,33 @@ import { APLNameModal } from './apl_name_modal';
 
 export type AplFloatingActionBarConfig = {
 	itemName: string;
-	modalTitle: string;
-	inputLabel: string;
+	modalTitle?: string;
+	inputLabel?: string;
 	inputPlaceholder?: string;
-	getExistingNames: () => string[];
-	createItem: (name: string) => any;
+	getExistingNames?: () => string[];
+	createItem?: (name: string) => any;
 };
 
 export class AplFloatingActionBar extends Component {
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<any>, listPicker: ListPicker<Player<any>, any>, configOrItemName: AplFloatingActionBarConfig | string) {
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<any>, listPicker: ListPicker<Player<any>, any>, config: AplFloatingActionBarConfig) {
 		super(parent, 'apl-floating-action-bar-root');
-
-		const isNamedItem = typeof configOrItemName !== 'string';
-		const itemName = isNamedItem ? configOrItemName.itemName : configOrItemName;
 
 		const newButton = this.rootElem.appendChild(
 			<button className="btn btn-primary">
 				<i className="fas fa-plus me-2" />
-				{i18n.t('rotation_tab.apl.floatingActionBar.new', { itemName })}
+				{i18n.t('rotation_tab.apl.floatingActionBar.new', { itemName: config.itemName })}
 			</button>,
 		);
 
 		newButton.addEventListener('click', () => {
-			if (isNamedItem) {
-				const config = configOrItemName;
+			if (config.createItem) {
 				new APLNameModal(simUI.rootElem, {
-					title: config.modalTitle,
-					inputLabel: config.inputLabel,
+					title: config.modalTitle!,
+					inputLabel: config.inputLabel!,
 					inputPlaceholder: config.inputPlaceholder,
-					existingNames: config.getExistingNames(),
+					existingNames: config.getExistingNames!(),
 					onSubmit: (name: string) => {
-						const newItem = config.createItem(name);
+						const newItem = config.createItem!(name);
 						const newList = listPicker.config.getValue(listPicker.modObject).concat([newItem]);
 						listPicker.config.setValue(TypedEvent.nextEventID(), listPicker.modObject, newList);
 					},
