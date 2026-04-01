@@ -414,18 +414,42 @@ export class CombatReplay extends ResultComponent {
 
 	private buildEnemyZone(): void {
 		const n = Math.min(this.numEnemies, MAX_ENEMIES);
-		const imgWidthPct = n === 1 ? 70 : n <= 2 ? 45 : n <= 4 ? 28 : 18;
-
 		this.ui.enemyZone.innerHTML = '';
-		const row = document.createElement('div');
-		row.className = 'cr-enemy-row';
 
-		for (let i = 0; i < n; i++) {
-			const name = this.enemyNames[i] ?? i18n.t('combat_replay.training_dummy');
+		// Split into front / back rows for a perspective-depth formation.
+		// Front row is larger + lower; back row is scaled down + pushed up + dimmed.
+		const frontCount = n <= 2 ? n : n <= 5 ? Math.ceil(n / 2) : 3;
+		const backCount = n - frontCount;
+
+		// Evenly space `count` cards across [minX%, maxX%] (centres, not edges).
+		const rowXs = (count: number, minX: number, maxX: number): number[] =>
+			count === 1 ? [(minX + maxX) / 2] : Array.from({ length: count }, (_, i) => minX + (i / (count - 1)) * (maxX - minX));
+
+		const frontXs = rowXs(frontCount, frontCount <= 2 ? 22 : 12, frontCount <= 2 ? 78 : 88);
+		const backXs  = backCount > 0 ? rowXs(backCount, 18, 82) : [];
+
+		// Card width (percentage of zone width) — overlap is intentional for depth feel.
+		const cardW = n === 1 ? 55 : n <= 2 ? 40 : n <= 4 ? 30 : 26;
+
+		const makeCard = (targetIdx: number, xPct: number, isFront: boolean) => {
+			const name = this.enemyNames[targetIdx] ?? i18n.t('combat_replay.training_dummy');
+			const scale  = isFront ? 1 : 0.62;
+			const bottom = isFront ? 0 : 14; // back row floats higher to fake distance
+			const bright = isFront ? 1 : 0.6;
+
 			const card = document.createElement('div');
 			card.className = 'cr-enemy-card';
-			card.style.width = `${imgWidthPct}%`;
-			card.dataset['idx'] = String(i);
+			card.dataset['idx'] = String(targetIdx);
+			card.style.cssText = [
+				'position:absolute',
+				`left:${xPct}%`,
+				`bottom:${bottom}%`,
+				`width:${cardW}%`,
+				`transform:translateX(-50%) scale(${scale})`,
+				'transform-origin:bottom center',
+				`z-index:${isFront ? 2 : 1}`,
+				`filter:brightness(${bright})`,
+			].join(';');
 			card.innerHTML = `
 				<div class="cr-nameplate">
 					<div class="cr-enemy-name">${this.esc(name)}</div>
@@ -440,17 +464,20 @@ export class CombatReplay extends ResultComponent {
 					<div class="cr-hit-layer"></div>
 				</div>
 			`;
-			row.appendChild(card);
-		}
+			return card;
+		};
+
+		// Render back row first so front targets overlap them.
+		backXs.forEach((x, j) => this.ui.enemyZone.appendChild(makeCard(frontCount + j, x, false)));
+		frontXs.forEach((x, j) => this.ui.enemyZone.appendChild(makeCard(j, x, true)));
 
 		if (this.numEnemies > MAX_ENEMIES) {
 			const more = document.createElement('div');
 			more.className = 'cr-enemy-more';
+			more.style.cssText = 'position:absolute;right:10px;bottom:8px;';
 			more.textContent = `+${this.numEnemies - MAX_ENEMIES}`;
-			row.appendChild(more);
+			this.ui.enemyZone.appendChild(more);
 		}
-
-		this.ui.enemyZone.appendChild(row);
 	}
 
 	private seekTo(t: number): void {

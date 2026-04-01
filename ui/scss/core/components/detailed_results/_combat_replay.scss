@@ -136,28 +136,15 @@
 		position: absolute;
 		inset: 0;
 		top: 60px;
-		display: flex;
-		align-items: flex-end;
-		justify-content: center;
 		z-index: 1;
-	}
-
-	.cr-enemy-row {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-end;
-		justify-content: center;
-		gap: 16px;
-		width: 100%;
-		height: 100%;
-		padding: 0 24px 12px;
+		overflow: hidden;
 	}
 
 	.cr-enemy-card {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		flex-shrink: 0;
+		// position / size / transform are set inline per-card for the depth formation
 	}
 
 	.cr-nameplate {
