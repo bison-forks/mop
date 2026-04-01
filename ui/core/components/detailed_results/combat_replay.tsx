@@ -304,12 +304,23 @@ export class CombatReplay extends ResultComponent {
 		}
 
 		const playerResourceLogs = playerEntity ? resourceLogs.filter(r => r.source?.equals(playerEntity)) : resourceLogs;
+
+		// Derive actual max per resource type from the "of X total" field in each log entry.
+		const resourceMaxes = new Map<ResourceType, number>();
 		for (const r of playerResourceLogs) {
+			if (r.total > 0) {
+				const cur = resourceMaxes.get(r.resourceType) ?? 0;
+				if (r.total > cur) resourceMaxes.set(r.resourceType, r.total);
+			}
+		}
+
+		for (const r of playerResourceLogs) {
+			const maxValue = resourceMaxes.get(r.resourceType) || RESOURCE_MAX_DEFAULTS[r.resourceType] || 100;
 			this.resources.push({
 				time: r.timestamp,
 				type: r.resourceType,
 				value: r.valueAfter,
-				maxValue: RESOURCE_MAX_DEFAULTS[r.resourceType] ?? 100,
+				maxValue,
 			});
 		}
 
