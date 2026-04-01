@@ -34,6 +34,7 @@ export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<
 	itemLabel: string;
 	newItem: () => ItemType;
 	copyItem: (oldItem: ItemType) => ItemType;
+	onCopyItem?: (index: number) => void;
 	newItemPicker: (
 		parent: HTMLElement,
 		listPicker: ListPicker<ModObject, ItemType>,
@@ -317,9 +318,13 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			copyButton.addEventListener(
 				'click',
 				() => {
-					const newList = this.config.getValue(this.modObject).slice();
-					newList.splice(index, 0, this.config.copyItem(newList[index]));
-					this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
+					if (this.config.onCopyItem) {
+						this.config.onCopyItem(index);
+					} else {
+						const newList = this.config.getValue(this.modObject).slice();
+						newList.splice(index, 0, this.config.copyItem(newList[index]));
+						this.config.setValue(TypedEvent.nextEventID(), this.modObject, newList);
+					}
 					copyButtonTooltip.hide();
 				},
 				{ signal: this.signal },

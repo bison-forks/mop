@@ -884,6 +884,13 @@
 				"new": "New {{itemName}}",
 				"reset": "Reset APL"
 			},
+			"nameModal": {
+				"create": "Create",
+				"nameConflict": "An item with this name already exists.",
+				"extract": "Extract",
+				"rename": "Rename {{itemName}}",
+				"renameConfirm": "Rename"
+			},
 			"prePullActions": {
 				"header": "Pre-Pull Action List",
 				"name": "Pre-Pull Action",

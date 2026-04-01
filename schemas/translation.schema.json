@@ -3686,6 +3686,34 @@
                 "reset"
               ]
             },
+            "nameModal": {
+              "type": "object",
+              "properties": {
+                "create": {
+                  "type": "string"
+                },
+                "extract": {
+                  "type": "string"
+                },
+                "nameConflict": {
+                  "type": "string"
+                },
+                "rename": {
+                  "type": "string"
+                },
+                "renameConfirm": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "create",
+                "extract",
+                "nameConflict",
+                "rename",
+                "renameConfirm"
+              ]
+            },
             "prePullActions": {
               "type": "object",
               "properties": {
@@ -7368,6 +7396,7 @@
           "required": [
             "actionGroups",
             "floatingActionBar",
+            "nameModal",
             "prePullActions",
             "priorityList",
             "tabs",

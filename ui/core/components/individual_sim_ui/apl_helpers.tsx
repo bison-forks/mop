@@ -27,6 +27,7 @@ import { ListItemPickerConfig, ListPicker, ListPickerExtraAction } from '../pick
 import { NumberPicker, NumberPickerConfig } from '../pickers/number_picker.js';
 import { AdaptiveStringPicker } from '../pickers/string_picker.js';
 import { UnitPicker, UnitPickerConfig, UnitValue } from '../pickers/unit_picker.jsx';
+import { APLNameModal } from './apl/apl_name_modal';
 
 export type ACTION_ID_SET =
 	| 'auras'
@@ -1309,6 +1310,7 @@ export function extractToVariableAction(
 	player: Player<any>,
 	getValue: (index: number) => APLValue | undefined,
 	setValue: (index: number, variableRef: APLValue) => void,
+	modalParent: HTMLElement = document.body,
 ): ListPickerExtraAction {
 	const isExtractable = (index: number): boolean => {
 		const value = getValue(index);
@@ -1324,25 +1326,28 @@ export function extractToVariableAction(
 			if (!isExtractable(index)) return;
 			const value = getValue(index)!;
 
-			const name = window.prompt(i18n.t('rotation_tab.apl.variables.enterVariableName'));
-			if (!name || !name.trim()) return;
+			new APLNameModal(modalParent, {
+				title: i18n.t('rotation_tab.apl.variables.extractToVariable'),
+				inputLabel: i18n.t('rotation_tab.apl.variables.attributes.name'),
+				confirmButtonLabel: i18n.t('rotation_tab.apl.nameModal.extract'),
+				existingNames: (player.aplRotation.valueVariables || []).map(v => v.name),
+				onSubmit: (name: string) => {
+					if (!player.aplRotation.valueVariables) {
+						player.aplRotation.valueVariables = [];
+					}
+					player.aplRotation.valueVariables.push(APLValueVariable.create({ name, value: APLValue.clone(value) }));
 
-			const trimmedName = name.trim();
+					setValue(
+						index,
+						APLValue.create({
+							value: { oneofKind: 'variableRef', variableRef: { name } },
+							uuid: { value: randomUUID() },
+						}),
+					);
 
-			if (!player.aplRotation.valueVariables) {
-				player.aplRotation.valueVariables = [];
-			}
-			player.aplRotation.valueVariables.push(APLValueVariable.create({ name: trimmedName, value: APLValue.clone(value) }));
-
-			setValue(
-				index,
-				APLValue.create({
-					value: { oneofKind: 'variableRef', variableRef: { name: trimmedName } },
-					uuid: { value: randomUUID() },
-				}),
-			);
-
-			player.rotationChangeEmitter.emit(TypedEvent.nextEventID());
+					player.rotationChangeEmitter.emit(TypedEvent.nextEventID());
+				},
+			});
 		},
 	};
 }

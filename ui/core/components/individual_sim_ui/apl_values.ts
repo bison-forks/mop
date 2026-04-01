@@ -531,6 +531,7 @@ export function valueListFieldConfig(field: string): AplHelpers.APLPickerBuilder
 							values[index] = ref;
 							config.setValue(TypedEvent.nextEventID(), player, values);
 						},
+						parent,
 					),
 				],
 			}),

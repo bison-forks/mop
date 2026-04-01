@@ -43,6 +43,7 @@ export class APLPriorityListPicker extends Component {
 					(index, ref) => {
 						simUI.player.aplRotation.priorityList[index].action!.condition = ref;
 					},
+					simUI.rootElem,
 				),
 			],
 		});

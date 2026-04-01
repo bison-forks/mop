@@ -4,22 +4,50 @@ import { Player } from '../../../player';
 import { TypedEvent } from '../../../typed_event';
 import { Component } from '../../component';
 import { ListPicker } from '../../pickers/list_picker';
+import { APLNameModal } from './apl_name_modal';
+
+export type AplFloatingActionBarConfig = {
+	itemName: string;
+	modalTitle: string;
+	inputLabel: string;
+	inputPlaceholder?: string;
+	getExistingNames: () => string[];
+	createItem: (name: string) => any;
+};
 
 export class AplFloatingActionBar extends Component {
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<any>, listPicker: ListPicker<Player<any>, any>, itemName: string) {
+	constructor(parent: HTMLElement, simUI: IndividualSimUI<any>, listPicker: ListPicker<Player<any>, any>, configOrItemName: AplFloatingActionBarConfig | string) {
 		super(parent, 'apl-floating-action-bar-root');
+
+		const isNamedItem = typeof configOrItemName !== 'string';
+		const itemName = isNamedItem ? configOrItemName.itemName : configOrItemName;
 
 		const newButton = this.rootElem.appendChild(
 			<button className="btn btn-primary">
 				<i className="fas fa-plus me-2" />
-				{i18n.t('rotation_tab.apl.floatingActionBar.new', { itemName: itemName })}
+				{i18n.t('rotation_tab.apl.floatingActionBar.new', { itemName })}
 			</button>,
 		);
 
 		newButton.addEventListener('click', () => {
-			const newItem = listPicker.config.newItem();
-			const newList = listPicker.config.getValue(listPicker.modObject).concat([newItem]);
-			listPicker.config.setValue(TypedEvent.nextEventID(), listPicker.modObject, newList);
+			if (isNamedItem) {
+				const config = configOrItemName;
+				new APLNameModal(simUI.rootElem, {
+					title: config.modalTitle,
+					inputLabel: config.inputLabel,
+					inputPlaceholder: config.inputPlaceholder,
+					existingNames: config.getExistingNames(),
+					onSubmit: (name: string) => {
+						const newItem = config.createItem(name);
+						const newList = listPicker.config.getValue(listPicker.modObject).concat([newItem]);
+						listPicker.config.setValue(TypedEvent.nextEventID(), listPicker.modObject, newList);
+					},
+				});
+			} else {
+				const newItem = listPicker.config.newItem();
+				const newList = listPicker.config.getValue(listPicker.modObject).concat([newItem]);
+				listPicker.config.setValue(TypedEvent.nextEventID(), listPicker.modObject, newList);
+			}
 		});
 
 		const resetButton = this.rootElem.appendChild(

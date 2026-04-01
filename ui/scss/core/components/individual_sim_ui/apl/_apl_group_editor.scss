@@ -12,9 +12,18 @@
 		width: unset !important;
 	}
 
-	.apl-group-name-picker {
-		input {
-			min-width: 8rem;
+	.apl-group-name-display {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+
+		.apl-group-name-value {
+			font-weight: bold;
+		}
+
+		.apl-group-name-rename {
+			padding: 0;
+			line-height: 1;
 		}
 	}
 }
