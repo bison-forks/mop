@@ -521,6 +521,7 @@ export class CombatReplay extends ResultComponent {
 		let html = '';
 		for (const rt of orderedTypes) {
 			if (rt === ResourceType.ResourceTypeNone) continue;
+			if (rt === ResourceType.ResourceTypeHealth) continue;
 			const snap = latest.get(rt)!;
 			const color = resourceColors.get(rt) ?? '#94a3b8';
 			const label = resourceNames.get(rt) ?? String(rt);
@@ -531,7 +532,7 @@ export class CombatReplay extends ResultComponent {
 				const segments = Array.from({ length: maxDots }, (_, i) =>
 					`<div class="cr-segment" style="background:${i < filled ? `linear-gradient(180deg,${color}ee,${color}99)` : 'rgba(255,255,255,0.07)'};box-shadow:${i < filled ? `0 0 8px ${color}88` : 'none'}"></div>`,
 				).join('');
-				html += `<div class="cr-resource-wrap"><div class="cr-seg-bar">${segments}<span class="cr-bar-label">${label}</span><span class="cr-bar-val">${filled}/${maxDots}</span></div></div>`;
+				html += `<div class="cr-resource-wrap cr-resource-dot"><span class="cr-dot-label">${label}</span><div class="cr-seg-bar">${segments}</div><span class="cr-dot-val">${filled}/${maxDots}</span></div>`;
 			} else {
 				const pct = snap.maxValue > 0 ? Math.min(1, Math.max(0, snap.value / snap.maxValue)) : 0;
 				html += `<div class="cr-resource-wrap"><div class="cr-res-bar-outer"><div class="cr-res-bar-fill" style="width:${pct * 100}%;background:linear-gradient(90deg,${color}88,${color}dd);box-shadow:0 0 10px ${color}55"></div><span class="cr-bar-label">${label}</span><span class="cr-bar-val">${Math.round(snap.value)}/${Math.round(snap.maxValue)}</span></div></div>`;

@@ -39,6 +39,7 @@
 		display: flex;
 		flex-direction: column;
 		flex: 1;
+		min-height: 0;
 		overflow: hidden;
 	}
 
@@ -46,8 +47,8 @@
 
 	.cr-arena {
 		position: relative;
-		height: 280px;
-		flex-shrink: 0;
+		flex: 1;
+		min-height: 180px;
 		overflow: hidden;
 		background: radial-gradient(ellipse at 50% 80%, #1a1008 0%, #0a0c10 70%);
 	}
@@ -199,13 +200,13 @@
 		align-items: flex-end;
 
 		img {
-			max-height: 200px;
+			height: min(240px, 55vh);
 			width: auto;
 			max-width: 100%;
 			display: block;
 			object-fit: contain;
 			object-position: center bottom;
-			filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.35));
+			filter: drop-shadow(0 0 14px rgba(255, 80, 0, 0.4));
 			user-select: none;
 		}
 	}
@@ -363,8 +364,28 @@
 		pointer-events: none;
 	}
 
+	.cr-resource-dot {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.cr-dot-label {
+		font-size: 0.6rem;
+		font-weight: 600;
+		color: rgba(255, 255, 255, 0.7);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.cr-dot-val {
+		font-size: 0.6rem;
+		color: rgba(255, 255, 255, 0.6);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
 	.cr-seg-bar {
-		position: relative;
 		display: flex;
 		gap: 3px;
 		align-items: center;
@@ -372,9 +393,10 @@
 	}
 
 	.cr-segment {
-		width: 20px;
+		width: 18px;
 		height: 14px;
 		border-radius: 3px;
+		flex-shrink: 0;
 	}
 
 	.cr-action-grid {
