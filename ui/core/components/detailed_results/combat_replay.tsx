@@ -3,7 +3,7 @@ import { ref } from 'tsx-vanilla';
 import { OtherAction } from '../../proto/common';
 import { ResourceType } from '../../proto/spell';
 import { ActionId } from '../../proto_utils/action_id';
-import { AuraUptimeLog, CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
+import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
 import { SimResult, SimResultFilter } from '../../proto_utils/sim_result';
 import i18n from '../../../i18n/config';
@@ -329,27 +329,28 @@ export class CombatReplay extends ResultComponent {
 			});
 		}
 
-		if (playerEntity) {
-			const auraUptimeLogs = AuraUptimeLog.fromLogs(result.logs, playerEntity, this.fightLen);
-			for (const aura of auraUptimeLogs) {
+		// Player buffs: auras the player unit itself received (e.g. trinket procs, raid buffs, CDs).
+		// UnitMetrics.auraUptimeLogs uses the player's own logs (source = player entity), so these
+		// are correct player-received auras — not debuffs on enemies.
+		if (players[0]) {
+			for (const aura of players[0].auraUptimeLogs) {
 				const id = aura.actionId;
-				if (!id) continue;
+				if (!id || (!id.spellId && !id.itemId) || !(id.name ?? '')) continue;
 				if (id.otherId !== OtherAction.OtherActionNone) continue;
-				if (!id.spellId && !id.itemId) continue;
-				if (!(id.name ?? '')) continue;
-				const snap: AuraSnapshot = {
-					gainedAt: aura.gainedAt,
-					fadedAt: aura.fadedAt,
-					name: id.name,
-					iconUrl: id.iconUrl,
-					actionId: id,
-					targetIndex: aura.target?.isTarget ? aura.target.index : -1,
-				};
-				if (aura.target?.isTarget) {
-					this.targetAuras.push(snap);
-				} else {
-					this.playerAuras.push(snap);
-				}
+				this.playerAuras.push({ gainedAt: aura.gainedAt, fadedAt: aura.fadedAt, name: id.name, iconUrl: id.iconUrl, actionId: id, targetIndex: -1 });
+			}
+		}
+
+		// Target debuffs: auras each target unit received (source = that target entity in the logs).
+		// "Target gained [debuff]" log entries are sourced from the target, so we read per-target
+		// auraUptimeLogs which is already computed correctly for each UnitMetrics target.
+		for (let i = 0; i < filteredTargets.length; i++) {
+			const target = filteredTargets[i];
+			for (const aura of target.auraUptimeLogs) {
+				const id = aura.actionId;
+				if (!id || (!id.spellId && !id.itemId) || !(id.name ?? '')) continue;
+				if (id.otherId !== OtherAction.OtherActionNone) continue;
+				this.targetAuras.push({ gainedAt: aura.gainedAt, fadedAt: aura.fadedAt, name: id.name, iconUrl: id.iconUrl, actionId: id, targetIndex: target.index });
 			}
 		}
 
