@@ -80,19 +80,34 @@ var ItemSetRegaliaOfTheShatteredVale = core.NewItemSet(core.ItemSet{
 			solarBolt := moonkin.registerT15BoltSpell(144772, core.SpellSchoolNature, SolarEclipse)
 			lunarBolt := moonkin.registerT15BoltSpell(144770, core.SpellSchoolArcane, LunarEclipse)
 
+			// Spells that should NOT trigger bolts
+			excludedSpells := druid.DruidSpellHurricane |
+				druid.DruidSpellAstralStorm |
+				druid.DruidSpellWildMushroom |
+				druid.DruidSpellWildMushroomDetonate |
+				druid.DruidSpellMoonfireDoT |
+				druid.DruidSpellSunfireDoT |
+				druid.DruidSpellStarfall
+
+			bothDuringCA := druid.DruidSpellMoonfire | druid.DruidSpellSunfire | druid.DruidSpellStarsurge
+
 			setBonusAura.AttachProcTrigger(core.ProcTrigger{
-				Callback:       core.CallbackOnSpellHitDealt,
-				ClassSpellMask: druid.DruidArcaneSpells | druid.DruidNatureSpells,
-				Outcome:        core.OutcomeLanded,
+				Callback: core.CallbackOnSpellHitDealt,
+				Outcome:  core.OutcomeLanded,
 
 				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					// Nature spells (Wrath, Sunfire) in Solar Eclipse trigger Solar Bolt
-					if spell.Matches(druid.DruidNatureSpells &^ druid.DruidSpellDoT) {
+					if !spell.SpellSchool.Matches(core.SpellSchoolNature|core.SpellSchoolArcane) ||
+						spell.Matches(excludedSpells) {
+						return
+					}
+
+					alignmentActive := moonkin.CelestialAlignment.RelatedSelfBuff.IsActive()
+
+					if spell.SpellSchool.Matches(core.SpellSchoolNature) || (alignmentActive && spell.Matches(bothDuringCA)) {
 						solarBolt.Cast(sim, result.Target)
 					}
 
-					// Arcane spells (Starfire, Moonfire) in Lunar Eclipse trigger Lunar Bolt
-					if spell.Matches(druid.DruidArcaneSpells &^ druid.DruidSpellDoT) {
+					if spell.SpellSchool.Matches(core.SpellSchoolArcane) || (alignmentActive && spell.Matches(bothDuringCA)) {
 						lunarBolt.Cast(sim, result.Target)
 					}
 				},
