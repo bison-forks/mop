@@ -3686,6 +3686,34 @@
                 "reset"
               ]
             },
+            "nameModal": {
+              "type": "object",
+              "properties": {
+                "create": {
+                  "type": "string"
+                },
+                "extract": {
+                  "type": "string"
+                },
+                "nameConflict": {
+                  "type": "string"
+                },
+                "rename": {
+                  "type": "string"
+                },
+                "renameConfirm": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "create",
+                "extract",
+                "nameConflict",
+                "rename",
+                "renameConfirm"
+              ]
+            },
             "prePullActions": {
               "type": "object",
               "properties": {
@@ -3791,7 +3819,10 @@
                     "valueTooltip"
                   ]
                 },
-                "copyName": {
+                "enterVariableName": {
+                  "type": "string"
+                },
+                "extractToVariable": {
                   "type": "string"
                 },
                 "header": {
@@ -3827,7 +3858,8 @@
               "additionalProperties": false,
               "required": [
                 "attributes",
-                "copyName",
+                "enterVariableName",
+                "extractToVariable",
                 "header",
                 "name",
                 "newVariableName",
@@ -7360,6 +7392,7 @@
           "required": [
             "actionGroups",
             "floatingActionBar",
+            "nameModal",
             "prePullActions",
             "priorityList",
             "tabs",
