@@ -17,7 +17,7 @@ var ItemSetRegaliaOfTheEternalBloosom = core.NewItemSet(core.ItemSet{
 			// Your Starfall deals 20% additional damage.
 			setBonusAura.AttachSpellMod(core.SpellModConfig{
 				Kind:       core.SpellMod_DamageDone_Pct,
-				ClassMask:  druid.DruidSpellStarfall,
+				ClassMask:  druid.DruidSpellStarfallTick,
 				FloatValue: 0.2,
 			})
 		},
@@ -80,27 +80,20 @@ var ItemSetRegaliaOfTheShatteredVale = core.NewItemSet(core.ItemSet{
 			solarBolt := moonkin.registerT15BoltSpell(144772, core.SpellSchoolNature, SolarEclipse)
 			lunarBolt := moonkin.registerT15BoltSpell(144770, core.SpellSchoolArcane, LunarEclipse)
 
-			// Spells that should NOT trigger bolts
-			excludedSpells := druid.DruidSpellHurricane |
-				druid.DruidSpellAstralStorm |
-				druid.DruidSpellWildMushroom |
-				druid.DruidSpellWildMushroomDetonate |
-				druid.DruidSpellMoonfireDoT |
-				druid.DruidSpellSunfireDoT |
-				druid.DruidSpellStarfall
-
 			bothDuringCA := druid.DruidSpellMoonfire | druid.DruidSpellSunfire | druid.DruidSpellStarsurge
 
+			procTriggerSpellMask := druid.DruidSpellMoonfire |
+				druid.DruidSpellSunfire |
+				druid.DruidSpellStarfall |
+				druid.DruidSpellStarfire |
+				druid.DruidSpellWrath |
+				druid.DruidSpellStarsurge
+
 			setBonusAura.AttachProcTrigger(core.ProcTrigger{
-				Callback: core.CallbackOnSpellHitDealt,
-				Outcome:  core.OutcomeLanded,
+				Callback:       core.CallbackOnCastComplete,
+				ClassSpellMask: procTriggerSpellMask,
 
 				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-					if !spell.SpellSchool.Matches(core.SpellSchoolNature|core.SpellSchoolArcane) ||
-						spell.Matches(excludedSpells) {
-						return
-					}
-
 					alignmentActive := moonkin.CelestialAlignment.RelatedSelfBuff.IsActive()
 
 					if spell.SpellSchool.Matches(core.SpellSchoolNature) || (alignmentActive && spell.Matches(bothDuringCA)) {
@@ -129,10 +122,11 @@ const (
 
 func (moonkin *BalanceDruid) registerT15BoltSpell(spellID int32, spellSchool core.SpellSchool, eclipse Eclipse) *druid.DruidSpell {
 	return moonkin.RegisterSpell(druid.Humanoid|druid.Moonkin, core.SpellConfig{
-		ActionID:    core.ActionID{SpellID: spellID},
-		SpellSchool: spellSchool,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       core.SpellFlagAPL,
+		ActionID:       core.ActionID{SpellID: spellID},
+		SpellSchool:    spellSchool,
+		ProcMask:       core.ProcMaskEmpty,
+		ClassSpellMask: druid.DruidSpell2PT16Bolt,
+		Flags:          core.SpellFlagAPL,
 
 		BonusCoefficient: T15BoltBonusCoeff,
 		DamageMultiplier: 1,

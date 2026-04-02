@@ -18,7 +18,7 @@ func (moonkin *BalanceDruid) registerStarfallSpell() {
 		ActionID:       core.ActionID{SpellID: 50286},
 		SpellSchool:    core.SpellSchoolArcane,
 		ProcMask:       core.ProcMaskSpellDamage,
-		ClassSpellMask: druid.DruidSpellStarfall,
+		ClassSpellMask: druid.DruidSpellStarfall | druid.DruidSpellStarfallTick,
 		Flags:          core.SpellFlagPassiveSpell,
 
 		DamageMultiplier: 1,

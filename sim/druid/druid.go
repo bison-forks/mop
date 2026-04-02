@@ -114,6 +114,7 @@ const (
 	DruidSpellSavageRoar
 	DruidSpellShred
 	DruidSpellStarfall
+	DruidSpellStarfallTick
 	DruidSpellStarfire
 	DruidSpellStarsurge
 	DruidSpellSunfire
@@ -126,6 +127,8 @@ const (
 	DruidSpellWildMushroom
 	DruidSpellWildMushroomDetonate
 	DruidSpellWrath
+
+	DruidSpell2PT16Bolt
 
 	DruidSpellHealingTouch
 	DruidSpellRegrowth
