@@ -1302,6 +1302,16 @@ export class ReforgeOptimizer {
 		const variables = this.buildYalpsVariables(baseGear, validatedWeights, reforgeCaps, reforgeSoftCaps);
 		const constraints = this.buildYalpsConstraints(baseGear, baseStats);
 
+		// After building variables and constraints we check for
+		// SocketBonusLink constraints for the all-or-nothing socket bonus variables.
+		for (const coefficients of variables.values()) {
+			for (const key of coefficients.keys()) {
+				if (key.startsWith('SocketBonusLink_') && !constraints.has(key)) {
+					constraints.set(key, lessEq(0));
+				}
+			}
+		}
+
 		// Solve in multiple passes to enforce caps
 		await this.solveModel(
 			baseGear,
@@ -1395,7 +1405,9 @@ export class ReforgeOptimizer {
 				socketBonusNormalization -= 1;
 			}
 
-			const distributedSocketBonus = new Stats(scaledItem.item.socketBonus).scale(1.0 / socketBonusNormalization).getBuffedStats();
+			const socketBonusStats = new Stats(scaledItem.item.socketBonus);
+			const distributedSocketBonus = socketBonusStats.scale(1.0 / socketBonusNormalization).getBuffedStats();
+			const fullSocketBonus = socketBonusStats.getBuffedStats();
 
 			// First determine whether the socket bonus should be obviously matched in order to save on brute force computation.
 			let forceSocketBonus: boolean = false;
@@ -1470,8 +1482,12 @@ export class ReforgeOptimizer {
 						coefficients.set(constraintKey, 1);
 
 						if (gemMatchesSocket(gemData.gem, socketColor)) {
-							for (const [stat, value] of distributedSocketBonus.entries()) {
-								this.applyReforgeStat(coefficients, stat, value, preCapEPs);
+							if (forceSocketBonus) {
+								for (const [stat, value] of distributedSocketBonus.entries()) {
+									this.applyReforgeStat(coefficients, stat, value, preCapEPs);
+								}
+							} else {
+								coefficients.set(`SocketBonusLink_${slot}_${socketIdx}`, -1);
 							}
 						}
 						// Performance optimisation to force socket bonus matching for Jewelcrafting gems.
@@ -1493,6 +1509,23 @@ export class ReforgeOptimizer {
 					}
 				}
 			});
+
+			if (!forceSocketBonus && socketBonusNormalization > 0) {
+				const socketBonusKey = `SocketBonus_${slot}`;
+				const socketBonusCoefficients = new Map<string, number>();
+
+				for (const [stat, value] of fullSocketBonus.entries()) {
+					this.applyReforgeStat(socketBonusCoefficients, stat, value, preCapEPs);
+				}
+
+				socketColors.forEach((socketColor, socketIdx) => {
+					if ([GemColor.GemColorRed, GemColor.GemColorBlue, GemColor.GemColorYellow, GemColor.GemColorPrismatic].includes(socketColor)) {
+						socketBonusCoefficients.set(`SocketBonusLink_${slot}_${socketIdx}`, 1);
+					}
+				});
+
+				variables.set(socketBonusKey, socketBonusCoefficients);
+			}
 		}
 
 		return variables;

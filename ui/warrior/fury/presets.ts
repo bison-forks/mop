@@ -128,9 +128,9 @@ export const P5_FURY_TG_EP_PRESET = PresetUtils.makePresetEpWeights(
 			[Stat.StatAttackPower]: 0.45,
 			[Stat.StatExpertiseRating]: 3.04,
 			[Stat.StatHitRating]: 3.61,
-			[Stat.StatCritRating]: 1.98,
+			[Stat.StatCritRating]: 1.86,
 			[Stat.StatHasteRating]: 0.79,
-			[Stat.StatMasteryRating]: 1.2,
+			[Stat.StatMasteryRating]: 1.28,
 		},
 		{
 			[PseudoStat.PseudoStatMainHandDps]: 2.58,
