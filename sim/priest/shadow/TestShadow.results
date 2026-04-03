@@ -2793,48 +2793,48 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 284503.38281
-  tps: 277870.17762
+  dps: 284797.45009
+  tps: 278126.1982
   hps: 3710.52987
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 272132.01908
-  tps: 244637.93802
+  dps: 272414.40802
+  tps: 244894.90724
   hps: 3723.98984
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-FullBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 401966.63001
-  tps: 331337.85004
+  dps: 402466.75666
+  tps: 331781.61433
   hps: 5063.89224
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 187477.5487
-  tps: 194591.5353
-  hps: 3292.24352
+  dps: 187581.73135
+  tps: 194774.8238
+  hps: 3297.60488
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 181580.41883
-  tps: 166520.41359
-  hps: 3305.77158
+  dps: 181899.08776
+  tps: 166821.46157
+  hps: 3308.63928
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Draenei-p4-Basic-t15-NoBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 221266.74192
-  tps: 191703.82055
+  dps: 221494.76504
+  tps: 191905.73959
   hps: 3850.19807
  }
 }
@@ -2889,48 +2889,48 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 284503.38281
-  tps: 277870.25653
+  dps: 284797.45009
+  tps: 278126.27715
   hps: 3710.52987
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 272132.01908
-  tps: 244637.94184
+  dps: 272414.40802
+  tps: 244894.91106
   hps: 3723.98984
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-FullBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 401966.63001
-  tps: 331337.86913
+  dps: 402466.75666
+  tps: 331781.63343
   hps: 5063.89224
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 187477.5487
-  tps: 194591.61412
-  hps: 3292.24352
+  dps: 187581.73135
+  tps: 194774.90267
+  hps: 3297.60488
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 181580.41883
-  tps: 166520.41737
-  hps: 3305.77158
+  dps: 181899.08776
+  tps: 166821.46536
+  hps: 3308.63928
  }
 }
 dps_results: {
  key: "TestShadow-Settings-NightElf-p4-Basic-t15-NoBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 221266.74192
-  tps: 191703.83949
+  dps: 221494.76504
+  tps: 191905.75854
   hps: 3850.19807
  }
 }
@@ -2985,48 +2985,48 @@ dps_results: {
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 292827.43318
-  tps: 283218.82373
+  dps: 293120.22472
+  tps: 283486.7351
   hps: 3862.20557
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 278080.24159
-  tps: 248568.86064
+  dps: 278409.50063
+  tps: 248865.56609
   hps: 3838.56693
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-FullBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 435528.50611
-  tps: 354410.10414
+  dps: 435935.84108
+  tps: 354752.64874
   hps: 5369.92223
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 195632.49782
-  tps: 200835.28781
-  hps: 3444.97969
+  dps: 196341.7274
+  tps: 201339.92028
+  hps: 3437.68575
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 186220.83343
-  tps: 169906.5262
-  hps: 3412.74924
+  dps: 186411.84619
+  tps: 170111.75712
+  hps: 3405.57999
  }
 }
 dps_results: {
  key: "TestShadow-Settings-Troll-p4-Basic-t15-NoBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 241088.30073
-  tps: 204112.22516
+  dps: 241313.41354
+  tps: 204303.8857
   hps: 4251.05257
  }
 }
