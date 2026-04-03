@@ -3866,6 +3866,21 @@
                 "tooltips"
               ]
             },
+            "variablePlaceholder": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "nameLabel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "nameLabel"
+              ]
+            },
             "prepull_actions": {
               "type": "object",
               "properties": {
@@ -7397,6 +7412,7 @@
             "priorityList",
             "tabs",
             "variables",
+            "variablePlaceholder",
             "prepull_actions",
             "priority_list",
             "actions",
