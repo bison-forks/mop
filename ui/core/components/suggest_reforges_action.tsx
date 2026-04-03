@@ -1439,49 +1439,53 @@ export class ReforgeOptimizer {
 				this.applyReforgeStat(socketBonusAsCoeff, stat, value, preCapEPs);
 			}
 
-			if (
-				ReforgeOptimizer.includesStatWithCap(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
-				!ReforgeOptimizer.includesCappedStat(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
-				socketBonusNormalization > 1
-			) {
-				forceSocketBonus = true;
-			}
-
-			const dummyVariables = new Map<string, YalpsCoefficients>();
-			dummyVariables.set('matched', new Map<string, number>());
-			dummyVariables.set('unmatched', new Map<string, number>());
-
-			for (const socketColor of socketColors.values()) {
-				if (![GemColor.GemColorRed, GemColor.GemColorBlue, GemColor.GemColorYellow, GemColor.GemColorPrismatic].includes(socketColor)) {
-					break;
+			if (socketBonusAsCoeff.size) {
+				if (
+					ReforgeOptimizer.includesStatWithCap(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
+					!ReforgeOptimizer.includesCappedStat(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
+					socketBonusNormalization > 1
+				) {
+					forceSocketBonus = true;
 				}
 
-				const matchedCoeffs = dummyVariables.get('matched')!;
-				const worstMatchedGemData = gemsToInclude.get(socketColor)!.at(-1)!;
+				const dummyVariables = new Map<string, YalpsCoefficients>();
+				dummyVariables.set('matched', new Map<string, number>());
+				dummyVariables.set('unmatched', new Map<string, number>());
 
-				for (const [key, value] of worstMatchedGemData.coefficients.entries()) {
-					matchedCoeffs.set(key, (matchedCoeffs.get(key) || 0) + value);
+				for (const socketColor of socketColors.values()) {
+					if (![GemColor.GemColorRed, GemColor.GemColorBlue, GemColor.GemColorYellow, GemColor.GemColorPrismatic].includes(socketColor)) {
+						break;
+					}
+
+					const matchedCoeffs = dummyVariables.get('matched')!;
+					const worstMatchedGemData = gemsToInclude.get(socketColor)!.at(-1)!;
+
+					for (const [key, value] of worstMatchedGemData.coefficients.entries()) {
+						matchedCoeffs.set(key, (matchedCoeffs.get(key) || 0) + value);
+					}
+
+					for (const [key, value] of socketBonusAsCoeff.entries()) {
+						matchedCoeffs.set(key, (matchedCoeffs.get(key) || 0) + value);
+					}
+
+					const unmatchedCoeffs = dummyVariables.get('unmatched')!;
+					const worstUnmatchedGemData = gemsToInclude.get(GemColor.GemColorPrismatic)!.at(0)!;
+
+					for (const [key, value] of worstUnmatchedGemData.coefficients.entries()) {
+						unmatchedCoeffs.set(key, (unmatchedCoeffs.get(key) || 0) + value);
+					}
 				}
 
-				for (const [key, value] of socketBonusAsCoeff.entries()) {
-					matchedCoeffs.set(key, (matchedCoeffs.get(key) || 0) + value);
+				const scoredDummyVariables = this.updateReforgeScores(dummyVariables, preCapEPs);
+
+				if (
+					scoredDummyVariables.get('matched')!.get('score')! > scoredDummyVariables.get('unmatched')!.get('score')! &&
+					(socketBonusNormalization > 1 ||
+						(ReforgeOptimizer.includesStatWithCap(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
+							!ReforgeOptimizer.includesCappedStat(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps)))
+				) {
+					forceSocketBonus = true;
 				}
-
-				const unmatchedCoeffs = dummyVariables.get('unmatched')!;
-				const worstUnmatchedGemData = gemsToInclude.get(GemColor.GemColorPrismatic)!.at(-1)!;
-
-				for (const [key, value] of worstUnmatchedGemData.coefficients.entries()) {
-					unmatchedCoeffs.set(key, (unmatchedCoeffs.get(key) || 0) + value);
-				}
-			}
-
-			const scoredDummyVariables = this.updateReforgeScores(dummyVariables, preCapEPs);
-
-			if (
-				scoredDummyVariables.get('matched')!.get('score')! > scoredDummyVariables.get('unmatched')!.get('score')! &&
-				(socketBonusNormalization > 1 || !ReforgeOptimizer.includesStatWithCap(scoredDummyVariables.get('matched')!, reforgeCaps, reforgeSoftCaps))
-			) {
-				forceSocketBonus = true;
 			}
 
 			socketColors.forEach((socketColor, socketIdx) => {
@@ -1714,7 +1718,10 @@ export class ReforgeOptimizer {
 		}
 
 		// Handle Spirit to Spell Hit conversion for hybrid casters separately from standard dependencies
-		if ((stat == Stat.StatSpirit && this.isHybridCaster) || stat == Stat.StatExpertiseRating) {
+		if (
+			preCapEPs.getPseudoStat(PseudoStat.PseudoStatSpellHitPercent) != 0 &&
+			((stat == Stat.StatSpirit && this.isHybridCaster) || stat == Stat.StatExpertiseRating)
+		) {
 			this.setPseudoStatCoefficient(coefficients, PseudoStat.PseudoStatSpellHitPercent, amount / Mechanics.SPELL_HIT_RATING_PER_HIT_PERCENT);
 		}
 
@@ -1888,7 +1895,6 @@ export class ReforgeOptimizer {
 					score += weights.getStat(statKey) * value;
 				}
 			}
-
 			updatedCoefficients.set('score', score);
 			updatedVariables.set(variableKey, updatedCoefficients);
 		}
