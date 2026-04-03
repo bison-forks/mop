@@ -90,18 +90,19 @@ var ItemSetRegaliaOfTheShatteredVale = core.NewItemSet(core.ItemSet{
 				druid.DruidSpellStarsurge
 
 			setBonusAura.AttachProcTrigger(core.ProcTrigger{
-				Callback:       core.CallbackOnCastComplete,
-				ClassSpellMask: procTriggerSpellMask,
+				Callback:           core.CallbackOnCastComplete,
+				ClassSpellMask:     procTriggerSpellMask,
+				TriggerImmediately: true,
 
-				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
 					alignmentActive := moonkin.CelestialAlignment.RelatedSelfBuff.IsActive()
 
 					if spell.SpellSchool.Matches(core.SpellSchoolNature) || (alignmentActive && spell.Matches(bothDuringCA)) {
-						solarBolt.Cast(sim, result.Target)
+						solarBolt.Cast(sim, spell.Unit.CurrentTarget)
 					}
 
 					if spell.SpellSchool.Matches(core.SpellSchoolArcane) || (alignmentActive && spell.Matches(bothDuringCA)) {
-						lunarBolt.Cast(sim, result.Target)
+						lunarBolt.Cast(sim, spell.Unit.CurrentTarget)
 					}
 				},
 			})
@@ -128,6 +129,8 @@ func (moonkin *BalanceDruid) registerT15BoltSpell(spellID int32, spellSchool cor
 		ClassSpellMask: druid.DruidSpell2PT16Bolt,
 		Flags:          core.SpellFlagAPL,
 
+		MissileSpeed: 30,
+
 		BonusCoefficient: T15BoltBonusCoeff,
 		DamageMultiplier: 1,
 		CritMultiplier:   moonkin.DefaultCritMultiplier(),
@@ -135,7 +138,11 @@ func (moonkin *BalanceDruid) registerT15BoltSpell(spellID int32, spellSchool cor
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := moonkin.CalcAndRollDamageRange(sim, T15BoltCoeff, T15BoltVariance)
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
