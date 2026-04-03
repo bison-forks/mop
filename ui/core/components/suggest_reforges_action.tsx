@@ -14,7 +14,7 @@ import { Gear } from '../proto_utils/gear';
 import { gemMatchesSocket, gemMatchesStats, getEmptyGemSocketIconUrl } from '../proto_utils/gems';
 import { statCapTypeNames } from '../proto_utils/names';
 import { translateSlotName, translateStat } from '../../i18n/localization';
-import { pseudoStatIsCapped, StatCap, statIsCapped, Stats, UnitStat, UnitStatPresets } from '../proto_utils/stats';
+import { pseudoStatHasCap, pseudoStatIsCapped, StatCap, statHasCap, statIsCapped, Stats, UnitStat, UnitStatPresets } from '../proto_utils/stats';
 import { Sim } from '../sim';
 import { ActionGroupItem } from '../sim_ui';
 import { EventID, TypedEvent } from '../typed_event';
@@ -493,7 +493,7 @@ export class ReforgeOptimizer {
 
 			// If all children have 0 EP, then loop through children and check whether a cap has been configured for that child.
 			for (const childStat of children) {
-				if (pseudoStatIsCapped(childStat, reforgeCaps, reforgeSoftCaps)) {
+				if (pseudoStatHasCap(childStat, reforgeCaps, reforgeSoftCaps)) {
 					// The first time a cap is detected, set EP for that child to re-scaled parent Rating EP, set parent Rating EP
 					// to 0, and break.
 					const rescaledWeight = UnitStat.fromPseudoStat(childStat).convertPercentToRating(weights.getStat(parentStat));
@@ -505,6 +505,28 @@ export class ReforgeOptimizer {
 		}
 
 		return validatedWeights;
+	}
+
+	static includesStatWithCap(coefficients: YalpsCoefficients, reforgeCaps: Stats, reforgeSoftCaps: StatCap[]): boolean {
+		for (const coefficientKey of coefficients.keys()) {
+			if (coefficientKey.includes('PseudoStat')) {
+				const statKey = PseudoStat[coefficientKey as keyof typeof PseudoStat];
+
+				if (pseudoStatHasCap(statKey, reforgeCaps, reforgeSoftCaps)) {
+					return true;
+				}
+			} else if (coefficientKey.includes('Stat')) {
+				const statKey = Stat[coefficientKey as keyof typeof Stat];
+
+				if (statHasCap(statKey, reforgeCaps, reforgeSoftCaps)) {
+					return true;
+				}
+			} else if (coefficientKey.includes('Minus')) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	static includesCappedStat(coefficients: YalpsCoefficients, reforgeCaps: Stats, reforgeSoftCaps: StatCap[]): boolean {
@@ -536,13 +558,13 @@ export class ReforgeOptimizer {
 			if (coefficientKey.includes('PseudoStat')) {
 				const statKey = PseudoStat[coefficientKey as keyof typeof PseudoStat];
 
-				if (pseudoStatIsCapped(statKey, reforgeCaps, reforgeSoftCaps)) {
+				if (pseudoStatHasCap(statKey, reforgeCaps, reforgeSoftCaps)) {
 					cappedStatKeys.push(coefficientKey);
 				}
 			} else if (coefficientKey.includes('Stat')) {
 				const statKey = Stat[coefficientKey as keyof typeof Stat];
 
-				if (statIsCapped(statKey, reforgeCaps, reforgeSoftCaps)) {
+				if (statHasCap(statKey, reforgeCaps, reforgeSoftCaps)) {
 					cappedStatKeys.push(coefficientKey);
 				}
 			}
@@ -1417,7 +1439,11 @@ export class ReforgeOptimizer {
 				this.applyReforgeStat(socketBonusAsCoeff, stat, value, preCapEPs);
 			}
 
-			if (ReforgeOptimizer.includesCappedStat(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) && socketBonusNormalization > 1) {
+			if (
+				ReforgeOptimizer.includesStatWithCap(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
+				!ReforgeOptimizer.includesCappedStat(socketBonusAsCoeff, reforgeCaps, reforgeSoftCaps) &&
+				socketBonusNormalization > 1
+			) {
 				forceSocketBonus = true;
 			}
 
@@ -1453,7 +1479,7 @@ export class ReforgeOptimizer {
 
 			if (
 				scoredDummyVariables.get('matched')!.get('score')! > scoredDummyVariables.get('unmatched')!.get('score')! &&
-				(socketBonusNormalization > 1 || !ReforgeOptimizer.includesCappedStat(scoredDummyVariables.get('matched')!, reforgeCaps, reforgeSoftCaps))
+				(socketBonusNormalization > 1 || !ReforgeOptimizer.includesStatWithCap(scoredDummyVariables.get('matched')!, reforgeCaps, reforgeSoftCaps))
 			) {
 				forceSocketBonus = true;
 			}
@@ -1616,7 +1642,7 @@ export class ReforgeOptimizer {
 
 				for (const parentStat of [Stat.StatCritRating, Stat.StatHasteRating]) {
 					for (const childStat of UnitStat.getChildren(parentStat)) {
-						if (pseudoStatIsCapped(childStat, reforgeCaps, reforgeSoftCaps)) {
+						if (pseudoStatHasCap(childStat, reforgeCaps, reforgeSoftCaps)) {
 							foundCritOrHasteCap = true;
 						}
 					}
