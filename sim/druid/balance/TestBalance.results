@@ -441,9 +441,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-RegaliaoftheShatteredVale"
  value: {
-  dps: 188931.4267
-  tps: 189834.0409
-  hps: 25102.22854
+  dps: 201857.40603
+  tps: 202744.17835
+  hps: 25124.95031
  }
 }
 dps_results: {
