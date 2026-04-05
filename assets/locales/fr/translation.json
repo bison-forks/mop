@@ -928,6 +928,10 @@
                     "value": "L'expression de la valeur que représente cette variable."
                 }
             },
+            "variablePlaceholder": {
+                "name": "Placeholder",
+                "nameLabel": "Placeholder Name"
+            },
             "prepull_actions": {
                 "title": "Actions de pré-pull",
                 "tooltip": "Actions à effectuer avant le pull.",
