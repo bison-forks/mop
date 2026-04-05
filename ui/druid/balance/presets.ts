@@ -8,13 +8,11 @@ import StandardApl from './apls/standard.apl.json';
 import PreraidGear from './gear_sets/preraid.gear.json';
 import T14Gear from './gear_sets/t14.gear.json';
 import T15Gear from './gear_sets/t15.gear.json';
-import T15UpgradedGear from './gear_sets/t15-upgraded.gear.json';
 import T16Gear from './gear_sets/t16.gear.json';
 
 export const PreraidPresetGear = PresetUtils.makePresetGear('Pre-raid', PreraidGear);
 export const T14PresetGear = PresetUtils.makePresetGear('T14', T14Gear);
 export const T15PresetGear = PresetUtils.makePresetGear('T15', T15Gear);
-export const T15UpgradedPresetGear = PresetUtils.makePresetGear('T15 - Upgraded', T15UpgradedGear);
 export const T16PresetGear = PresetUtils.makePresetGear('T16 (WIP)', T16Gear);
 
 export const StandardRotation = PresetUtils.makePresetAPLRotation('Standard', StandardApl);
@@ -111,7 +109,7 @@ export const T14PresetBuild = PresetUtils.makePresetBuild('T14', {
 });
 
 export const T15PresetBuild = PresetUtils.makePresetBuild('T15', {
-	gear: T15UpgradedPresetGear,
+	gear: T15PresetGear,
 	talents: StandardTalents,
 	rotation: StandardRotation,
 	epWeights: P3_BIS_EP_PRESET,
