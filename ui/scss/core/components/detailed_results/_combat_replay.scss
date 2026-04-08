@@ -258,7 +258,23 @@
 		position: absolute;
 		transform: translate(-50%, -50%);
 		border-radius: 50%;
-		border: 2px solid #c0a060;
+		border: 2px solid var(--bs-hit, #c0a060);
+		color: var(--bs-hit, #c0a060);
+
+		&.cr-hit-outcome-hit {
+			border-color: var(--bs-hit);
+			color: var(--bs-hit);
+		}
+
+		&.cr-hit-outcome-crit {
+			border-color: var(--bs-crit);
+			color: var(--bs-crit);
+		}
+
+		&.cr-hit-outcome-crit-secondary {
+			border-color: #ffcc40;
+			color: #ffcc40;
+		}
 	}
 
 	.cr-dmg-num {
@@ -506,6 +522,10 @@
 		&:hover {
 			background: rgba(255, 255, 255, 0.15);
 		}
+	}
+
+	.cr-play-btn i {
+		pointer-events: none;
 	}
 
 	.cr-speed-btns {
