@@ -368,6 +368,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSubtlety-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 104053.35358
+  tps: 73333.89453
+ }
+}
+dps_results: {
  key: "TestSubtlety-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 104053.35358

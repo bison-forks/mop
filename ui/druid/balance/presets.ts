@@ -22,11 +22,11 @@ export const P2_BIS_EP_PRESET = PresetUtils.makePresetEpWeights(
 	Stats.fromMap({
 		[Stat.StatIntellect]: 1,
 		[Stat.StatSpirit]: 0.88,
-		[Stat.StatSpellPower]: 0.80,
 		[Stat.StatHitRating]: 0.88,
 		[Stat.StatCritRating]: 0.54,
 		[Stat.StatHasteRating]: 0.55,
 		[Stat.StatMasteryRating]: 0.46,
+		[Stat.StatSpellPower]: 0.8,
 	}),
 );
 
@@ -35,11 +35,24 @@ export const P3_BIS_EP_PRESET = PresetUtils.makePresetEpWeights(
 	Stats.fromMap({
 		[Stat.StatIntellect]: 1,
 		[Stat.StatSpirit]: 1.0,
-		[Stat.StatSpellPower]: 0.79,
 		[Stat.StatHitRating]: 1.0,
 		[Stat.StatCritRating]: 0.57,
 		[Stat.StatHasteRating]: 0.64,
 		[Stat.StatMasteryRating]: 0.53,
+		[Stat.StatSpellPower]: 0.79,
+	}),
+);
+
+export const P4_BIS_EP_PRESET = PresetUtils.makePresetEpWeights(
+	'Item Level >= 560 (WIP)',
+	Stats.fromMap({
+		[Stat.StatIntellect]: 1,
+		[Stat.StatSpirit]: 1.24 * 0.9,
+		[Stat.StatHitRating]: 1.18,
+		[Stat.StatCritRating]: 0.73,
+		[Stat.StatHasteRating]: 0.84 * 0.9,
+		[Stat.StatMasteryRating]: 0.67 * 0.9,
+		[Stat.StatSpellPower]: 0.73,
 	}),
 );
 
@@ -115,7 +128,7 @@ export const T15PresetBuild = PresetUtils.makePresetBuild('T15', {
 	epWeights: P3_BIS_EP_PRESET,
 });
 
-export const T16PresetBuild = PresetUtils.makePresetBuild('T16', {
+export const T16PresetBuild = PresetUtils.makePresetBuild('T16 (WIP)', {
 	gear: T16PresetGear,
 	talents: StandardTalents,
 	rotation: StandardRotation,

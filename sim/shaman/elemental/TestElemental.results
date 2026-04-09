@@ -1691,6 +1691,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 224480.64013
+  tps: 141903.1439
+ }
+}
+dps_results: {
  key: "TestElemental-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 246585.25434

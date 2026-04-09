@@ -368,6 +368,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombat-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 99290.47801
+  tps: 69983.15137
+ }
+}
+dps_results: {
  key: "TestCombat-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 99290.47801

@@ -1951,6 +1951,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWindwalker-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 270895.4556
+  tps: 258963.34959
+  hps: 8271.77427
+ }
+}
+dps_results: {
  key: "TestWindwalker-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 270895.4556

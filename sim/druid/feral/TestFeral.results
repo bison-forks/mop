@@ -1943,6 +1943,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 247197.99381
+  tps: 359528.80904
+  hps: 16218.88172
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 247562.05865
