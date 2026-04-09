@@ -54,8 +54,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BarbedAssassinBattlegear"
  value: {
-  dps: 110405.63644
-  tps: 77831.11102
+  dps: 112033.09471
+  tps: 78986.60639
  }
 }
 dps_results: {
