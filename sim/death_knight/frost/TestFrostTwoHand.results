@@ -1943,6 +1943,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrostTwoHand-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 266866.42042
+  tps: 239114.26628
+  hps: 4146.49755
+ }
+}
+dps_results: {
  key: "TestFrostTwoHand-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 266837.56406

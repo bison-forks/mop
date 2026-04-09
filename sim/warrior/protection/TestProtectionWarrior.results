@@ -1945,6 +1945,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 259155.12281
+  tps: 1.4977396342e+06
+  dtps: 42824.76557
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 259155.12281

@@ -1943,6 +1943,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrostMasterfrost-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 266590.74256
+  tps: 243211.82066
+  hps: 2372.52942
+ }
+}
+dps_results: {
  key: "TestFrostMasterfrost-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 266592.53168
