@@ -10372,10 +10372,8 @@
         "empty_desc": { "type": "string" },
         "default_player": { "type": "string" },
         "training_dummy": { "type": "string" },
-        "seek_back_5": { "type": "string" },
-        "seek_back_1": { "type": "string" },
-        "seek_fwd_1": { "type": "string" },
-        "seek_fwd_5": { "type": "string" }
+        "seek_back": { "type": "string" },
+        "seek_fwd": { "type": "string" }
       },
       "additionalProperties": false,
       "required": [
@@ -10383,10 +10381,8 @@
         "empty_desc",
         "default_player",
         "training_dummy",
-        "seek_back_5",
-        "seek_back_1",
-        "seek_fwd_1",
-        "seek_fwd_5"
+        "seek_back",
+        "seek_fwd"
       ]
     }
   },

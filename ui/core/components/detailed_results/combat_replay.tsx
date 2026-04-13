@@ -52,7 +52,7 @@ interface EnemyCardDom {
 	hitLayer: HTMLElement;
 }
 
-const BOSS_IMAGE_URL = '/mop/assets/img/boss_patchwerk.png';
+const BOSS_IMAGE_URL = '/mop/assets/img/boss_patchwerk.webp';
 
 const RESOURCE_MAX_DEFAULTS: Partial<Record<ResourceType, number>> = {
 	[ResourceType.ResourceTypeMana]: 100,
@@ -71,6 +71,7 @@ const RESOURCE_MAX_DEFAULTS: Partial<Record<ResourceType, number>> = {
 const RESOURCE_PRIORITY = [
 	ResourceType.ResourceTypeMana,
 	ResourceType.ResourceTypeEnergy,
+	ResourceType.ResourceTypeComboPoints,
 	ResourceType.ResourceTypeRage,
 	ResourceType.ResourceTypeFocus,
 	ResourceType.ResourceTypeRunicPower,
@@ -111,6 +112,10 @@ export class CombatReplay extends ResultComponent {
 	private lastBuffKey = '';
 	private lastDebuffKeys = new Map<number, string>();
 
+	/** Resource types present anywhere in the log — rows are pre-built so CDM height does not jump. */
+	private lockedResourceTypes: ResourceType[] = [];
+	private resourceMaxByType = new Map<ResourceType, number>();
+
 	private readonly preloadedUrls = new Set<string>();
 	private enemyCardDom: EnemyCardDom[] = [];
 	private readonly actionIconByKey = new Map<string, HTMLAnchorElement>();
@@ -120,6 +125,7 @@ export class CombatReplay extends ResultComponent {
 		scene: HTMLElement;
 		tickerTrack: HTMLElement;
 		enemyZone: HTMLElement;
+		enemyFormation: HTMLElement;
 		buffIconsEl: HTMLElement;
 		playerLabel: HTMLElement;
 		castBarFill: HTMLElement;
@@ -145,6 +151,7 @@ export class CombatReplay extends ResultComponent {
 		const sceneRef = ref<HTMLDivElement>();
 		const tickerTrackRef = ref<HTMLDivElement>();
 		const enemyZoneRef = ref<HTMLDivElement>();
+		const enemyFormationRef = ref<HTMLDivElement>();
 		const buffIconsRef = ref<HTMLDivElement>();
 		const playerLabelRef = ref<HTMLDivElement>();
 		const castBarFillRef = ref<HTMLDivElement>();
@@ -165,12 +172,14 @@ export class CombatReplay extends ResultComponent {
 					<div className="cr-empty-desc">{i18n.t('combat_replay.empty_desc')}</div>
 				</div>
 				<div ref={sceneRef} className="cr-scene" style="display:none">
+					<div className="cr-scene-vignette" aria-hidden="true" />
 					<div className="cr-arena">
-						<div className="cr-vignette" />
 						<div className="cr-ticker-outer">
 							<div ref={tickerTrackRef} className="cr-ticker-track" />
 						</div>
-						<div ref={enemyZoneRef} className="cr-enemy-zone" />
+						<div ref={enemyZoneRef} className="cr-enemy-zone">
+							<div ref={enemyFormationRef} className="cr-enemy-formation" />
+						</div>
 					</div>
 					<div className="cr-cdm">
 						<div className="cr-cdm-header">
@@ -187,19 +196,35 @@ export class CombatReplay extends ResultComponent {
 					</div>
 					<div className="cr-controls">
 						<div className="cr-ctrl-row">
-							<button className="cr-ctrl-btn" dataset={{ seek: '-5' }} title={i18n.t('combat_replay.seek_back_5')}>⏪</button>
-							<button className="cr-ctrl-btn" dataset={{ seek: '-1' }} title={i18n.t('combat_replay.seek_back_1')}>◀</button>
+							<button className="cr-ctrl-btn" dataset={{ seek: '-5' }} title={i18n.t('combat_replay.seek_back', { time: 5 })}>
+								⏪
+							</button>
+							<button className="cr-ctrl-btn" dataset={{ seek: '-1' }} title={i18n.t('combat_replay.seek_back', { time: 1 })}>
+								◀
+							</button>
 							<button ref={playBtnRef} type="button" className="cr-play-btn cr-ctrl-btn" title="Play / Pause">
 								<i ref={playIconRef} className="fas fa-play" aria-hidden="true" />
 							</button>
-							<button className="cr-ctrl-btn" dataset={{ seek: '1' }} title={i18n.t('combat_replay.seek_fwd_1')}>▶</button>
-							<button className="cr-ctrl-btn" dataset={{ seek: '5' }} title={i18n.t('combat_replay.seek_fwd_5')}>⏩</button>
+							<button className="cr-ctrl-btn" dataset={{ seek: '1' }} title={i18n.t('combat_replay.seek_fwd', { time: 1 })}>
+								▶
+							</button>
+							<button className="cr-ctrl-btn" dataset={{ seek: '5' }} title={i18n.t('combat_replay.seek_fwd', { time: 5 })}>
+								⏩
+							</button>
 							<div className="cr-speed-btns">
-								<button className="cr-speed-btn active" dataset={{ rate: '1' }}>1x</button>
-								<button className="cr-speed-btn" dataset={{ rate: '2' }}>2x</button>
-								<button className="cr-speed-btn" dataset={{ rate: '3' }}>3x</button>
+								<button className="cr-speed-btn active" dataset={{ rate: '1' }}>
+									1x
+								</button>
+								<button className="cr-speed-btn" dataset={{ rate: '2' }}>
+									2x
+								</button>
+								<button className="cr-speed-btn" dataset={{ rate: '3' }}>
+									3x
+								</button>
 							</div>
-							<span ref={timeDisplayRef} className="cr-time-display">0:00.0 / 0:00.0</span>
+							<span ref={timeDisplayRef} className="cr-time-display">
+								0:00.0 / 0:00.0
+							</span>
 						</div>
 						<div className="cr-scrub-row">
 							<input ref={scrubberRef} type="range" className="cr-scrubber" min="0" max="1000" value="0" step="1" />
@@ -214,6 +239,7 @@ export class CombatReplay extends ResultComponent {
 			scene: sceneRef.value!,
 			tickerTrack: tickerTrackRef.value!,
 			enemyZone: enemyZoneRef.value!,
+			enemyFormation: enemyFormationRef.value!,
 			buffIconsEl: buffIconsRef.value!,
 			playerLabel: playerLabelRef.value!,
 			castBarFill: castBarFillRef.value!,
@@ -276,6 +302,8 @@ export class CombatReplay extends ResultComponent {
 		this.hitEffects = [];
 		this.playerAuras = [];
 		this.targetAuras = [];
+		this.lockedResourceTypes = [];
+		this.resourceMaxByType.clear();
 
 		const filteredTargets = result.getTargets(filter);
 		this.enemyNames = filteredTargets.map(t => t.name);
@@ -352,6 +380,20 @@ export class CombatReplay extends ResultComponent {
 			});
 		}
 
+		this.resourceMaxByType = new Map(resourceMaxes);
+		const locked = new Set<ResourceType>();
+		for (const r of playerResourceLogs) {
+			if (r.resourceType === ResourceType.ResourceTypeNone || r.resourceType === ResourceType.ResourceTypeHealth) continue;
+			locked.add(r.resourceType);
+		}
+		this.lockedResourceTypes = [];
+		for (const p of RESOURCE_PRIORITY) {
+			if (locked.has(p)) this.lockedResourceTypes.push(p);
+		}
+		for (const rt of locked) {
+			if (!this.lockedResourceTypes.includes(rt)) this.lockedResourceTypes.push(rt);
+		}
+
 		for (const d of playerDmg) {
 			if (d.miss || d.dodge || d.parry) continue;
 			if (d.actionId && d.actionId.otherId !== OtherAction.OtherActionNone) continue;
@@ -361,8 +403,8 @@ export class CombatReplay extends ResultComponent {
 			this.hitEffects.push({
 				time: d.timestamp,
 				targetIndex: Math.max(0, cardIdx),
-				x: 20 + (seed * 23 % 60),
-				y: 10 + (seed * 37 % 60),
+				x: 20 + ((seed * 23) % 60),
+				y: 10 + ((seed * 37) % 60),
 				dmg: d.amount > 0 ? d.amount : null,
 				isCrit: d.crit,
 			});
@@ -383,7 +425,14 @@ export class CombatReplay extends ResultComponent {
 				const id = aura.actionId;
 				if (!id || (!id.spellId && !id.itemId) || !(id.name ?? '')) continue;
 				if (id.otherId !== OtherAction.OtherActionNone) continue;
-				this.targetAuras.push({ gainedAt: aura.gainedAt, fadedAt: aura.fadedAt, name: id.name, iconUrl: id.iconUrl, actionId: id, targetIndex: target.index });
+				this.targetAuras.push({
+					gainedAt: aura.gainedAt,
+					fadedAt: aura.fadedAt,
+					name: id.name,
+					iconUrl: id.iconUrl,
+					actionId: id,
+					targetIndex: target.index,
+				});
 			}
 		}
 
@@ -391,11 +440,7 @@ export class CombatReplay extends ResultComponent {
 	}
 
 	private preloadImages(): void {
-		const allUrls = [
-			...this.actions.map(a => a.iconUrl),
-			...this.playerAuras.map(a => a.iconUrl),
-			...this.targetAuras.map(a => a.iconUrl),
-		];
+		const allUrls = [...this.actions.map(a => a.iconUrl), ...this.playerAuras.map(a => a.iconUrl), ...this.targetAuras.map(a => a.iconUrl)];
 		for (const url of allUrls) {
 			if (!url || this.preloadedUrls.has(url)) continue;
 			this.preloadedUrls.add(url);
@@ -443,7 +488,7 @@ export class CombatReplay extends ResultComponent {
 		const bright = isFront ? 1 : 0.6;
 		const z = isFront ? 2 : 1;
 
-		this.ui.enemyZone.appendChild(
+		this.ui.enemyFormation.appendChild(
 			<div
 				className="cr-enemy-card"
 				dataset={{ idx: String(targetIdx) }}
@@ -456,8 +501,7 @@ export class CombatReplay extends ResultComponent {
 					transformOrigin: 'bottom center',
 					zIndex: z,
 					filter: `brightness(${bright})`,
-				}}
-			>
+				}}>
 				<div className="cr-nameplate">
 					<div className="cr-enemy-name">{name}</div>
 					<div className="cr-hp-bar">
@@ -486,7 +530,8 @@ export class CombatReplay extends ResultComponent {
 	private buildEnemyZone(): void {
 		const n = Math.min(this.numEnemies, MAX_ENEMIES);
 		this.enemyCardDom = [];
-		this.ui.enemyZone.replaceChildren();
+		const formation = this.ui.enemyFormation;
+		formation.replaceChildren();
 
 		const frontCount = n <= 2 ? n : n <= 5 ? Math.ceil(n / 2) : 3;
 		const backCount = n - frontCount;
@@ -503,12 +548,21 @@ export class CombatReplay extends ResultComponent {
 		frontXs.forEach((x, j) => this.appendEnemyCard(j, x, true, cardW));
 
 		if (this.numEnemies > MAX_ENEMIES) {
-			this.ui.enemyZone.appendChild(
+			this.ui.enemyFormation.appendChild(
 				<div className="cr-enemy-more" style={{ position: 'absolute', right: '10px', bottom: '8px' }}>
 					+{this.numEnemies - MAX_ENEMIES}
 				</div>,
 			);
 		}
+	}
+
+	private syntheticResourceSnap(rt: ResourceType): ResourceSnapshot {
+		return {
+			time: -1,
+			type: rt,
+			value: 0,
+			maxValue: this.resourceMaxByType.get(rt) ?? RESOURCE_MAX_DEFAULTS[rt] ?? 100,
+		};
 	}
 
 	private seekTo(t: number): void {
@@ -642,11 +696,15 @@ export class CombatReplay extends ResultComponent {
 			bar.appendChild(
 				(
 					<div
-						className="cr-segment"
-						style={{
-							background: on ? `linear-gradient(180deg,${color}ee,${color}99)` : 'rgba(255,255,255,0.07)',
-							boxShadow: on ? `0 0 8px ${color}88` : 'none',
-						}}
+						className={on ? 'cr-segment cr-segment--filled' : 'cr-segment cr-segment--empty'}
+						style={
+							on
+								? {
+										background: `linear-gradient(180deg,${color}ee,${color}99)`,
+										boxShadow: `0 0 8px ${color}88`,
+									}
+								: {}
+						}
 					/>
 				) as unknown as HTMLElement,
 			);
@@ -677,37 +735,34 @@ export class CombatReplay extends ResultComponent {
 	}
 
 	private renderResources(t: number): void {
+		if (this.lockedResourceTypes.length === 0) {
+			this.ui.resourceBarsEl.replaceChildren();
+			return;
+		}
+
 		const latest = new Map<ResourceType, ResourceSnapshot>();
 		for (const snap of this.resources) {
 			if (snap.time <= t) latest.set(snap.type, snap);
 		}
 
-		if (latest.size === 0) {
-			this.ui.resourceBarsEl.replaceChildren();
-			return;
-		}
-
 		let primaryType: ResourceType | null = null;
 		for (const p of RESOURCE_PRIORITY) {
-			if (latest.has(p)) {
+			if (this.lockedResourceTypes.includes(p)) {
 				primaryType = p;
 				break;
 			}
 		}
 
-		const types = Array.from(latest.keys());
-		const orderedTypes = primaryType ? [primaryType, ...types.filter(rt => rt !== primaryType)] : types;
+		const orderedTypes = primaryType ? [primaryType, ...this.lockedResourceTypes.filter(rt => rt !== primaryType)] : [...this.lockedResourceTypes];
 
 		const frag = document.createDocumentFragment();
 		for (const rt of orderedTypes) {
 			if (rt === ResourceType.ResourceTypeNone) continue;
 			if (rt === ResourceType.ResourceTypeHealth) continue;
-			const snap = latest.get(rt)!;
+			const snap = latest.get(rt) ?? this.syntheticResourceSnap(rt);
 			const color = resourceColors.get(rt) ?? '#94a3b8';
 			const label = resourceNames.get(rt) ?? String(rt);
-			const row = DOT_RESOURCE_TYPES.has(rt)
-				? this.renderDotResourceRow(rt, snap, color, label)
-				: this.renderBarResourceRow(rt, snap, color, label);
+			const row = DOT_RESOURCE_TYPES.has(rt) ? this.renderDotResourceRow(rt, snap, color, label) : this.renderBarResourceRow(rt, snap, color, label);
 			frag.appendChild(row);
 		}
 		this.ui.resourceBarsEl.replaceChildren(frag);
@@ -770,7 +825,13 @@ export class CombatReplay extends ResultComponent {
 		const numScale = dp < 0.1 ? 1.4 - (dp / 0.1) * 0.4 : 1;
 		const ringGlow = 6 + ep * 10;
 		const dmgStr =
-			hit.dmg == null ? '' : hit.dmg >= 1000000 ? `${(hit.dmg / 1000000).toFixed(2)}M` : hit.dmg >= 1000 ? `${(hit.dmg / 1000).toFixed(1)}K` : String(Math.round(hit.dmg));
+			hit.dmg == null
+				? ''
+				: hit.dmg >= 1000000
+					? `${(hit.dmg / 1000000).toFixed(2)}M`
+					: hit.dmg >= 1000
+						? `${(hit.dmg / 1000).toFixed(1)}K`
+						: String(Math.round(hit.dmg));
 
 		const ringClass = clsx('cr-hit-ring', hit.isCrit ? 'cr-hit-outcome-crit' : 'cr-hit-outcome-hit');
 
@@ -809,8 +870,7 @@ export class CombatReplay extends ResultComponent {
 						style={{
 							opacity: numOpacity,
 							transform: `translate(-50%, calc(-50% - ${floatY}px)) scale(${numScale})`,
-						}}
-					>
+						}}>
 						{dmgStr}
 					</div>
 				) : null}

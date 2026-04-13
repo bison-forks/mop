@@ -2478,9 +2478,7 @@
 		"empty_desc": "Lancez une simulation pour générer un replay de combat interactif",
 		"default_player": "Joueur",
 		"training_dummy": "Mannequin d'entraînement",
-		"seek_back_5": "Reculer 5s",
-		"seek_back_1": "Reculer 1s",
-		"seek_fwd_1": "Avancer 1s",
-		"seek_fwd_5": "Avancer 5s"
+		"seek_back": "Reculer {{time}}s",
+		"seek_fwd": "Avancer {{time}}s"
 	}
 }

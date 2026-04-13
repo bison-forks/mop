@@ -2477,9 +2477,7 @@
 		"empty_desc": "Run a simulation to generate an interactive combat replay",
 		"default_player": "Player",
 		"training_dummy": "Training Dummy",
-		"seek_back_5": "Rewind 5s",
-		"seek_back_1": "Rewind 1s",
-		"seek_fwd_1": "Forward 1s",
-		"seek_fwd_5": "Forward 5s"
+		"seek_back": "Rewind {{time}}s",
+		"seek_fwd": "Forward {{time}}s"
 	}
 }
