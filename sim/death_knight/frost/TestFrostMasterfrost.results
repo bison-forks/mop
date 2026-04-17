@@ -663,6 +663,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFrostMasterfrost-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 253826.75915
+  tps: 231235.06456
+  hps: 2326.56982
+ }
+}
+dps_results: {
  key: "TestFrostMasterfrost-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 261432.653
@@ -2476,6 +2484,14 @@ dps_results: {
   dps: 259640.84523
   tps: 235586.9578
   hps: 2387.01809
+ }
+}
+dps_results: {
+ key: "TestFrostMasterfrost-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 253826.75915
+  tps: 231235.06456
+  hps: 2326.56982
  }
 }
 dps_results: {

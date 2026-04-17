@@ -671,6 +671,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 233358.09506
+  tps: 349217.03351
+  hps: 16324.27542
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 235783.50102
@@ -2420,6 +2428,14 @@ dps_results: {
   dps: 248781.79403
   tps: 375843.41216
   hps: 16552.85564
+ }
+}
+dps_results: {
+ key: "TestFeral-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 233600.60242
+  tps: 351160.30302
+  hps: 15674.68034
  }
 }
 dps_results: {

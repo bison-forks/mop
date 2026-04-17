@@ -655,6 +655,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtectionWarrior-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 253713.38379
+  tps: 1.46767886608e+06
+  dtps: 42794.65806
+ }
+}
+dps_results: {
  key: "TestProtectionWarrior-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 262088.21178
@@ -2422,6 +2430,14 @@ dps_results: {
   dps: 262411.53795
   tps: 1.5226245868e+06
   dtps: 42863.29291
+ }
+}
+dps_results: {
+ key: "TestProtectionWarrior-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 253713.38379
+  tps: 1.46767886608e+06
+  dtps: 42794.65806
  }
 }
 dps_results: {

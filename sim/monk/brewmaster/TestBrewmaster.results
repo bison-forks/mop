@@ -751,6 +751,15 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBrewmaster-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 323271.58689
+  tps: 1.4719032516e+06
+  dtps: 15223.822
+  hps: 33734.13591
+ }
+}
+dps_results: {
  key: "TestBrewmaster-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 336087.84187
@@ -2728,6 +2737,15 @@ dps_results: {
   tps: 1.52018277021e+06
   dtps: 14819.23617
   hps: 35516.54286
+ }
+}
+dps_results: {
+ key: "TestBrewmaster-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 323271.58689
+  tps: 1.4719032516e+06
+  dtps: 15223.822
+  hps: 33734.13591
  }
 }
 dps_results: {

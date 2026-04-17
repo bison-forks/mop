@@ -671,6 +671,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWindwalker-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 259794.91568
+  tps: 248020.98794
+  hps: 8098.11854
+ }
+}
+dps_results: {
  key: "TestWindwalker-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 298858.13535
@@ -2428,6 +2436,14 @@ dps_results: {
   dps: 271036.9281
   tps: 258154.96212
   hps: 9174.34286
+ }
+}
+dps_results: {
+ key: "TestWindwalker-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 259794.91568
+  tps: 248020.98794
+  hps: 8098.11854
  }
 }
 dps_results: {

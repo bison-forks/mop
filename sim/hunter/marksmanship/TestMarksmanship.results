@@ -655,6 +655,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestMarksmanship-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 263054.04995
+  tps: 203221.15597
+  hps: 18.18791
+ }
+}
+dps_results: {
  key: "TestMarksmanship-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 264551.09488
@@ -2404,6 +2412,14 @@ dps_results: {
   dps: 291312.76067
   tps: 223445.02876
   hps: 18.54706
+ }
+}
+dps_results: {
+ key: "TestMarksmanship-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 263056.57336
+  tps: 203221.15597
+  hps: 18.18791
  }
 }
 dps_results: {

@@ -655,6 +655,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-DysmorphicSamophlangeofDiscontinuity-105615"
+ value: {
+  dps: 245853.39301
+  tps: 174266.74858
+  hps: 2922.13694
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-EffulgentPrimalDiamond"
  value: {
   dps: 262908.39983
@@ -2476,6 +2484,14 @@ dps_results: {
   dps: 254492.56886
   tps: 179942.3662
   hps: 2993.63335
+ }
+}
+dps_results: {
+ key: "TestUnholy-AllItems-Thok'sAcid-GroovedTooth-105607"
+ value: {
+  dps: 245853.39301
+  tps: 174266.74858
+  hps: 2922.13694
  }
 }
 dps_results: {
