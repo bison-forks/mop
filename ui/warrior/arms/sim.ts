@@ -39,8 +39,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecArmsWarrior, {
 			Stat.StatHealth,
 			Stat.StatStamina,
 			Stat.StatStrength,
-			Stat.StatPvpPowerRating,
-			Stat.StatPvpResilienceRating,
 			Stat.StatAgility,
 			Stat.StatAttackPower,
 			Stat.StatExpertiseRating,
