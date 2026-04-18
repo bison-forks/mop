@@ -115,8 +115,12 @@ func assignTrigger(e *ItemEffect, statsSpellID int, pe *proto.ItemEffect) {
 		pe.BuffId = statsSP.ID
 		pe.BuffName = statsSP.NameLang
 		pe.Effect = &proto.ItemEffect_Proc{Proc: proc}
-		if spTop.MaxCumulativeStacks > 0 {
-			pe.MaxCumulativeStacks = spTop.MaxCumulativeStacks
+
+		// In MoP a lot of times the stacks are on the stats spelkl not the trigger spell,
+		// so we make sure to check both and take the max of the two if they are different.
+		maxCumulativeStacks := max(statsSP.MaxCumulativeStacks, spTop.MaxCumulativeStacks)
+		if maxCumulativeStacks > 0 {
+			pe.MaxCumulativeStacks = maxCumulativeStacks
 		}
 	}
 }

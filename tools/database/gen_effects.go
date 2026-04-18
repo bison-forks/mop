@@ -172,6 +172,7 @@ func ItemEffectIsSupported(instance *dbc.DBC, effectID int) bool {
 				} else {
 					if slices.Contains(params, effect.EffectMiscValues[0]) {
 						supported = false
+						break
 					}
 				}
 			}
@@ -183,6 +184,7 @@ func ItemEffectIsSupported(instance *dbc.DBC, effectID int) bool {
 				} else {
 					if slices.Contains(params, effect.EffectMiscValues[0]) {
 						supported = false
+						break
 					}
 				}
 			}
