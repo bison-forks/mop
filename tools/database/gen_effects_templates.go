@@ -103,10 +103,10 @@ func RegisterAllProcs() {
 	{{- else}}
 	{{- if len .Variants | eq 1}}
 	// shared.NewProcStatBonusEffect(shared.ProcStatBonusEffect{
-	// 	{{with index .Variants 0 -}}
+	 	{{with index .Variants 0 -}}
 	// 	Name:               "{{ .Name }}",
 	// 	ItemID:             {{ .ID }},
-	// 	{{- end}}
+	 	{{- end}}
 	// 	Callback:           {{ .ProcInfo.Callback | asCoreCallback }},
 	// 	ProcMask:           {{ .ProcInfo.ProcMask | asCoreProcMask }},
 	// 	Outcome:            {{ .ProcInfo.Outcome | asCoreOutcome }},
@@ -164,7 +164,7 @@ func RegisterAllEnchants() {
 	})
 	{{- else}}
 	// shared.NewProcStatBonusEffect(shared.ProcStatBonusEffect{
-	{{- with index .Variants 0 }}
+		{{- with index .Variants 0 }}
 	//	Name:               "{{ .Name }}",
 	//	EnchantID:          {{ .ID }},
 		{{- end}}
