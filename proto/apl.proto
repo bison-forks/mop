@@ -49,7 +49,7 @@ message APLGroup {
 	repeated APLValueVariable variables = 3;  // Variables that can be used in this group
 }
 
-// NextIndex: 31
+// NextIndex: 32
 message APLAction {
     APLValue condition = 1; // If set, action will only execute if value is true or != 0.
 
@@ -85,6 +85,7 @@ message APLAction {
         APLActionItemSwap item_swap = 17;
         APLActionMove move = 21;
         APLActionMoveDuration move_duration = 22;
+		APLActionDamageAmplifier damage_amplifier = 31;
 
         // Class or Spec-specific actions
         APLActionCatOptimalRotationAction cat_optimal_rotation_action = 18;
@@ -418,6 +419,16 @@ message APLActionMove {
 
 message APLActionMoveDuration {
     APLValue duration = 1;
+}
+message APLActionDamageAmplifier {
+	enum AmplificationType {
+        CasterBuff = 0;
+        EnvironmentBuff = 1;
+        TargetDebuff = 2;
+    }
+
+	AmplificationType ampType = 1;
+	int32 amount = 2;
 }
 
 message APLActionCustomRotation {

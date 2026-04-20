@@ -884,6 +884,13 @@
 				"new": "New {{itemName}}",
 				"reset": "Reset APL"
 			},
+			"nameModal": {
+				"create": "Create",
+				"nameConflict": "An item with this name already exists.",
+				"extract": "Extract",
+				"rename": "Rename {{itemName}}",
+				"renameConfirm": "Rename"
+			},
 			"prePullActions": {
 				"header": "Pre-Pull Action List",
 				"name": "Pre-Pull Action",
@@ -910,7 +917,8 @@
 					"value": "Value",
 					"valueTooltip": "The value expression that this variable represents."
 				},
-				"copyName": "{variableName} (Copy)",
+				"enterVariableName": "Enter variable name:",
+				"extractToVariable": "Extract to APL Variable",
 				"header": "Variables",
 				"name": "Variable",
 				"newVariableName": "New Variable",
@@ -919,6 +927,10 @@
 					"overview": "Variables can be used to store complex conditions that can be referenced in the Action Priority List (APL). This is useful for storing dynamic values that change during the fight, such as cooldown timers or resource levels.",
 					"value": "The value expression that this variable represents."
 				}
+			},
+			"variablePlaceholder": {
+				"name": "Placeholder",
+				"nameLabel": "Placeholder Name"
 			},
 			"prepull_actions": {
 				"title": "Prepull Actions",
@@ -1069,6 +1081,13 @@
 				"trigger_icd": {
 					"label": "Trigger ICD",
 					"tooltip": "Triggers the specified internal cooldown."
+				},
+				"damage_amplification": {
+					"label": "Damage Amplification",
+					"tooltip": "Multiplies Damage Done % by the specified percentage.",
+					"amount": {
+						"label": "Percentage"
+					}
 				},
 				"item_swap": {
 					"label": "Item Swap",
@@ -1685,7 +1704,8 @@
 					"include_reaction_time_tooltip": "If checked, will use the configured reaction time.",
 					"use_base_value": "Use base value",
 					"use_base_value_tooltip": "If checked, will compare the current DoT to the the base value (on encounter start) of the DoT.",
-					"variable_assignment_tooltip": "Value to assign to variable '{{variableName}}'"
+					"variable_assignment_tooltip": "Value to assign to variable '{{variableName}}'",
+					"amplification_type": "Amplification Type"
 				},
 				"eclipse_types": {
 					"lunar": "Lunar",
@@ -1714,6 +1734,20 @@
 					"caster": "Caster",
 					"cat": "Cat",
 					"hybrid": "Hybrid"
+				},
+				"amplification_types": {
+					"caster_buff": {
+						"label": "Caster Buff",
+						"tooltip": "Buff is on caster; snapshots DoTs and affect pets (not guardians)"
+					},
+					"environment_buff": {
+						"label": "Environment Buff",
+						"tooltip": "Buff is on the environment (ie. Jin'Rokh' pool); snapshots DoTs and affect pets (not guardians)"
+					},
+					"target_debuff": {
+						"label": "Target Debuff",
+						"tooltip": "Debuff is on target; doesn't snapshot DoTs and affects pets/guardians"
+					}
 				},
 				"unit_labels": {
 					"self": "Self",

@@ -15,6 +15,7 @@ import FireApl from './apls/fire.apl.json';
 import MasteryApl from './apls/mastery_fire.apl.json';
 import P3BISGear from './gear_sets/p3_bis.gear.json';
 import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
+import P4BISGear from './gear_sets/p4_bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -22,8 +23,9 @@ import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
 // export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
 // export const P1_BIS = PresetUtils.makePresetGear('P1 - BIS', P1BISGear);
 // export const P2_BIS = PresetUtils.makePresetGear('P2 - BIS', P2BISGear);
-export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
+// export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
 export const P3_MASTERY = PresetUtils.makePresetGear('P3 - Mastery BiS', P3MasteryGear);
+export const P4_BIS = PresetUtils.makePresetGear('P3/P4 - BIS', P4BISGear);
 
 export const P1TrollDefaultSimpleRotation = FireMage_Rotation.create({
 	combustAlwaysSend: 4000000,
@@ -52,11 +54,11 @@ export const P2NoTrollDefaultSimpleRotation = FireMage_Rotation.create({
 });
 
 export const P3TrollDefaultSimpleRotation = FireMage_Rotation.create({
-	combustAlwaysSend: 11000000,
-	combustBloodlust: 13000000,
-	combustPostAlter: 10000000,
-	combustNoAlter: 1100000,
-	combustEndOfCombat: 700000,
+	combustAlwaysSend: 5250000,
+	combustBloodlust: 4750000,
+	combustPostAlter: 2000000,
+	combustNoAlter: 500000,
+	combustEndOfCombat: 200000,
 });
 export const P3NoTrollDefaultSimpleRotation = FireMage_Rotation.create({
 	...P3TrollDefaultSimpleRotation,
@@ -96,12 +98,12 @@ export const P1_PREBIS_EP_PRESET = PresetUtils.makePresetEpWeights(
 		[Stat.StatMasteryRating]: 0.59,
 	}),
 );
-	export const MASTERY_EP_PRESET = PresetUtils.makePresetEpWeights(
+export const MASTERY_EP_PRESET = PresetUtils.makePresetEpWeights(
 	'Mastery',
 	Stats.fromMap({
 		[Stat.StatIntellect]: 1.37,
 		[Stat.StatSpellPower]: 1.0,
-		[Stat.StatHitRating]: 1.20,
+		[Stat.StatHitRating]: 1.2,
 		[Stat.StatCritRating]: 0.55,
 		[Stat.StatHasteRating]: 0.62,
 		[Stat.StatMasteryRating]: 1.05,
@@ -227,7 +229,7 @@ export const MASTERY_SETTINGS: PresetUtils.PresetSettings = {
 };
 
 export const P3_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P3 - Crit', {
-	gear: P3_BIS,
+	gear: P4_BIS,
 	rotation: P3_SIMPLE_ROTATION_PRESET_DEFAULT,
 	talents: FireTalents,
 	epWeights: DEFAULT_EP_PRESET,
@@ -283,8 +285,6 @@ export const P3_MASTERY_PRESET_BUILD = PresetUtils.makePresetBuild('P3 - Mastery
 // 		consumables: DefaultFireConsumables,
 // 	},
 // });
-
-
 
 export const COMBUSTION_BREAKPOINT: UnitStatPresets = {
 	unitStat: UnitStat.fromPseudoStat(PseudoStat.PseudoStatSpellHastePercent),

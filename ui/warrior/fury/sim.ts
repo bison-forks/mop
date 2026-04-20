@@ -15,6 +15,7 @@ import * as Presets from './presets';
 
 const P2HitPostCapEPs = [0, 0];
 const P3HitPostCapEPs = [0.42 * Mechanics.PHYSICAL_HIT_RATING_PER_HIT_PERCENT, 0];
+const P5HitPostCapEPs = [1.18 * Mechanics.PHYSICAL_HIT_RATING_PER_HIT_PERCENT, 0];
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecFuryWarrior, {
 	cssClass: 'fury-warrior-sim-ui',
@@ -122,7 +123,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFuryWarrior, {
 	},
 
 	presets: {
-		epWeights: [Presets.P2_FURY_SMF_EP_PRESET, Presets.P2_FURY_TG_EP_PRESET, Presets.P3_FURY_TG_EP_PRESET],
+		epWeights: [Presets.P2_FURY_SMF_EP_PRESET, Presets.P2_FURY_TG_EP_PRESET, Presets.P3_4_FURY_TG_EP_PRESET, Presets.P5_FURY_TG_EP_PRESET],
 		// Preset talents that the user can quickly select.
 		talents: [Presets.FurySMFTalents, Presets.FuryTGTalents],
 		// Preset rotations that the user can quickly select.
@@ -133,9 +134,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFuryWarrior, {
 			Presets.PRERAID_FURY_TG_PRESET,
 			Presets.P2_BIS_FURY_SMF_PRESET,
 			Presets.P2_BIS_FURY_TG_PRESET,
-			Presets.P3_BIS_FURY_TG_PRESET,
+			Presets.P3_4_BIS_FURY_TG_PRESET,
+			Presets.P5_BIS_FURY_TG_PRESET,
 		],
-		builds: [Presets.P2_PRESET_BUILD_SMF, Presets.P2_PRESET_BUILD_TG],
+		builds: [Presets.P3_4_PRESET_BUILD_TG, Presets.P5_PRESET_BUILD_TG],
 	},
 
 	autoRotation: (_player: Player<Spec.SpecFuryWarrior>): APLRotation => {
@@ -178,28 +180,45 @@ export class FuryWarriorSimUI extends IndividualSimUI<Spec.SpecFuryWarrior> {
 		super(parentElem, player, SPEC_CONFIG);
 
 		this.reforger = new ReforgeOptimizer(this, {
+			getEPDefaults: player => {
+				const avgIlvl = player.getGear().getAverageItemLevel(player.canDualWield2H());
+				if (avgIlvl >= 560) {
+					return Presets.P5_FURY_TG_EP_PRESET.epWeights;
+				} else if (avgIlvl >= 517) {
+					return Presets.P3_4_FURY_TG_EP_PRESET.epWeights;
+				}
+				return Presets.P2_FURY_TG_EP_PRESET.epWeights;
+			},
 			updateSoftCaps: softCaps => {
-				const avgIlvl = player.getGear().getAverageItemLevel(false);
+				const avgIlvl = player.getGear().getAverageItemLevel(player.canDualWield2H());
+				// const gear = player.getGear();
+				// const avgIlvl = gear.getAverageItemLevel(false);
+				// const hasT154P = gear.getItemSetCount('Battleplate of the Last Mogu') >= 4;
+				const epWeights = this.reforger?.preCapEPs;
 
 				this.individualConfig.defaults.softCapBreakpoints!.forEach(softCap => {
 					const softCapToModify = softCaps.find(sc => sc.unitStat.equals(softCap.unitStat));
 					if (softCap.unitStat.equalsPseudoStat(PseudoStat.PseudoStatPhysicalHitPercent) && softCapToModify) {
-						if (avgIlvl >= 517) {
+						console.log(avgIlvl);
+						if (avgIlvl >= 560) {
+							softCapToModify.postCapEPs = P5HitPostCapEPs;
+						} else if (avgIlvl >= 517) {
 							softCapToModify.postCapEPs = P3HitPostCapEPs;
 						} else {
 							softCapToModify.postCapEPs = P2HitPostCapEPs;
 						}
 					}
-
-					// TODO: Setup Crit soft cap for P3
-					// if (softCap.unitStat.equalsPseudoStat(PseudoStat.PseudoStatPhysicalCritPercent) && softCapToModify) {
-					// 	if (avgIlvl >= 517) {
-					// 		softCapToModify.postCapEPs = P3CritPostCapEPs;
-					// 	} else {
-					// 		softCapToModify.postCapEPs = P2CritPostCapEPs;
-					// 	}
-					// }
 				});
+
+				if (epWeights) {
+					softCaps.push(
+						StatCap.fromPseudoStat(PseudoStat.PseudoStatPhysicalCritPercent, {
+							breakpoints: [53],
+							capType: StatCapType.TypeSoftCap,
+							postCapEPs: [(epWeights.getStat(Stat.StatMasteryRating) - 0.02) * Mechanics.CRIT_RATING_PER_CRIT_PERCENT],
+						}),
+					);
+				}
 				return softCaps;
 			},
 		});

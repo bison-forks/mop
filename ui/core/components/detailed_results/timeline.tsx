@@ -582,7 +582,9 @@ export class Timeline extends ResultComponent {
 		);
 
 		auraAsResource.forEach(auraId => {
-			const auraIndex = buffsById.findIndex(auraUptimeLogs => auraUptimeLogs?.[0].actionId!.spellId === auraId);
+			const auraIndex = buffsById.findIndex(
+				auraUptimeLogs => auraUptimeLogs?.[0].actionId!.spellId === auraId || auraUptimeLogs?.[0].actionId!.otherId === auraId,
+			);
 			if (auraIndex !== -1) {
 				this.addAuraRow(buffsById[auraIndex], duration);
 			}
@@ -1316,6 +1318,9 @@ const SPELL_ACTION_CATEGORY = 2;
 const DEFAULT_ACTION_CATEGORY = 3;
 
 const auraAsResource = [
+	// APL Damage Amplifier
+	OtherAction.OtherActionDamageAmplifier,
+
 	// Vengeance
 	84840, // Druid
 	84839, // Paladin
@@ -1339,6 +1344,7 @@ const idToCategoryMap: Record<number, number> = {
 	[OtherAction.OtherActionMove]: 0,
 	[OtherAction.OtherActionAttack]: 0.01,
 	[OtherAction.OtherActionShoot]: 0.5,
+	[OtherAction.OtherActionDamageAmplifier]: 0.6,
 
 	// Druid
 	[48480]: 0.1, // Maul

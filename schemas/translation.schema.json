@@ -966,6 +966,7 @@
         "name",
         "search",
         "filter",
+        "elapsed_time",
         "phases",
         "tanks",
         "status",
@@ -3685,6 +3686,34 @@
                 "reset"
               ]
             },
+            "nameModal": {
+              "type": "object",
+              "properties": {
+                "create": {
+                  "type": "string"
+                },
+                "extract": {
+                  "type": "string"
+                },
+                "nameConflict": {
+                  "type": "string"
+                },
+                "rename": {
+                  "type": "string"
+                },
+                "renameConfirm": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "create",
+                "extract",
+                "nameConflict",
+                "rename",
+                "renameConfirm"
+              ]
+            },
             "prePullActions": {
               "type": "object",
               "properties": {
@@ -3790,7 +3819,10 @@
                     "valueTooltip"
                   ]
                 },
-                "copyName": {
+                "enterVariableName": {
+                  "type": "string"
+                },
+                "extractToVariable": {
                   "type": "string"
                 },
                 "header": {
@@ -3826,11 +3858,27 @@
               "additionalProperties": false,
               "required": [
                 "attributes",
-                "copyName",
+                "enterVariableName",
+                "extractToVariable",
                 "header",
                 "name",
                 "newVariableName",
                 "tooltips"
+              ]
+            },
+            "variablePlaceholder": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "nameLabel": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "nameLabel"
               ]
             },
             "prepull_actions": {
@@ -4442,6 +4490,35 @@
                     "tooltip"
                   ]
                 },
+                "damage_amplification": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "tooltip": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "label"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "label",
+                    "tooltip",
+                    "amount"
+                  ]
+                },
                 "item_swap": {
                   "type": "object",
                   "properties": {
@@ -4604,6 +4681,7 @@
                 "activate_all_stat_buff_proc_auras",
                 "cancel_aura",
                 "trigger_icd",
+                "damage_amplification",
                 "item_swap",
                 "move",
                 "custom_rotation",
@@ -7042,6 +7120,9 @@
                     },
                     "variable_assignment_tooltip": {
                       "type": "string"
+                    },
+                    "amplification_type": {
+                      "type": "string"
                     }
                   },
                   "additionalProperties": false,
@@ -7055,7 +7136,8 @@
                     "include_reaction_time_tooltip",
                     "use_base_value",
                     "use_base_value_tooltip",
-                    "variable_assignment_tooltip"
+                    "variable_assignment_tooltip",
+                    "amplification_type"
                   ]
                 },
                 "eclipse_types": {
@@ -7170,6 +7252,65 @@
                     "hybrid"
                   ]
                 },
+                "amplification_types": {
+                  "type": "object",
+                  "properties": {
+                    "caster_buff": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "tooltip": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "label",
+                        "tooltip"
+                      ]
+                    },
+                    "environment_buff": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "tooltip": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "label",
+                        "tooltip"
+                      ]
+                    },
+                    "target_debuff": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "tooltip": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "label",
+                        "tooltip"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "caster_buff",
+                    "environment_buff",
+                    "target_debuff"
+                  ]
+                },
                 "unit_labels": {
                   "type": "object",
                   "properties": {
@@ -7251,6 +7392,7 @@
                 "rune_slots",
                 "rotation_types",
                 "hotw_strategies",
+                "amplification_types",
                 "unit_labels",
                 "placeholder_tooltip",
                 "select_variable",
@@ -7265,10 +7407,12 @@
           "required": [
             "actionGroups",
             "floatingActionBar",
+            "nameModal",
             "prePullActions",
             "priorityList",
             "tabs",
             "variables",
+            "variablePlaceholder",
             "prepull_actions",
             "priority_list",
             "actions",
@@ -9808,6 +9952,7 @@
                 "breakpoints_implemented",
                 "post_cap_ep",
                 "reforge_optimization_failed",
+                "reforge_optimization_cancelled",
                 "use_custom",
                 "enable_modification",
                 "modify_in_editor",

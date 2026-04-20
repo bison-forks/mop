@@ -16,6 +16,7 @@ type buffConfig struct {
 	stat      stats.Stat
 	duration  time.Duration
 	icd       time.Duration
+	callback  core.AuraCallback // default: core.CallbackOnSpellHitDealt
 }
 
 type readinessTrinketConfig struct {
@@ -390,7 +391,7 @@ func init() {
 				spiritValue := 1 + core.GetItemEffectScaling(itemID, 0.00176999997, state)/100
 
 				statAura := core.MakePermanent(character.RegisterAura(core.Aura{
-					Label:      fmt.Sprintf("Amplification (%s)", versionLabel),
+					Label:      fmt.Sprintf("Amplification - %s (%s)", config.baseTrinketLabel, versionLabel),
 					ActionID:   core.ActionID{SpellID: 146051},
 					BuildPhase: core.CharacterBuildPhaseGear,
 				})).
@@ -411,7 +412,7 @@ func init() {
 
 				triggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
 					Name:       fmt.Sprintf("%s (%s)", config.baseTrinketLabel, versionLabel),
-					Callback:   core.CallbackOnSpellHitDealt,
+					Callback:   core.Ternary(config.buff.callback != core.CallbackEmpty, config.buff.callback, core.CallbackOnSpellHitDealt),
 					Outcome:    core.OutcomeLanded,
 					ICD:        time.Second * 115,
 					ProcChance: 0.15,
@@ -468,6 +469,28 @@ func init() {
 			auraLabel: "Expanded Mind",
 			auraID:    146046,
 			stat:      stats.Intellect,
+		},
+	})
+
+	// Prismatic Prison of Pride
+	// Each time your spells heal you have a chance to gain 14039 Intellect for 20 sec.
+	// (15% chance, 115 sec cooldown) (Proc chance: 15%, 1.917m cooldown)
+	// Amplifies your Critical Strike damage and healing, Haste, Mastery, and Spirit by 1%.
+	newStatAmplificationTrinket(&statAmplificationTrinketConfig{
+		itemVersionMap: shared.ItemVersionMap{
+			shared.ItemVersionLFR:             104976,
+			shared.ItemVersionNormal:          102299,
+			shared.ItemVersionHeroic:          104478,
+			shared.ItemVersionWarforged:       105225,
+			shared.ItemVersionHeroicWarforged: 105474,
+			shared.ItemVersionFlexible:        104727,
+		},
+		baseTrinketLabel: "Prismatic Prison of Pride",
+		buff: &buffConfig{
+			auraLabel: "Titanic Restoration",
+			auraID:    146314,
+			stat:      stats.Intellect,
+			callback:  core.CallbackOnHealDealt | core.CallbackOnPeriodicHealDealt,
 		},
 	})
 
