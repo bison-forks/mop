@@ -6,7 +6,7 @@ import { ResourceType } from '../../proto/spell';
 import { ActionId } from '../../proto_utils/action_id';
 import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
-import { SimResult, SimResultFilter } from '../../proto_utils/sim_result';
+import { ActionMetrics, SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result';
 import i18n from '../../../i18n/config';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component';
 
@@ -119,9 +119,6 @@ export class CombatReplay extends ResultComponent {
 	private readonly preloadedUrls = new Set<string>();
 	private enemyCardDom: EnemyCardDom[] = [];
 	private readonly actionIconByKey = new Map<string, HTMLAnchorElement>();
-
-	/** ActionId keys (see replayCastExclusionKey) excluded from ticker + CDM grid — passives, melee, non-spell. */
-	private replayExcludedCastKeys = new Set<string>();
 
 	private ui!: {
 		emptyEl: HTMLElement;
@@ -285,9 +282,18 @@ export class CombatReplay extends ResultComponent {
 		});
 	}
 
-	/** Matches ActionMetrics identity for replay cast filtering (ignores tag). */
-	private replayCastExclusionKey(id: ActionId): string {
-		return [id.spellId, id.itemId, id.otherId, id.randomSuffixId, id.reforgeId, id.upgradeStep].join(':');
+	/**
+	 * Find merged action row for a cast; match like PR #1360 (equalsIgnoringTag).
+	 * Sim `isPassive` = SpellFlagPassiveSpell (passive in spellbook) — not normal rotation / melee abilities.
+	 */
+	private findActionMetricsForCastId(player: UnitMetrics | null, id: ActionId): ActionMetrics | null {
+		if (!player) return null;
+		for (const am of player.getPlayerAndPetActions()) {
+			if (am.actionId.equalsIgnoringTag(id)) {
+				return am;
+			}
+		}
+		return null;
 	}
 
 	onSimResult(resultData: SimResultData): void {
@@ -312,7 +318,6 @@ export class CombatReplay extends ResultComponent {
 		this.targetAuras = [];
 		this.lockedResourceTypes = [];
 		this.resourceMaxByType.clear();
-		this.replayExcludedCastKeys.clear();
 
 		const filteredTargets = result.getTargets(filter);
 		this.enemyNames = filteredTargets.map(t => t.name);
@@ -323,13 +328,6 @@ export class CombatReplay extends ResultComponent {
 		const playerEntity = players[0] ? new Entity(players[0].name, '', players[0].index, false, false) : null;
 
 		const mainPlayer = players[0];
-		if (mainPlayer) {
-			for (const am of mainPlayer.getPlayerAndPetActions()) {
-				if (am.isPassiveAction || am.isMeleeAction) {
-					this.replayExcludedCastKeys.add(this.replayCastExclusionKey(am.actionId));
-				}
-			}
-		}
 
 		const castBeganLogs: CastBeganLog[] = [];
 		const dmgLogs: DamageDealtLog[] = [];
@@ -343,14 +341,17 @@ export class CombatReplay extends ResultComponent {
 			else if (l.isResourceChanged()) resourceLogs.push(l as ResourceChangedLog);
 		}
 
-		// Ticker + CDM action grid: real spells only (game-like bar), not passives, melee, or item-only entries.
+		// Ticker + CDM: any player CastBegan with spell or item; hide only sim passive spells (isPassive on metrics = SpellFlagPassive).
 		const isReplayCastSequenceAction = (c: CastBeganLog): boolean => {
 			const id = c.actionId;
 			if (!id) return false;
 			if (id.otherId !== OtherAction.OtherActionNone) return false;
-			if (!id.spellId) return false;
+			if (!id.spellId && !id.itemId) return false;
 			if (!(id.name ?? '')) return false;
-			if (this.replayExcludedCastKeys.has(this.replayCastExclusionKey(id))) return false;
+			const am = this.findActionMetricsForCastId(mainPlayer ?? null, id);
+			if (am != null && am.isPassiveAction) {
+				return false;
+			}
 			return true;
 		};
 
