@@ -120,6 +120,9 @@ export class CombatReplay extends ResultComponent {
 	private enemyCardDom: EnemyCardDom[] = [];
 	private readonly actionIconByKey = new Map<string, HTMLAnchorElement>();
 
+	/** ActionId keys (see replayCastExclusionKey) excluded from ticker + CDM grid — passives, melee, non-spell. */
+	private replayExcludedCastKeys = new Set<string>();
+
 	private ui!: {
 		emptyEl: HTMLElement;
 		scene: HTMLElement;
@@ -282,6 +285,11 @@ export class CombatReplay extends ResultComponent {
 		});
 	}
 
+	/** Matches ActionMetrics identity for replay cast filtering (ignores tag). */
+	private replayCastExclusionKey(id: ActionId): string {
+		return [id.spellId, id.itemId, id.otherId, id.randomSuffixId, id.reforgeId, id.upgradeStep].join(':');
+	}
+
 	onSimResult(resultData: SimResultData): void {
 		this.stopPlayback();
 		this.lastBuffKey = '';
@@ -304,6 +312,7 @@ export class CombatReplay extends ResultComponent {
 		this.targetAuras = [];
 		this.lockedResourceTypes = [];
 		this.resourceMaxByType.clear();
+		this.replayExcludedCastKeys.clear();
 
 		const filteredTargets = result.getTargets(filter);
 		this.enemyNames = filteredTargets.map(t => t.name);
@@ -312,6 +321,15 @@ export class CombatReplay extends ResultComponent {
 
 		const players = result.getPlayers(filter);
 		const playerEntity = players[0] ? new Entity(players[0].name, '', players[0].index, false, false) : null;
+
+		const mainPlayer = players[0];
+		if (mainPlayer) {
+			for (const am of mainPlayer.getPlayerAndPetActions()) {
+				if (am.isPassiveAction || am.isMeleeAction) {
+					this.replayExcludedCastKeys.add(this.replayCastExclusionKey(am.actionId));
+				}
+			}
+		}
 
 		const castBeganLogs: CastBeganLog[] = [];
 		const dmgLogs: DamageDealtLog[] = [];
@@ -325,15 +343,18 @@ export class CombatReplay extends ResultComponent {
 			else if (l.isResourceChanged()) resourceLogs.push(l as ResourceChangedLog);
 		}
 
-		const isRealSpell = (c: CastBeganLog): boolean => {
+		// Ticker + CDM action grid: real spells only (game-like bar), not passives, melee, or item-only entries.
+		const isReplayCastSequenceAction = (c: CastBeganLog): boolean => {
 			const id = c.actionId;
 			if (!id) return false;
 			if (id.otherId !== OtherAction.OtherActionNone) return false;
-			if (!id.spellId && !id.itemId) return false;
-			return !!(id.name ?? '');
+			if (!id.spellId) return false;
+			if (!(id.name ?? '')) return false;
+			if (this.replayExcludedCastKeys.has(this.replayCastExclusionKey(id))) return false;
+			return true;
 		};
 
-		const playerCasts = (playerEntity ? castBeganLogs.filter(c => c.source?.equals(playerEntity)) : castBeganLogs).filter(isRealSpell);
+		const playerCasts = (playerEntity ? castBeganLogs.filter(c => c.source?.equals(playerEntity)) : castBeganLogs).filter(isReplayCastSequenceAction);
 		const playerDmg = playerEntity ? dmgLogs.filter(d => d.source?.equals(playerEntity)) : dmgLogs;
 
 		for (const cast of playerCasts) {
