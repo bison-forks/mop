@@ -1670,6 +1670,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDemonology-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 233390.33374
+  tps: 145344.6285
+ }
+}
+dps_results: {
  key: "TestDemonology-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 258446.91739

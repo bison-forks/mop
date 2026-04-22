@@ -1943,6 +1943,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestFeral-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 247197.99381
+  tps: 359528.80904
+  hps: 16218.88172
+ }
+}
+dps_results: {
  key: "TestFeral-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 247562.05865
@@ -1972,14 +1980,6 @@ dps_results: {
   dps: 233864.86554
   tps: 348305.95745
   hps: 15131.05427
- }
-}
-dps_results: {
- key: "TestFeral-AllItems-RegaliaoftheShatteredVale"
- value: {
-  dps: 159538.96959
-  tps: 196084.35066
-  hps: 14712.9298
  }
 }
 dps_results: {

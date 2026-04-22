@@ -131,10 +131,14 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecArcaneMage, {
 	},
 
 	autoRotation: (player: Player<Spec.SpecArcaneMage>): APLRotation => {
+		const hasT154P = player.getGear().getItemSetCount('Regalia of the Chromatic Hydra') >= 4;
 		// const numTargets = player.sim.encounter.targets.length;
 		// if (numTargets >= 2) {
 		// 	return Presets.ROTATION_PRESET_CLEAVE.rotation.rotation!;
 		// } else {
+		if (hasT154P) {
+			return Presets.ROTATION_PRESET_T15_4PC.rotation.rotation!;
+		}
 		return Presets.ROTATION_PRESET_DEFAULT.rotation.rotation!;
 		// }
 	},

@@ -2182,6 +2182,15 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestGuardian-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 327498.65619
+  tps: 1.99027489907e+06
+  dtps: 44989.82602
+  hps: 31902.94576
+ }
+}
+dps_results: {
  key: "TestGuardian-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 327758.4125
@@ -2215,15 +2224,6 @@ dps_results: {
   tps: 1.91490513389e+06
   dtps: 43804.40631
   hps: 30443.59862
- }
-}
-dps_results: {
- key: "TestGuardian-AllItems-RegaliaoftheShatteredVale"
- value: {
-  dps: 251640.07379
-  tps: 1.53285974426e+06
-  dtps: 59102.29117
-  hps: 31888.39523
  }
 }
 dps_results: {

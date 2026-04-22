@@ -1887,6 +1887,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestDestruction-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 276027.24438
+  tps: 214707.94815
+  hps: 1551.91304
+ }
+}
+dps_results: {
  key: "TestDestruction-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 279418.71623
@@ -1921,17 +1929,17 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-RegaliaoftheHornedNightmare"
  value: {
-  dps: 223549.65468
-  tps: 169498.26128
+  dps: 224963.45576
+  tps: 171006.84184
   hps: 1427.68921
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-RegaliaoftheThousandfoldHells"
  value: {
-  dps: 222819.7419
-  tps: 169437.32536
-  hps: 1401.26826
+  dps: 222553.41994
+  tps: 169307.86521
+  hps: 1400.68415
  }
 }
 dps_results: {
@@ -2057,17 +2065,17 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Sha-SkinRegalia"
  value: {
-  dps: 215740.74498
-  tps: 164335.12298
-  hps: 1299.26995
+  dps: 215430.68819
+  tps: 164169.54222
+  hps: 1299.81449
  }
 }
 dps_results: {
  key: "TestDestruction-AllItems-ShadowflameRegalia"
  value: {
-  dps: 166590.19079
-  tps: 125843.48985
-  hps: 1015.89841
+  dps: 167074.70496
+  tps: 126081.92605
+  hps: 1016.33895
  }
 }
 dps_results: {

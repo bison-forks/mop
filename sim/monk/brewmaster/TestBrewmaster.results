@@ -2191,6 +2191,15 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestBrewmaster-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 333203.21973
+  tps: 1.53153889582e+06
+  dtps: 14465.61699
+  hps: 34760.99661
+ }
+}
+dps_results: {
  key: "TestBrewmaster-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 333203.21973

@@ -1935,6 +1935,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestUnholy-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 253660.95462
+  tps: 180861.24273
+  hps: 3012.3876
+ }
+}
+dps_results: {
  key: "TestUnholy-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 253660.95462

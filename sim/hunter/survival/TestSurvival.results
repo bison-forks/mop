@@ -82,15 +82,15 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-AllItems-BattlegearoftheSaurokStalker"
  value: {
-  dps: 226260.32915
-  tps: 171361.6437
+  dps: 225477.42136
+  tps: 171193.37109
  }
 }
 dps_results: {
  key: "TestSurvival-AllItems-BattlegearoftheUnblinkingVigil"
  value: {
-  dps: 231720.24677
-  tps: 178978.08336
+  dps: 231231.23605
+  tps: 178548.92553
  }
 }
 dps_results: {
@@ -831,8 +831,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-AllItems-Gladiator'sPursuit"
  value: {
-  dps: 233690.36974
-  tps: 179751.1126
+  dps: 237095.47903
+  tps: 182636.25318
  }
 }
 dps_results: {
@@ -1684,6 +1684,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestSurvival-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 268872.24641
+  tps: 209179.00806
+ }
+}
+dps_results: {
  key: "TestSurvival-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
   dps: 268872.24641
@@ -2428,8 +2435,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-AllItems-YaungolSlayerBattlegear"
  value: {
-  dps: 215797.84566
-  tps: 168711.57361
+  dps: 214064.82614
+  tps: 167536.98297
  }
 }
 dps_results: {

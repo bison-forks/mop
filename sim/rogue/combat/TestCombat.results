@@ -54,8 +54,8 @@ dps_results: {
 dps_results: {
  key: "TestCombat-AllItems-BarbedAssassinBattlegear"
  value: {
-  dps: 110405.63644
-  tps: 77831.11102
+  dps: 112033.09471
+  tps: 78986.60639
  }
 }
 dps_results: {
@@ -365,6 +365,13 @@ dps_results: {
  value: {
   dps: 102823.22604
   tps: 72432.29879
+ }
+}
+dps_results: {
+ key: "TestCombat-AllItems-PrismaticPrisonofPride-105474"
+ value: {
+  dps: 99290.47801
+  tps: 69983.15137
  }
 }
 dps_results: {
