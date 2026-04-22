@@ -745,39 +745,6 @@ func init() {
 		},
 	})
 
-	// Time-Lost Artifact
-	// Your melee and ranged attacks have a chance to grant 3647 haste for 20 sec.
-	// (Proc chance: 20%, 50s cooldown)
-	core.NewItemEffect(103678, func(agent core.Agent, state proto.ItemLevelState) {
-		character := agent.GetCharacter()
-
-		aura := character.NewTemporaryStatsAura(
-			"Winds of Time",
-			core.ActionID{SpellID: 148447},
-			stats.Stats{stats.HasteRating: core.GetItemEffectScalingStatValue(103678, 1.56799995899, state)},
-			time.Second*20,
-		)
-
-		triggerAura := character.MakeProcTriggerAura(core.ProcTrigger{
-			Name:       "Time-Lost Artifact Trigger",
-			Callback:   core.CallbackOnSpellHitDealt,
-			Outcome:    core.OutcomeLanded,
-			ProcMask:   core.ProcMaskMeleeOrMeleeProc | core.ProcMaskRangedOrRangedProc,
-			ICD:        time.Second * 50,
-			ProcChance: 0.2,
-
-			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
-				aura.Activate(sim)
-			},
-		})
-
-		aura.Icd = triggerAura.Icd
-
-		eligibleSlots := character.ItemSwap.EligibleSlotsForItem(103678)
-		character.AddStatProcBuff(103678, aura, false, eligibleSlots)
-		character.ItemSwap.RegisterProcWithSlots(103678, triggerAura, eligibleSlots)
-	})
-
 	// Skeer's Bloodsoaked Talisman
 	// Your melee attacks have a chance to trigger Cruelty for 10 sec.
 	// While Cruelty is active, you gain 1402 Critical Strike every 0.5 sec, stacking up to 20 times.
