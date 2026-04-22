@@ -35,7 +35,15 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecArmsWarrior, {
 	epReferenceStat: Stat.StatStrength,
 	// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 	displayStats: UnitStat.createDisplayStatArray(
-		[Stat.StatHealth, Stat.StatStamina, Stat.StatStrength, Stat.StatAgility, Stat.StatAttackPower, Stat.StatExpertiseRating, Stat.StatMasteryRating],
+		[
+			Stat.StatHealth,
+			Stat.StatStamina,
+			Stat.StatStrength,
+			Stat.StatAgility,
+			Stat.StatAttackPower,
+			Stat.StatExpertiseRating,
+			Stat.StatMasteryRating,
+		],
 		[PseudoStat.PseudoStatPhysicalHitPercent, PseudoStat.PseudoStatPhysicalCritPercent, PseudoStat.PseudoStatMeleeHastePercent],
 	),
 	// modifyDisplayStats: (player: Player<Spec.SpecArmsWarrior>) => {
