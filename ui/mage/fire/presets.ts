@@ -67,8 +67,16 @@ export const P3NoTrollDefaultSimpleRotation = FireMage_Rotation.create({
 	combustPostAlter: 10000000,
 });
 
-export const P3_SIMPLE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetSimpleRotation('P3 - Crit', Spec.SpecFireMage, P3TrollDefaultSimpleRotation);
-export const P3_SIMPLE_ROTATION_NO_TROLL = PresetUtils.makePresetSimpleRotation('P3 - Default (No Troll)', Spec.SpecFireMage, P3NoTrollDefaultSimpleRotation);
+export const P4TrollDefaultSimpleRotation = FireMage_Rotation.create({
+	combustAlwaysSend: 9100000,
+	combustBloodlust: 6100000,
+	combustPostAlter: 3100000,
+	combustNoAlter: 600000,
+	combustEndOfCombat: 245000,
+});
+
+export const P4_SIMPLE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetSimpleRotation('P4 - Crit', Spec.SpecFireMage, P4TrollDefaultSimpleRotation);
+export const P3_SIMPLE_ROTATION_NO_TROLL = PresetUtils.makePresetSimpleRotation('P4 - Default (No Troll)', Spec.SpecFireMage, P3NoTrollDefaultSimpleRotation);
 export const P1_ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('APL', FireApl);
 export const MASTERY_ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Mastery APL', MasteryApl);
 
@@ -228,9 +236,9 @@ export const MASTERY_SETTINGS: PresetUtils.PresetSettings = {
 	playerOptions: OtherDefaults,
 };
 
-export const P3_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P3 - Crit', {
+export const P4_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P4 - Crit', {
 	gear: P4_BIS,
-	rotation: P3_SIMPLE_ROTATION_PRESET_DEFAULT,
+	rotation: P4_SIMPLE_ROTATION_PRESET_DEFAULT,
 	talents: FireTalents,
 	epWeights: DEFAULT_EP_PRESET,
 	encounter: ENCOUNTER_SINGLE_TARGET,
