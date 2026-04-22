@@ -4,9 +4,9 @@ import { ref } from 'tsx-vanilla';
 import { OtherAction } from '../../proto/common';
 import { ResourceType } from '../../proto/spell';
 import { ActionId } from '../../proto_utils/action_id';
-import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser';
+import { CastBeganLog, DamageDealtLog, Entity, ResourceChangedLog } from '../../proto_utils/logs_parser';
 import { resourceColors, resourceNames } from '../../proto_utils/names';
-import { ActionMetrics, SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result';
+import { SimResult, SimResultFilter } from '../../proto_utils/sim_result';
 import i18n from '../../../i18n/config';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component';
 
@@ -282,20 +282,6 @@ export class CombatReplay extends ResultComponent {
 		});
 	}
 
-	/**
-	 * Find merged action row for a cast; match like PR #1360 (equalsIgnoringTag).
-	 * Sim `isPassive` = SpellFlagPassiveSpell (passive in spellbook) — not normal rotation / melee abilities.
-	 */
-	private findActionMetricsForCastId(player: UnitMetrics | null, id: ActionId): ActionMetrics | null {
-		if (!player) return null;
-		for (const am of player.getPlayerAndPetActions()) {
-			if (am.actionId.equalsIgnoringTag(id)) {
-				return am;
-			}
-		}
-		return null;
-	}
-
 	onSimResult(resultData: SimResultData): void {
 		this.stopPlayback();
 		this.lastBuffKey = '';
@@ -326,8 +312,7 @@ export class CombatReplay extends ResultComponent {
 
 		const players = result.getPlayers(filter);
 		const playerEntity = players[0] ? new Entity(players[0].name, '', players[0].index, false, false) : null;
-
-		const mainPlayer = players[0];
+		const actionMetrics = result.getActionMetrics(filter);
 
 		const castBeganLogs: CastBeganLog[] = [];
 		const dmgLogs: DamageDealtLog[] = [];
@@ -335,21 +320,18 @@ export class CombatReplay extends ResultComponent {
 
 		for (const log of result.logs) {
 			if (log.timestamp < 0) continue;
-			const l = log as SimLog;
-			if (l.isCastBegan()) castBeganLogs.push(l as CastBeganLog);
-			else if (l.isDamageDealt()) dmgLogs.push(l as DamageDealtLog);
-			else if (l.isResourceChanged()) resourceLogs.push(l as ResourceChangedLog);
+			if (log.isCastBegan()) castBeganLogs.push(log);
+			else if (log.isDamageDealt()) dmgLogs.push(log);
+			else if (log.isResourceChanged()) resourceLogs.push(log);
 		}
 
-		// Ticker + CDM: any player CastBegan with spell or item; hide only sim passive spells (isPassive on metrics = SpellFlagPassive).
 		const isReplayCastSequenceAction = (c: CastBeganLog): boolean => {
 			const id = c.actionId;
 			if (!id) return false;
 			if (id.otherId !== OtherAction.OtherActionNone) return false;
 			if (!id.spellId && !id.itemId) return false;
 			if (!(id.name ?? '')) return false;
-			const am = this.findActionMetricsForCastId(mainPlayer ?? null, id);
-			if (am != null && am.isPassiveAction) {
+			if (actionMetrics.find(m => m.actionId?.equals(id))?.isPassiveAction) {
 				return false;
 			}
 			return true;
