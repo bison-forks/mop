@@ -1671,6 +1671,7 @@
 				"eclipse": "Éclipse",
 				"runes": "Runes",
 				"cooldowns": "CDs",
+				"non_combat_potions": "Flasques / Élixirs",
 				"placeholders": "Espaces Réservés"
 			},
 			"item_swap_sets": {

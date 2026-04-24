@@ -13,14 +13,14 @@ import { ReforgeSettings, SavedTalents } from '../../core/proto/ui';
 import { Stats, UnitStat, UnitStatPresets } from '../../core/proto_utils/stats';
 import FireApl from './apls/fire.apl.json';
 import MasteryApl from './apls/mastery_fire.apl.json';
-import P3BISGear from './gear_sets/p3_bis.gear.json';
+import P1PreBISGear from './gear_sets/p1_prebis.gear.json';
 import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
 import P4BISGear from './gear_sets/p4_bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
-// export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
+export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
 // export const P1_BIS = PresetUtils.makePresetGear('P1 - BIS', P1BISGear);
 // export const P2_BIS = PresetUtils.makePresetGear('P2 - BIS', P2BISGear);
 // export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);

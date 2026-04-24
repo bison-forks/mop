@@ -1,4 +1,5 @@
 import { CHARACTER_LEVEL, MAX_CHALLENGE_MODE_ILVL } from '../constants/mechanics';
+import { APLActionItemSwap_SwapSet } from '../proto/apl';
 import { ActionID as ActionIdProto, ItemLevelState, ItemRandomSuffix, OtherAction, ReforgeStat } from '../proto/common';
 import { ResourceType } from '../proto/spell';
 import { IconData, UIItem as Item } from '../proto/ui';
@@ -162,6 +163,15 @@ export class ActionId {
 						break;
 				}
 				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/spell_nature_abolishmagic.jpg';
+				break;
+			case OtherAction.OtherActionItemSwap:
+				baseName = 'Item Swap: ';
+				if (this.tag == APLActionItemSwap_SwapSet.Main) {
+					baseName += 'Main';
+				} else {
+					baseName += 'Swapped';
+				}
+				iconUrl = 'https://wow.zamimg.com/images/wow/icons/medium/ability_dualwield.jpg';
 				break;
 		}
 		this.baseName = baseName ?? '';

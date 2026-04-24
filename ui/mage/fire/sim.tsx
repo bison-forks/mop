@@ -157,7 +157,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFireMage, {
 		// Preset talents that the user can quickly select.
 		talents: [Presets.FireTalents, Presets.FireTalentsCleave, Presets.FireTalentsMastery],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.P3_MASTERY, Presets.P4_BIS],
+		gear: [Presets.P1_PREBIS, Presets.P3_MASTERY, Presets.P4_BIS],
 		// gear: [Presets.P1_PREBIS, Presets.P1_BIS, Presets.P2_BIS, Presets.P3_BIS, Presets.P3_MASTERY],
 
 		builds: [Presets.P4_CRIT_PRESET_BUILD, Presets.P3_MASTERY_PRESET_BUILD],
