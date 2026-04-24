@@ -109,6 +109,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 		})(),
 		softCapBreakpoints: (() => {
 			return [
+				StatCap.fromPseudoStat(PseudoStat.PseudoStatMeleeHastePercent, {
+					breakpoints: [50],
+					capType: StatCapType.TypeSoftCap,
+					postCapEPs: [1.1 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT],
+				}),
 				StatCap.fromStat(Stat.StatExpertiseRating, {
 					breakpoints: [7.5 * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION, 15 * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION],
 					capType: StatCapType.TypeSoftCap,
@@ -217,6 +222,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 		this.reforger = new ReforgeOptimizer(this, {
 			updateSoftCaps: softCaps => {
 				const epWeights = player.getEpWeights();
+				// const hasSealOfInsight = player.getSpecOptions().classOptions?.seal === PaladinSeal.Insight;
+				const raidBuffs = player.getRaid()?.getBuffs()!;
+				const hasDamageAmpTrinket = !!this.player.getAmplificationTrinkets().length;
 
 				this.individualConfig.defaults.softCapBreakpoints!.forEach(softCap => {
 					const softCapToModify = softCaps.find(sc => sc.unitStat.equals(softCap.unitStat));
@@ -231,7 +239,27 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 							softCapToModify.postCapEPs = P2ExpertisePostCapEPs;
 						}
 					}
+					if (softCap.unitStat.equalsPseudoStat(PseudoStat.PseudoStatMeleeHastePercent) && softCapToModify) {
+						let hasteSoftCap = 50;
+						const hasMeleeHaste = [
+							raidBuffs.unholyAura,
+							raidBuffs.cacklingHowl,
+							raidBuffs.serpentsSwiftness,
+							raidBuffs.swiftbladesCunning,
+							raidBuffs.unleashedRage,
+						].some(Boolean);
+
+						if (!hasMeleeHaste) {
+							hasteSoftCap -= 10;
+						}
+
+						softCapToModify.breakpoints = [hasteSoftCap];
+						softCapToModify.postCapEPs = [
+							(epWeights.getStat(Stat.StatCritRating) - 0.05) * (hasDamageAmpTrinket ? 0.9 : 1) * Mechanics.HASTE_RATING_PER_HASTE_PERCENT,
+						];
+					}
 				});
+
 				return softCaps;
 			},
 		});
