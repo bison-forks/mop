@@ -85,6 +85,20 @@ func (we *WaterElemental) GetPet() *core.Pet {
 
 func (we *WaterElemental) Initialize() {
 	we.registerWaterboltSpell()
+
+	if we.mageOwner.IncantersWardPassiveAura != nil {
+		incantersWardPassiveDmgMod := we.AddDynamicMod(core.SpellModConfig{
+			Kind:       core.SpellMod_DamageDone_Pct,
+			FloatValue: 0.06,
+		})
+		we.mageOwner.IncantersWardPassiveAura.
+			ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
+				incantersWardPassiveDmgMod.Activate()
+			}).
+			ApplyOnExpire(func(aura *core.Aura, sim *core.Simulation) {
+				incantersWardPassiveDmgMod.Deactivate()
+			})
+	}
 }
 
 func (we *WaterElemental) Reset(_ *core.Simulation) {
