@@ -222,7 +222,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 		this.reforger = new ReforgeOptimizer(this, {
 			updateSoftCaps: softCaps => {
 				const epWeights = player.getEpWeights();
-				// const hasSealOfInsight = player.getSpecOptions().classOptions?.seal === PaladinSeal.Insight;
 				const raidBuffs = player.getRaid()?.getBuffs()!;
 				const hasDamageAmpTrinket = !!this.player.getAmplificationTrinkets().length;
 
@@ -249,8 +248,8 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 							raidBuffs.unleashedRage,
 						].some(Boolean);
 
-						if (!hasMeleeHaste) {
-							hasteSoftCap -= 10;
+						if (hasMeleeHaste) {
+							hasteSoftCap += 15;
 						}
 
 						softCapToModify.breakpoints = [hasteSoftCap];
