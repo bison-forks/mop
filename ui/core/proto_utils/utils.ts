@@ -2070,8 +2070,8 @@ export const extendPlayerProtoWithMissingEffects = (playerProto: Player, db: Dat
 	const seenEffectIds = new Set<number>();
 
 	const { consumableIds = [], ...consumables } = playerProto.consumables || {};
-	const allConsumeableIds = Object.values(consumables).filter((c): c is number => typeof c === 'number');
-	const allConsumables = [...consumableIds, ...allConsumeableIds];
+	const allConsumableIds = Object.values(consumables).filter((c): c is number => typeof c === 'number');
+	const allConsumables = [...consumableIds, ...allConsumableIds];
 
 	allConsumables.forEach((cid: number) => {
 		if (!cid || seenConsumableIds.has(cid)) return;

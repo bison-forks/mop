@@ -618,7 +618,7 @@ export class Timeline extends ResultComponent {
 
 		// Don't add a row for buffs that were already visualized in a cast row or are prioritized.
 		const buffsToShow = buffsById.filter(auraUptimeLogs =>
-			playerCastsByAbility.findIndex(casts => {
+			!playerCastsByAbility.some(casts => {
 				const actionId = auraUptimeLogs[0].actionId;
 				return actionId && (casts[0].actionId!.equalsIgnoringTag(actionId) || auraAsResource.find(auraId => auraId.equals(actionId)));
 			}),

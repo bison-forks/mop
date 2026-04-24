@@ -122,7 +122,9 @@ const actionIdSets: Record<
 			const castableSpells = metadata.getSpells().filter(spell => spell.data.isCastable);
 
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
-			const { spells: spells, cooldowns: cooldowns } = bucket(castableSpells, spell => (spell.data.isMajorCooldown ? 'cooldowns' : 'spells'));
+			const { spells, cooldowns, nonCombatPotion } = bucket(castableSpells, spell =>
+				spell.data.isNonCombatPotion ? 'nonCombatPotion' : spell.data.isMajorCooldown ? 'cooldowns' : 'spells',
+			);
 
 			const placeholders: Array<ActionId> = [ActionId.fromOtherId(OtherAction.OtherActionPotion)];
 
@@ -156,6 +158,24 @@ const actionIdSets: Record<
 					return {
 						value: actionId.id,
 						submenu: ['cooldowns'],
+						extraCssClasses: actionId.data.prepullOnly
+							? ['apl-prepull-actions-only']
+							: actionId.data.encounterOnly
+								? ['apl-priority-list-only']
+								: [],
+					};
+				}),
+				[
+					{
+						value: ActionId.fromEmpty(),
+						headerText: i18n.t('rotation_tab.apl.submenus.non_combat_potions'),
+						submenu: ['non_combat_potions'],
+					},
+				],
+				(nonCombatPotion || []).map(actionId => {
+					return {
+						value: actionId.id,
+						submenu: ['non_combat_potions'],
 						extraCssClasses: actionId.data.prepullOnly
 							? ['apl-prepull-actions-only']
 							: actionId.data.encounterOnly
@@ -881,7 +901,7 @@ class APLPlaceholderNamePicker extends Input<Player<any>, string> {
 	private openNameModal(player: Player<any>, getParentValue: () => any, isNew = false) {
 		const currentName = this.getSourceValue();
 		const group = this.findContainingGroup(player, getParentValue());
-		new APLNameModal(this.rootElem.closest('.individual-sim-ui') as HTMLElement ?? document.body, {
+		new APLNameModal((this.rootElem.closest('.individual-sim-ui') as HTMLElement) ?? document.body, {
 			title: currentName
 				? i18n.t('rotation_tab.apl.nameModal.rename', { itemName: i18n.t('rotation_tab.apl.variablePlaceholder.name') })
 				: i18n.t('rotation_tab.apl.floatingActionBar.new', { itemName: i18n.t('rotation_tab.apl.variablePlaceholder.name') }),

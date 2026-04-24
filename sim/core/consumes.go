@@ -99,7 +99,7 @@ func registerNonCombatPotion(agent Agent, elixirOrFlaskId int32) *Spell {
 		BuildPhase: CharacterBuildPhaseBuffs,
 	})
 
-	registerExclusiveNonCombatPotionBuff(item.Type, aura, item.Stats)
+	registerExclusiveNonCombatPotionBuff(item.Type, aura, potionStats)
 
 	castConfig := CastConfig{
 		SharedCD: Cooldown{
@@ -116,7 +116,7 @@ func registerNonCombatPotion(agent Agent, elixirOrFlaskId int32) *Spell {
 
 	return character.GetOrRegisterSpell(SpellConfig{
 		ActionID: actionID,
-		Flags:    SpellFlagNoOnCastComplete | SpellFlagAPL,
+		Flags:    SpellFlagNonCombatPotion | SpellFlagNoOnCastComplete | SpellFlagAPL,
 		Cast:     castConfig,
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 			switch item.Type {
