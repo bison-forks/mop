@@ -2295,22 +2295,22 @@ dps_results: {
 dps_results: {
  key: "TestFire-Settings-Troll-p1_prebis-Row5_Talent3-Fire-fire-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 276958.36366
-  tps: 274309.42759
+  dps: 277452.58885
+  tps: 274812.73608
  }
 }
 dps_results: {
  key: "TestFire-Settings-Troll-p1_prebis-Row5_Talent3-Fire-fire-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 91050.99658
-  tps: 88565.79223
+  dps: 90654.19215
+  tps: 88225.0454
  }
 }
 dps_results: {
  key: "TestFire-Settings-Troll-p1_prebis-Row5_Talent3-Fire-fire-FullBuffs-0.0yards-ShortSingleTarget"
  value: {
-  dps: 132100.36679
-  tps: 123975.45661
+  dps: 130628.8669
+  tps: 122781.80953
  }
 }
 dps_results: {

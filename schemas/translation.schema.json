@@ -3692,10 +3692,10 @@
                 "create": {
                   "type": "string"
                 },
-                "extract": {
+                "nameConflict": {
                   "type": "string"
                 },
-                "nameConflict": {
+                "extract": {
                   "type": "string"
                 },
                 "rename": {
@@ -3708,8 +3708,8 @@
               "additionalProperties": false,
               "required": [
                 "create",
-                "extract",
                 "nameConflict",
+                "extract",
                 "rename",
                 "renameConfirm"
               ]
@@ -3876,6 +3876,7 @@
                   "type": "string"
                 }
               },
+              "additionalProperties": false,
               "required": [
                 "name",
                 "nameLabel"
@@ -6963,6 +6964,9 @@
                 "cooldowns": {
                   "type": "string"
                 },
+                "non_combat_potions": {
+                  "type": "string"
+                },
                 "placeholders": {
                   "type": "string"
                 }
@@ -7002,6 +7006,7 @@
                 "eclipse",
                 "runes",
                 "cooldowns",
+                "non_combat_potions",
                 "placeholders"
               ]
             },

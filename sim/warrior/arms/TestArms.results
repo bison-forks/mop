@@ -2036,8 +2036,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-p4_arms_bis-Basic-arms-FullBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.80480111245e+06
-  tps: 1.42662615243e+06
+  dps: 1.80370116981e+06
+  tps: 1.42552620979e+06
  }
 }
 dps_results: {
@@ -2057,8 +2057,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-p4_arms_bis-Basic-arms-NoBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.43267490311e+06
-  tps: 1.15138787529e+06
+  dps: 1.43170437044e+06
+  tps: 1.15041734261e+06
  }
 }
 dps_results: {
@@ -2078,8 +2078,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-prebis-Basic-arms-FullBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.23496177867e+06
-  tps: 965019.27567
+  dps: 1.23416858723e+06
+  tps: 964226.08423
  }
 }
 dps_results: {
@@ -2099,8 +2099,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Orc-prebis-Basic-arms-NoBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 939484.81201
-  tps: 753727.27348
+  dps: 938804.45178
+  tps: 753046.91325
  }
 }
 dps_results: {
@@ -2120,8 +2120,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Worgen-p4_arms_bis-Basic-arms-FullBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.79163571795e+06
-  tps: 1.42095878096e+06
+  dps: 1.79055597296e+06
+  tps: 1.41987903597e+06
  }
 }
 dps_results: {
@@ -2141,8 +2141,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Worgen-p4_arms_bis-Basic-arms-NoBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.43253733487e+06
-  tps: 1.15589769806e+06
+  dps: 1.43155817495e+06
+  tps: 1.15491853815e+06
  }
 }
 dps_results: {
@@ -2162,8 +2162,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Worgen-prebis-Basic-arms-FullBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 1.19993696912e+06
-  tps: 937821.62792
+  dps: 1.19916552035e+06
+  tps: 937050.17914
  }
 }
 dps_results: {
@@ -2183,8 +2183,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-Settings-Worgen-prebis-Basic-arms-NoBuffs-25.0yards-LongMultiTarget"
  value: {
-  dps: 925585.34142
-  tps: 743664.6307
+  dps: 924902.55489
+  tps: 742981.84417
  }
 }
 dps_results: {

@@ -13,14 +13,14 @@ import { ReforgeSettings, SavedTalents } from '../../core/proto/ui';
 import { Stats, UnitStat, UnitStatPresets } from '../../core/proto_utils/stats';
 import FireApl from './apls/fire.apl.json';
 import MasteryApl from './apls/mastery_fire.apl.json';
-import P3BISGear from './gear_sets/p3_bis.gear.json';
+import P1PreBISGear from './gear_sets/p1_prebis.gear.json';
 import P3MasteryGear from './gear_sets/mastery_fire.gear.json';
 import P4BISGear from './gear_sets/p4_bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
-// export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
+export const P1_PREBIS = PresetUtils.makePresetGear('P1 - Pre-BIS', P1PreBISGear);
 // export const P1_BIS = PresetUtils.makePresetGear('P1 - BIS', P1BISGear);
 // export const P2_BIS = PresetUtils.makePresetGear('P2 - BIS', P2BISGear);
 // export const P3_BIS = PresetUtils.makePresetGear('P3 - Crit BiS', P3BISGear);
@@ -67,8 +67,16 @@ export const P3NoTrollDefaultSimpleRotation = FireMage_Rotation.create({
 	combustPostAlter: 10000000,
 });
 
-export const P3_SIMPLE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetSimpleRotation('P3 - Crit', Spec.SpecFireMage, P3TrollDefaultSimpleRotation);
-export const P3_SIMPLE_ROTATION_NO_TROLL = PresetUtils.makePresetSimpleRotation('P3 - Default (No Troll)', Spec.SpecFireMage, P3NoTrollDefaultSimpleRotation);
+export const P4TrollDefaultSimpleRotation = FireMage_Rotation.create({
+	combustAlwaysSend: 9100000,
+	combustBloodlust: 6100000,
+	combustPostAlter: 3100000,
+	combustNoAlter: 600000,
+	combustEndOfCombat: 245000,
+});
+
+export const P4_SIMPLE_ROTATION_PRESET_DEFAULT = PresetUtils.makePresetSimpleRotation('P4 - Crit', Spec.SpecFireMage, P4TrollDefaultSimpleRotation);
+export const P3_SIMPLE_ROTATION_NO_TROLL = PresetUtils.makePresetSimpleRotation('P4 - Default (No Troll)', Spec.SpecFireMage, P3NoTrollDefaultSimpleRotation);
 export const P1_ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('APL', FireApl);
 export const MASTERY_ROTATION_PRESET_APL = PresetUtils.makePresetAPLRotation('Mastery APL', MasteryApl);
 
@@ -228,9 +236,9 @@ export const MASTERY_SETTINGS: PresetUtils.PresetSettings = {
 	playerOptions: OtherDefaults,
 };
 
-export const P3_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P3 - Crit', {
+export const P4_CRIT_PRESET_BUILD = PresetUtils.makePresetBuild('P4 - Crit', {
 	gear: P4_BIS,
-	rotation: P3_SIMPLE_ROTATION_PRESET_DEFAULT,
+	rotation: P4_SIMPLE_ROTATION_PRESET_DEFAULT,
 	talents: FireTalents,
 	epWeights: DEFAULT_EP_PRESET,
 	encounter: ENCOUNTER_SINGLE_TARGET,
