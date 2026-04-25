@@ -116,11 +116,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 					capType: StatCapType.TypeSoftCap,
 					postCapEPs: [1.1 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT],
 				}),
-				// StatCap.fromPseudoStat(PseudoStat.PseudoStatMeleeHastePercent, {
-				// 	breakpoints: [50],
-				// 	capType: StatCapType.TypeSoftCap,
-				// 	postCapEPs: [1.1 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT],
-				// }),
 				StatCap.fromStat(Stat.StatExpertiseRating, {
 					breakpoints: [7.5 * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION, 15 * 4 * Mechanics.EXPERTISE_PER_QUARTER_PERCENT_REDUCTION],
 					capType: StatCapType.TypeSoftCap,
