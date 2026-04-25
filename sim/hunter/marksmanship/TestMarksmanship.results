@@ -793,8 +793,8 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-AllItems-Fen-Yu,FuryofXuen-102248"
  value: {
-  dps: 294671.55961
-  tps: 228178.40528
+  dps: 295248.6626
+  tps: 228761.05569
   hps: 18.54706
  }
 }
@@ -881,8 +881,8 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-AllItems-Gong-Lu,StrengthofXuen-102249"
  value: {
-  dps: 285190.99311
-  tps: 222263.4433
+  dps: 285800.38886
+  tps: 222872.83905
   hps: 18.54706
  }
 }
