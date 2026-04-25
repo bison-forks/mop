@@ -1682,4 +1682,17 @@ export class Player<SpecType extends Spec> {
 			})
 			.filter((i): i is EquippedItem => !!i);
 	}
+
+	getTotalAmplificationTrinketStatModifier() {
+		const trinkets = this.getAmplificationTrinkets();
+		let totalModifier = 1;
+		for (const trinket of trinkets) {
+			const randPropPoints = this.sim.db.getItemEffectRandPropPoints(trinket.ilvl)?.randPropPoints;
+			if (!randPropPoints) continue;
+			const statScalingCoeff = 0.00176999997;
+			const buffValue = 1 + (statScalingCoeff * randPropPoints) / 100;
+			totalModifier *= buffValue;
+		}
+		return totalModifier;
+	}
 }

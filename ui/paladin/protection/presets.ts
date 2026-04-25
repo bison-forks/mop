@@ -101,10 +101,10 @@ export const P3_4_OFFENSIVE_EP_PRESET = PresetUtils.makePresetEpWeights(
 		{
 			[Stat.StatStrength]: 1.0,
 			[Stat.StatStamina]: 0.61,
-			[Stat.StatHitRating]: 2.16,
+			[Stat.StatHitRating]: 0,
 			[Stat.StatCritRating]: 1.23,
 			[Stat.StatHasteRating]: 1.24,
-			[Stat.StatExpertiseRating]: 1.83,
+			[Stat.StatExpertiseRating]: 0,
 			[Stat.StatDodgeRating]: 0.35,
 			[Stat.StatParryRating]: 0.34,
 			[Stat.StatMasteryRating]: 0.83,

@@ -96,7 +96,7 @@ func registerNonCombatPotion(agent Agent, elixirOrFlaskId int32) *Spell {
 		Label:      item.Name,
 		ActionID:   actionID,
 		Duration:   item.BuffDuration,
-		BuildPhase: CharacterBuildPhaseBuffs,
+		BuildPhase: CharacterBuildPhaseConsumes,
 	})
 
 	registerExclusiveNonCombatPotionBuff(item.Type, aura, potionStats)

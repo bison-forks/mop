@@ -1708,13 +1708,7 @@ export class ReforgeOptimizer {
 		}
 
 		if (stat == Stat.StatHasteRating || stat == Stat.StatMasteryRating || stat == Stat.StatSpirit) {
-			this.player.getAmplificationTrinkets().forEach(trinket => {
-				const randPropPoints = this.sim.db.getItemEffectRandPropPoints(trinket.ilvl)?.randPropPoints;
-				if (!randPropPoints) return;
-				const statScalingCoeff = 0.00176999997;
-				const buffValue = 1 + (statScalingCoeff * randPropPoints) / 100;
-				amount *= buffValue;
-			});
+			amount *= this.player.getTotalAmplificationTrinketStatModifier();
 		}
 
 		// Handle Spirit to Spell Hit conversion for hybrid casters separately from standard dependencies
