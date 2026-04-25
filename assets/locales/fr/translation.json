@@ -2001,6 +2001,7 @@
 				"casts": "Sorts",
 				"resources": "Ressources",
 				"timeline": "Chronologie",
+				"replay": "Replay",
 				"log": "Journal"
 			},
 			"columns": {
@@ -2484,5 +2485,13 @@
 			"points_suffix": "Points",
 			"percent_suffix": "%"
 		}
+	},
+	"combat_replay": {
+		"empty_title": "Replay de Combat",
+		"empty_desc": "Lancez une simulation pour générer un replay de combat interactif",
+		"default_player": "Joueur",
+		"training_dummy": "Mannequin d'entraînement",
+		"seek_back": "Reculer {{time}}s",
+		"seek_fwd": "Avancer {{time}}s"
 	}
 }
