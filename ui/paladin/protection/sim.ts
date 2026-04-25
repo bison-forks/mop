@@ -7,12 +7,10 @@ import { Player } from '../../core/player.js';
 import { PlayerClasses } from '../../core/player_classes';
 import { APLRotation, APLRotation_Type } from '../../core/proto/apl.js';
 import { Debuffs, Faction, IndividualBuffs, PartyBuffs, PseudoStat, Race, RaidBuffs, Spec, Stat, UnitStats } from '../../core/proto/common.js';
-import { PaladinSeal } from '../../core/proto/paladin';
 import { StatCapType } from '../../core/proto/ui.js';
 import { StatCap, Stats, UnitStat } from '../../core/proto_utils/stats.js';
 import { defaultRaidBuffMajorDamageCooldowns } from '../../core/proto_utils/utils';
 import * as PaladinInputs from '../inputs.js';
-import { getGCDCapBreakpoint } from '../shared';
 import * as Presets from './presets.js';
 
 const P2ExpertisePostCapEPs = [0.6, 0];
@@ -239,7 +237,21 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 						}
 					}
 					if (softCap.unitStat.equalsPseudoStat(PseudoStat.PseudoStatMeleeHastePercent) && softCapToModify) {
-						softCapToModify.breakpoints = [getGCDCapBreakpoint(player)];
+						const raidBuffs = player.getRaid()?.getBuffs()!;
+						const hasMeleeHaste = [
+							raidBuffs.unholyAura,
+							raidBuffs.cacklingHowl,
+							raidBuffs.serpentsSwiftness,
+							raidBuffs.swiftbladesCunning,
+							raidBuffs.unleashedRage,
+						].some(Boolean);
+
+						let targetPercent = 50;
+						if (hasMeleeHaste) {
+							targetPercent += 15;
+						}
+
+						softCapToModify.breakpoints = [targetPercent];
 						softCapToModify.postCapEPs = [
 							((epWeights.getStat(Stat.StatCritRating) - 0.02) / player.getTotalAmplificationTrinketStatModifier()) *
 								Mechanics.HASTE_RATING_PER_HASTE_PERCENT,
