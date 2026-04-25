@@ -12,6 +12,7 @@ import { StatCapType } from '../../core/proto/ui.js';
 import { StatCap, Stats, UnitStat } from '../../core/proto_utils/stats.js';
 import { defaultRaidBuffMajorDamageCooldowns } from '../../core/proto_utils/utils';
 import * as PaladinInputs from '../inputs.js';
+import { getGCDCapBreakpoint } from '../shared';
 import * as Presets from './presets.js';
 
 const P2ExpertisePostCapEPs = [0.6, 0];
@@ -228,9 +229,6 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 		this.reforger = new ReforgeOptimizer(this, {
 			updateSoftCaps: softCaps => {
 				const epWeights = player.getEpWeights();
-				const raidBuffs = player.getRaid()?.getBuffs()!;
-				const hasDamageAmpTrinket = !!this.player.getAmplificationTrinkets().length;
-				const hasSealOfInsight = player.getClassOptions()?.seal === PaladinSeal.Insight;
 
 				this.individualConfig.defaults.softCapBreakpoints!.forEach(softCap => {
 					const softCapToModify = softCaps.find(sc => sc.unitStat.equals(softCap.unitStat));
@@ -246,39 +244,10 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 						}
 					}
 					if (softCap.unitStat.equalsPseudoStat(PseudoStat.PseudoStatMeleeHastePercent) && softCapToModify) {
-						const targetHasteFromRatingPercent = 18213 / Mechanics.HASTE_RATING_PER_HASTE_PERCENT;
-
-						const hasMeleeHaste = [
-							raidBuffs.unholyAura,
-							raidBuffs.cacklingHowl,
-							raidBuffs.serpentsSwiftness,
-							raidBuffs.swiftbladesCunning,
-							raidBuffs.unleashedRage,
-						].some(Boolean);
-
-						// Keep baseline cap at 50%.
-						// For melee-haste offset:
-						// - No seal: use 50% base so the buff acts as a pure offset and preserves required rating.
-						// - With seal: use the 18213 target for the multiplicative seal interaction.
-						let meleeOffsetBasePercent = 50;
-						if (hasSealOfInsight) {
-							meleeOffsetBasePercent = targetHasteFromRatingPercent;
-						}
-
-						let sealMultiplier = 1;
-						if (hasSealOfInsight) {
-							sealMultiplier = 1.05;
-						}
-
-						let meleeHasteBonus = 0;
-						if (hasMeleeHaste) {
-							meleeHasteBonus = 10 * (1 + meleeOffsetBasePercent / 100) * sealMultiplier;
-						}
-						const percentCap = 50 + meleeHasteBonus;
-
-						softCapToModify.breakpoints = [percentCap];
+						softCapToModify.breakpoints = [getGCDCapBreakpoint(player)];
 						softCapToModify.postCapEPs = [
-							(epWeights.getStat(Stat.StatCritRating) - 0.05) * (hasDamageAmpTrinket ? 0.9 : 1) * Mechanics.HASTE_RATING_PER_HASTE_PERCENT,
+							((epWeights.getStat(Stat.StatCritRating) - 0.02) / player.getTotalAmplificationTrinketStatModifier()) *
+								Mechanics.HASTE_RATING_PER_HASTE_PERCENT,
 						];
 					}
 				});
