@@ -277,7 +277,9 @@ export class ProtectionPaladinSimUI extends IndividualSimUI<Spec.SpecProtectionP
 						const percentCap = 50 + meleeHasteBonus;
 
 						softCapToModify.breakpoints = [percentCap];
-						softCapToModify.postCapEPs = [0];
+						softCapToModify.postCapEPs = [
+							(epWeights.getStat(Stat.StatCritRating) - 0.05) * (hasDamageAmpTrinket ? 0.9 : 1) * Mechanics.HASTE_RATING_PER_HASTE_PERCENT,
+						];
 					}
 				});
 
