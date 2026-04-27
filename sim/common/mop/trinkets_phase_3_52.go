@@ -144,15 +144,16 @@ func init() {
 			statValue := core.GetItemEffectScalingStatValue(itemID, 0.44999998808, state)
 
 			statBuffAura, aura := character.NewTemporaryStatBuffWithStacks(core.TemporaryStatBuffWithStacksConfig{
-				AuraLabel:            fmt.Sprintf("Wushoolay's Lightning (%s)", versionLabel),
-				ActionID:             core.ActionID{SpellID: 138790},
-				Duration:             time.Second * 10,
-				MaxStacks:            10,
-				TimePerStack:         time.Second * 1,
-				BonusPerStack:        stats.Stats{stats.Intellect: statValue},
-				StackingAuraActionID: core.ActionID{SpellID: 138786},
-				StackingAuraLabel:    fmt.Sprintf("Item - Proc Stacking Intellect (%s)", versionLabel),
-				TickImmediately:      true,
+				AuraLabel:              fmt.Sprintf("Wushoolay's Lightning (%s)", versionLabel),
+				ActionID:               core.ActionID{SpellID: 138790},
+				Duration:               time.Second * 10,
+				MaxStacks:              10,
+				TimePerStack:           time.Second * 1,
+				BonusPerStack:          stats.Stats{stats.Intellect: statValue},
+				StackingAuraActionID:   core.ActionID{SpellID: 138786},
+				StackingAuraLabel:      fmt.Sprintf("Item - Proc Stacking Intellect (%s)", versionLabel),
+				TickImmediately:        true,
+				BuggedAlterTimeRestore: true,
 			})
 
 			triggerAura := character.MakeProcTriggerAura(core.ProcTrigger{

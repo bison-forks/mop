@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestArcane-AllItems-BlackBloodofY'Shaarj-105648"
  value: {
-  dps: 280467.15009
-  tps: 268887.58167
+  dps: 282499.50753
+  tps: 270496.55259
  }
 }
 dps_results: {

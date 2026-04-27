@@ -33,8 +33,8 @@ character_stats_results: {
 dps_results: {
  key: "TestFrost-AllItems-AgilePrimalDiamond"
  value: {
-  dps: 170106.59128
-  tps: 121893.9702
+  dps: 170067.69182
+  tps: 121874.53091
  }
 }
 dps_results: {
@@ -47,8 +47,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ArcaneBadgeoftheShieldwall-93347"
  value: {
-  dps: 167370.95236
-  tps: 119876.59442
+  dps: 167285.57467
+  tps: 119833.39659
  }
 }
 dps_results: {
@@ -68,8 +68,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-AusterePrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BlackBloodofY'Shaarj-105648"
  value: {
-  dps: 190417.46641
-  tps: 136055.44423
+  dps: 190970.88448
+  tps: 136493.19119
  }
 }
 dps_results: {
@@ -145,15 +145,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-BurningPrimalDiamond"
  value: {
-  dps: 171462.56496
-  tps: 122859.40321
+  dps: 171425.4944
+  tps: 122839.81442
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-CapacitivePrimalDiamond"
  value: {
-  dps: 168363.02352
-  tps: 120215.79667
+  dps: 168320.43879
+  tps: 120192.06307
  }
 }
 dps_results: {
@@ -180,15 +180,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ChronomancerRegalia"
  value: {
-  dps: 160288.10352
-  tps: 113804.72018
+  dps: 164621.26763
+  tps: 117713.3895
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-CommunalIdolofDestruction-101168"
  value: {
-  dps: 164905.07606
-  tps: 116204.57722
+  dps: 164857.30975
+  tps: 116183.56951
  }
 }
 dps_results: {
@@ -229,8 +229,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-CourageousPrimalDiamond"
  value: {
-  dps: 169686.57692
-  tps: 121180.70997
+  dps: 169649.28972
+  tps: 121161.04682
  }
 }
 dps_results: {
@@ -383,15 +383,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DarkglowEmbroidery(Rank3)-4893"
  value: {
-  dps: 166939.56034
-  tps: 119505.07938
+  dps: 166911.85178
+  tps: 119490.90594
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-DarkmistVortex-87172"
  value: {
-  dps: 163031.78247
-  tps: 116892.46384
+  dps: 162988.83614
+  tps: 116869.65746
  }
 }
 dps_results: {
@@ -411,8 +411,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-DestructivePrimalDiamond"
  value: {
-  dps: 168589.33553
-  tps: 120385.25505
+  dps: 168546.7508
+  tps: 120361.52146
  }
 }
 dps_results: {
@@ -425,8 +425,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-Dominator'sArcaneBadge-93342"
  value: {
-  dps: 167370.95236
-  tps: 119876.59442
+  dps: 167285.57467
+  tps: 119833.39659
  }
 }
 dps_results: {
@@ -537,15 +537,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EffulgentPrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EmberPrimalDiamond"
  value: {
-  dps: 168989.77944
-  tps: 120678.90722
+  dps: 168952.62699
+  tps: 120659.32021
  }
 }
 dps_results: {
@@ -572,64 +572,64 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-BloodyDancingSteel-5125"
  value: {
-  dps: 166582.38039
-  tps: 119360.25895
+  dps: 166541.10828
+  tps: 119335.86781
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-Colossus-4445"
  value: {
-  dps: 166582.38039
-  tps: 119360.25895
+  dps: 166541.10828
+  tps: 119335.86781
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-DancingSteel-4444"
  value: {
-  dps: 166582.38039
-  tps: 119360.25895
+  dps: 166541.10828
+  tps: 119335.86781
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-ElementalForce-4443"
  value: {
-  dps: 167556.68612
-  tps: 120095.43605
+  dps: 167542.41491
+  tps: 120093.33332
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-River'sSong-4446"
  value: {
-  dps: 166594.00608
-  tps: 119383.37412
+  dps: 166552.73398
+  tps: 119358.98298
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-SpiritofConquest-5124"
  value: {
-  dps: 171516.6105
-  tps: 122891.73224
+  dps: 171458.75537
+  tps: 122854.44197
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnchantWeapon-Windsong-4441"
  value: {
-  dps: 168333.01405
-  tps: 120231.91301
+  dps: 168293.04229
+  tps: 120202.10508
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EnigmaticPrimalDiamond"
  value: {
-  dps: 168589.33553
-  tps: 120385.25505
+  dps: 168546.7508
+  tps: 120361.52146
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-EternalPrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
@@ -656,15 +656,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-FearwurmRelic-84070"
  value: {
-  dps: 163977.02421
-  tps: 117347.48167
+  dps: 163952.44402
+  tps: 117340.80423
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-FelsoulIdolofDestruction-101263"
  value: {
-  dps: 165028.09355
-  tps: 116440.28957
+  dps: 164928.05049
+  tps: 116385.29513
  }
 }
 dps_results: {
@@ -698,15 +698,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-FleetPrimalDiamond"
  value: {
-  dps: 168709.44523
-  tps: 119733.85568
+  dps: 168670.16085
+  tps: 119714.42097
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-ForlornPrimalDiamond"
  value: {
-  dps: 168989.77944
-  tps: 120678.90722
+  dps: 168952.62699
+  tps: 120659.32021
  }
 }
 dps_results: {
@@ -894,15 +894,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ImpassivePrimalDiamond"
  value: {
-  dps: 168589.33553
-  tps: 120385.25505
+  dps: 168546.7508
+  tps: 120361.52146
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-IndomitablePrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
@@ -1021,8 +1021,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-LeiShen'sFinalOrders-87072"
  value: {
-  dps: 162884.51271
-  tps: 116422.74558
+  dps: 162908.34335
+  tps: 116452.81153
  }
 }
 dps_results: {
@@ -1049,15 +1049,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-LightoftheCosmos-87065"
  value: {
-  dps: 169961.70509
-  tps: 121533.32818
+  dps: 170006.52604
+  tps: 121581.64626
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-LordBlastington'sScopeofDoom-4699"
  value: {
-  dps: 166582.38039
-  tps: 119360.25895
+  dps: 166541.10828
+  tps: 119335.86781
  }
 }
 dps_results: {
@@ -1161,8 +1161,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-MirrorScope-4700"
  value: {
-  dps: 166582.38039
-  tps: 119360.25895
+  dps: 166541.10828
+  tps: 119335.86781
  }
 }
 dps_results: {
@@ -1210,8 +1210,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-MountainsageIdolofDestruction-101069"
  value: {
-  dps: 164865.11709
-  tps: 116311.02216
+  dps: 164860.76554
+  tps: 116315.82703
  }
 }
 dps_results: {
@@ -1224,8 +1224,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-NitroBoosts-4223"
  value: {
-  dps: 171462.56496
-  tps: 122859.40321
+  dps: 171425.4944
+  tps: 122839.81442
  }
 }
 dps_results: {
@@ -1273,8 +1273,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-PowerfulPrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
@@ -1392,15 +1392,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-RegaliaoftheBurningScroll"
  value: {
-  dps: 151180.2184
-  tps: 106220.75756
+  dps: 151191.88853
+  tps: 106254.06658
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-RegaliaoftheChromaticHydra"
  value: {
-  dps: 163264.64297
-  tps: 113866.56033
+  dps: 163290.83032
+  tps: 113895.4454
  }
 }
 dps_results: {
@@ -1455,15 +1455,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-ReverberatingPrimalDiamond"
  value: {
-  dps: 170106.59128
-  tps: 121893.9702
+  dps: 170067.69182
+  tps: 121874.53091
  }
 }
 dps_results: {
  key: "TestFrost-AllItems-RevitalizingPrimalDiamond"
  value: {
-  dps: 170106.59128
-  tps: 121893.9702
+  dps: 170067.69182
+  tps: 121874.53091
  }
 }
 dps_results: {
@@ -1742,8 +1742,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-SwordguardEmbroidery(Rank3)-4894"
  value: {
-  dps: 166941.24744
-  tps: 119505.07938
+  dps: 166913.53888
+  tps: 119490.90594
  }
 }
 dps_results: {
@@ -1756,8 +1756,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-SynapseSprings(MarkII)-4898"
  value: {
-  dps: 172935.78254
-  tps: 124008.37064
+  dps: 172837.67757
+  tps: 123913.73842
  }
 }
 dps_results: {
@@ -1777,8 +1777,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TheGloamingBlade-88149"
  value: {
-  dps: 171462.56496
-  tps: 122859.40321
+  dps: 171425.4944
+  tps: 122839.81442
  }
 }
 dps_results: {
@@ -1896,8 +1896,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-AllItems-TyrannicalPrimalDiamond"
  value: {
-  dps: 167657.94639
-  tps: 119733.85568
+  dps: 167618.96952
+  tps: 119714.42097
  }
 }
 dps_results: {
@@ -2001,8 +2001,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Average-Default"
  value: {
-  dps: 175268.74465
-  tps: 125601.05986
+  dps: 175257.03495
+  tps: 125590.99131
  }
 }
 dps_results: {
@@ -2239,8 +2239,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_bis-Row5_Talent3-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 429413.88668
-  tps: 409146.82383
+  dps: 429417.65318
+  tps: 409150.59033
  }
 }
 dps_results: {
@@ -2302,15 +2302,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_bis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 546828.81178
-  tps: 520184.87236
+  dps: 546833.25664
+  tps: 520189.31722
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_bis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 121270.77415
-  tps: 85912.39836
+  dps: 121270.95752
+  tps: 85912.58173
  }
 }
 dps_results: {
@@ -2324,7 +2324,7 @@ dps_results: {
  key: "TestFrost-Settings-Orc-p1_bis-Row6_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 414361.52134
-  tps: 403850.48222
+  tps: 403849.50084
  }
 }
 dps_results: {
@@ -2533,8 +2533,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_prebis-Row5_Talent1-Basic-frost-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 206569.9863
-  tps: 184776.20385
+  dps: 206617.80899
+  tps: 184791.18644
  }
 }
 dps_results: {
@@ -2750,8 +2750,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_prebis-Row6_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 69119.06937
-  tps: 51603.29058
+  dps: 69119.23186
+  tps: 51603.45307
  }
 }
 dps_results: {
@@ -2764,8 +2764,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_prebis-Row6_Talent3-Basic-frost-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 329068.67029
-  tps: 300012.14816
+  dps: 329236.52856
+  tps: 300141.54835
  }
 }
 dps_results: {
@@ -2834,8 +2834,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Orc-p1_prebis-Row6_Talent3-Basic-frost_aoe-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 63152.67926
-  tps: 46474.73665
+  dps: 63152.82903
+  tps: 46474.88642
  }
 }
 dps_results: {
@@ -2855,8 +2855,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-DefaultTalents-Basic-frost-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 174942.40231
-  tps: 125435.77707
+  dps: 174938.36339
+  tps: 125451.23979
  }
 }
 dps_results: {
@@ -2876,8 +2876,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-DefaultTalents-Basic-frost-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 126358.69443
-  tps: 95232.65083
+  dps: 126400.34481
+  tps: 95265.94802
  }
 }
 dps_results: {
@@ -2890,8 +2890,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-DefaultTalents-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 550090.68248
-  tps: 509493.84701
+  dps: 550447.06193
+  tps: 509882.4188
  }
 }
 dps_results: {
@@ -2911,8 +2911,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-DefaultTalents-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 420247.54921
-  tps: 394525.174
+  dps: 420486.23593
+  tps: 394750.39987
  }
 }
 dps_results: {
@@ -2974,8 +2974,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row5_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 379763.55636
-  tps: 330405.47375
+  dps: 379588.42284
+  tps: 330242.48158
  }
 }
 dps_results: {
@@ -2995,15 +2995,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row5_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 281011.49163
-  tps: 253473.4283
+  dps: 281317.09424
+  tps: 253771.85673
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row5_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 85621.09222
-  tps: 62163.39351
+  dps: 85621.25471
+  tps: 62163.556
  }
 }
 dps_results: {
@@ -3122,14 +3122,14 @@ dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost-NoBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 331872.59012
-  tps: 326075.16316
+  tps: 326076.6696
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 125072.13788
-  tps: 95989.37237
+  dps: 125099.76086
+  tps: 95997.68638
  }
 }
 dps_results: {
@@ -3143,28 +3143,28 @@ dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 544119.84585
-  tps: 517267.59545
+  tps: 517264.84411
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 121972.61907
-  tps: 87131.10718
+  dps: 121972.59488
+  tps: 87131.08299
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-ShortSingleTarget"
  value: {
   dps: 164463.7963
-  tps: 111460.3331
+  tps: 111461.20213
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 416263.02957
-  tps: 405900.21556
+  dps: 416259.92221
+  tps: 405894.48788
  }
 }
 dps_results: {
@@ -3205,15 +3205,15 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent3-Basic-frost-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 309893.43741
-  tps: 287889.70457
+  dps: 309893.45606
+  tps: 287895.10598
  }
 }
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent3-Basic-frost-NoBuffs-0.0yards-LongSingleTarget"
  value: {
   dps: 115430.52014
-  tps: 87665.89398
+  tps: 87665.01074
  }
 }
 dps_results: {
@@ -3226,8 +3226,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_bis-Row6_Talent3-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 504167.6785
-  tps: 467698.77552
+  dps: 504171.85615
+  tps: 467702.95316
  }
 }
 dps_results: {
@@ -3268,8 +3268,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-DefaultTalents-Basic-frost-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 355213.61369
-  tps: 320705.82087
+  dps: 355166.81762
+  tps: 320635.83052
  }
 }
 dps_results: {
@@ -3317,8 +3317,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-DefaultTalents-Basic-frost_aoe-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 96932.07195
-  tps: 68489.53504
+  dps: 96932.21974
+  tps: 68489.68284
  }
 }
 dps_results: {
@@ -3380,8 +3380,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row5_Talent1-Basic-frost-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 94662.52471
-  tps: 70890.18242
+  dps: 94687.785
+  tps: 70919.93019
  }
 }
 dps_results: {
@@ -3394,8 +3394,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row5_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 299230.61265
-  tps: 259224.57548
+  dps: 298930.47357
+  tps: 258879.92724
  }
 }
 dps_results: {
@@ -3422,8 +3422,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row5_Talent1-Basic-frost_aoe-NoBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 66088.26474
-  tps: 47970.38005
+  dps: 66088.42723
+  tps: 47970.54254
  }
 }
 dps_results: {
@@ -3521,7 +3521,7 @@ dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent1-Basic-frost-FullBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 348184.09589
-  tps: 335867.10594
+  tps: 335872.20542
  }
 }
 dps_results: {
@@ -3542,7 +3542,7 @@ dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent1-Basic-frost-NoBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 261134.63652
-  tps: 261280.63542
+  tps: 261297.65235
  }
 }
 dps_results: {
@@ -3569,8 +3569,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent1-Basic-frost_aoe-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 96317.42805
-  tps: 68731.0532
+  dps: 96317.57584
+  tps: 68731.51226
  }
 }
 dps_results: {
@@ -3625,8 +3625,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent3-Basic-frost-NoBuffs-0.0yards-LongMultiTarget"
  value: {
-  dps: 245355.4744
-  tps: 230223.37137
+  dps: 245355.53508
+  tps: 230235.85718
  }
 }
 dps_results: {
@@ -3653,8 +3653,8 @@ dps_results: {
 dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent3-Basic-frost_aoe-FullBuffs-0.0yards-LongSingleTarget"
  value: {
-  dps: 89084.63464
-  tps: 62806.6462
+  dps: 89084.49024
+  tps: 62806.50179
  }
 }
 dps_results: {
@@ -3668,7 +3668,7 @@ dps_results: {
  key: "TestFrost-Settings-Troll-p1_prebis-Row6_Talent3-Basic-frost_aoe-NoBuffs-0.0yards-LongMultiTarget"
  value: {
   dps: 306778.30853
-  tps: 289992.43171
+  tps: 289994.86003
  }
 }
 dps_results: {
@@ -3688,7 +3688,7 @@ dps_results: {
 dps_results: {
  key: "TestFrost-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 174942.40231
-  tps: 125435.77707
+  dps: 174938.36339
+  tps: 125451.23979
  }
 }
