@@ -89,8 +89,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-AllItems-BattlegearoftheUnblinkingVigil"
  value: {
-  dps: 226533.88286
-  tps: 102531.904
+  dps: 226904.27899
+  tps: 105878.29636
  }
 }
 dps_results: {
