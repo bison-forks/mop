@@ -248,7 +248,7 @@ func registerBeastMasteryT16(hunter *Hunter, _ *core.Aura) {
 			MaxStacks: 5,
 
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
-				hunter.Pet.PseudoStats.DamageDealtMultiplier *= (1.0 + 0.04*float64(newStacks)) / (1.0 + 0.04*float64(oldStacks))
+				hunter.PseudoStats.DamageDealtMultiplier *= (1.0 + 0.04*float64(newStacks)) / (1.0 + 0.04*float64(oldStacks))
 			},
 		})
 
