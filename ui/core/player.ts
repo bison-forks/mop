@@ -707,7 +707,7 @@ export class Player<SpecType extends Spec> {
 			});
 		}
 		// Make a defensive copy
-		return ConsumesSpec.clone(this.consumables);
+		return ConsumesSpec.clone({ ...this.consumables, consumableIds: [] });
 	}
 
 	setConsumes(eventID: EventID, newConsumes: ConsumesSpec) {
