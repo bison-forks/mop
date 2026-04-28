@@ -236,6 +236,10 @@ func registerBeastMasteryT16(hunter *Hunter, _ *core.Aura) {
 			ClassSpellMask: HunterPetFocusDump,
 
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !hunter.Pet.BestialWrathAura.IsActive() {
+					return
+				}
+
 				brutalKinshipPetAura.Activate(sim)
 				brutalKinshipPetAura.AddStack(sim)
 			},
@@ -248,7 +252,7 @@ func registerBeastMasteryT16(hunter *Hunter, _ *core.Aura) {
 			MaxStacks: 5,
 
 			OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks, newStacks int32) {
-				hunter.Pet.PseudoStats.DamageDealtMultiplier *= (1.0 + 0.04*float64(newStacks)) / (1.0 + 0.04*float64(oldStacks))
+				hunter.PseudoStats.DamageDealtMultiplier *= (1.0 + 0.04*float64(newStacks)) / (1.0 + 0.04*float64(oldStacks))
 			},
 		})
 
@@ -260,6 +264,10 @@ func registerBeastMasteryT16(hunter *Hunter, _ *core.Aura) {
 			ClassSpellMask: HunterSpellsAll | HunterSpellsTalents ^ (HunterSpellFervor | HunterSpellDireBeast | HunterSpellBestialWrath),
 
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+				if !hunter.BestialWrathAura.IsActive() {
+					return
+				}
+
 				brutalKinshipAura.Activate(sim)
 				brutalKinshipAura.AddStack(sim)
 			},
