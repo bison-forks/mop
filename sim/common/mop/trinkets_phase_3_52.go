@@ -545,7 +545,7 @@ func init() {
 
 		core.NewItemEffect(itemID, func(agent core.Agent, state proto.ItemLevelState) {
 			character := agent.GetCharacter()
-			actionId := core.ActionID{SpellID: 138979, ItemID: itemID}
+			actionId := core.ActionID{SpellID: 138979}
 			absorbPerHitValue := core.GetItemEffectScalingStatValue(itemID, 3.78200006485, state)
 
 			damageAbsorptionAura := character.NewDamageAbsorptionAura(core.AbsorptionAuraConfig{
