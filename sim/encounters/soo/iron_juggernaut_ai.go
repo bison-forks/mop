@@ -155,12 +155,16 @@ type IronJuggernautAI struct {
 	SwapBackOnDebuffExpire bool
 
 	priorVengeanceEstimate int32
-	VengeanceAura          *core.Aura
 
-	IgniteArmor     *core.Spell
+	targetSwapPendingAction *core.PendingAction
+	fakeTauntPendingAction  *core.PendingAction
+
+	IgniteArmor *core.Spell
+	LaserBurn   *core.Spell
+	FlameVents  *core.Spell
+
+	VengeanceAura   *core.Aura
 	IgniteArmorAura map[*core.Unit]*core.Aura
-	LaserBurn       *core.Spell
-	FlameVents      *core.Spell
 }
 
 func (ai *IronJuggernautAI) Initialize(target *core.Target, config *proto.Target) {
@@ -170,6 +174,8 @@ func (ai *IronJuggernautAI) Initialize(target *core.Target, config *proto.Target
 	ai.IgniteArmorAura = make(map[*core.Unit]*core.Aura)
 	ai.SwapAtStackCount = int32(config.TargetInputs[0].NumberValue)
 	ai.SwapBackOnDebuffExpire = config.TargetInputs[1].BoolValue
+	ai.targetSwapPendingAction = &core.PendingAction{}
+	ai.fakeTauntPendingAction = &core.PendingAction{}
 
 	for _, tank := range ai.Target.Env.Raid.AllPlayerUnits {
 		ai.registerIgniteArmorAura(tank)
@@ -182,10 +188,9 @@ func (ai *IronJuggernautAI) Initialize(target *core.Target, config *proto.Target
 func (ai *IronJuggernautAI) scheduleFakeTaunt(sim *core.Simulation) {
 	fakeTauntDelay := time.Second*15 + core.DurationFromSeconds(sim.RandomFloat("Vengeance Taunt Timing")*5)
 
-	pa := sim.GetConsumedPendingActionFromPool()
-	pa.NextActionAt = sim.CurrentTime + fakeTauntDelay
-	pa.Priority = core.ActionPriorityDOT
-	pa.OnAction = func(sim *core.Simulation) {
+	ai.fakeTauntPendingAction.NextActionAt = sim.CurrentTime + fakeTauntDelay
+	ai.fakeTauntPendingAction.Priority = core.ActionPriorityDOT
+	ai.fakeTauntPendingAction.OnAction = func(sim *core.Simulation) {
 		ai.applyFakeTauntVengeance(sim)
 
 		if ai.Target.CurrentTarget != ai.TankUnit {
@@ -193,7 +198,7 @@ func (ai *IronJuggernautAI) scheduleFakeTaunt(sim *core.Simulation) {
 		}
 	}
 
-	sim.AddPendingAction(pa)
+	sim.AddPendingAction(ai.fakeTauntPendingAction)
 }
 
 func (ai *IronJuggernautAI) applyFakeTauntVengeance(sim *core.Simulation) {
@@ -232,14 +237,13 @@ func (ai *IronJuggernautAI) swapTargets(sim *core.Simulation, newTankTarget *cor
 	ai.Target.CurrentTarget = newTankTarget
 
 	if !ai.SwapBackOnDebuffExpire {
-		pa := sim.GetConsumedPendingActionFromPool()
-		pa.NextActionAt = sim.CurrentTime + (ai.rollFlameVentsCD(sim) * time.Duration(ai.SwapAtStackCount))
-		pa.Priority = core.ActionPriorityDOT
-		pa.OnAction = func(sim *core.Simulation) {
+		ai.targetSwapPendingAction.NextActionAt = sim.CurrentTime + (ai.rollFlameVentsCD(sim) * time.Duration(ai.SwapAtStackCount))
+		ai.targetSwapPendingAction.Priority = core.ActionPriorityDOT
+		ai.targetSwapPendingAction.OnAction = func(sim *core.Simulation) {
 			ai.swapTargets(sim, oldtarget)
 		}
 
-		sim.AddPendingAction(pa)
+		sim.AddPendingAction(ai.targetSwapPendingAction)
 	}
 
 	if ai.Target.CurrentTarget == nil {
@@ -434,8 +438,14 @@ func (ai *IronJuggernautAI) registerIgniteArmorAura(target *core.Unit) {
 }
 
 func (ai *IronJuggernautAI) Reset(sim *core.Simulation) {
+	ai.Target.CurrentTarget = ai.TankUnit
 	ai.Target.Enable(sim)
+	ai.Target.AutoAttacks.EnableAutoSwing(sim)
 	ai.Target.AutoAttacks.RandomizeMeleeTiming(sim)
+	ai.TankUnit.PseudoStats.InFrontOfTarget = true
+
+	ai.fakeTauntPendingAction.Cancel(sim)
+	ai.targetSwapPendingAction.Cancel(sim)
 
 	ai.VengeanceAura = ai.TankUnit.GetAura("Vengeance")
 	ai.priorVengeanceEstimate = 0
