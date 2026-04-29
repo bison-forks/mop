@@ -1545,17 +1545,17 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-PrismaticPrisonofPride-105474"
  value: {
-  dps: 278496.32028
-  tps: 188559.91129
-  hps: 3272.05136
+  dps: 280334.27009
+  tps: 189455.06089
+  hps: 3319.35813
  }
 }
 dps_results: {
  key: "TestAffliction-AllItems-PurifiedBindingsofImmerseus-105422"
  value: {
-  dps: 278259.37558
-  tps: 187208.56203
-  hps: 3271.44486
+  dps: 282240.46278
+  tps: 190063.8019
+  hps: 3267.80588
  }
 }
 dps_results: {

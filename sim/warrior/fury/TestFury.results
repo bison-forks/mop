@@ -1819,8 +1819,8 @@ dps_results: {
 dps_results: {
  key: "TestFury-AllItems-Thok'sTailTip-105609"
  value: {
-  dps: 303510.48026
-  tps: 192866.72582
+  dps: 303383.10477
+  tps: 192249.98612
  }
 }
 dps_results: {
