@@ -2121,9 +2121,9 @@ dps_results: {
 dps_results: {
  key: "TestUnholy-AllItems-Thok'sTailTip-105609"
  value: {
-  dps: 284254.32719
-  tps: 198248.08634
-  hps: 2995.6236
+  dps: 286197.31103
+  tps: 200278.56879
+  hps: 2989.12502
  }
 }
 dps_results: {

@@ -127,10 +127,10 @@
     "apiVersion": 3,
     "duration": 120,
     "durationVariation": 5,
-    "executeProportion20": 0.2,
-    "executeProportion25": 0.25,
-    "executeProportion35": 0.35,
-    "executeProportion45": 0.45,
+    "executeProportion20": 0,
+    "executeProportion25": 0,
+    "executeProportion35": 0,
+    "executeProportion45": 0,
     "executeProportion90": 0.9,
     "targets": [
       {
