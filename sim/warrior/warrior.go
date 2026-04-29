@@ -32,6 +32,7 @@ const (
 	SpellMaskDemoralizingShout
 
 	// Special attacks
+	SpellMaskOpportunityStrike
 	SpellMaskSweepingStrikes
 	SpellMaskSweepingStrikesHit
 	SpellMaskSweepingStrikesNormalizedHit
