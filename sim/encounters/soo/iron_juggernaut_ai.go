@@ -268,16 +268,18 @@ func (ai *IronJuggernautAI) rollFlameVentsCD(sim *core.Simulation) time.Duration
 }
 
 func (ai *IronJuggernautAI) rollLaserBurnCD(sim *core.Simulation) time.Duration {
-	return core.DurationFromSeconds(6 + sim.RandomFloat("Laser Burn Timing")*6)
+	if sim.Proc(0.75, "Short Laser Burn CD") {
+		return core.DurationFromSeconds(6 + sim.RandomFloat("Laser Burn Timing")*2)
+	}
+	return core.DurationFromSeconds(8.5 + sim.RandomFloat("Laser Burn Timing")*10)
 }
 
 func (ai *IronJuggernautAI) registerLaserBurn() {
 	spellConfig := ai.config.LaserBurn
 	dotConfig := ai.config.LaserBurnDoT
-	procChance := 3 / float64(ai.config.RaidSize)
-	if ai.config.RaidSize == 10 {
-		procChance = 1 / float64(ai.config.RaidSize)
-	}
+	// Rounded average of WCL Heroic logs observed
+	// per-player instant-hit rates across 10m and 25m.
+	procChance := 0.077
 
 	ai.LaserBurn = ai.Target.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 144459},
@@ -289,9 +291,6 @@ func (ai *IronJuggernautAI) registerLaserBurn() {
 		ThreatMultiplier: 1,
 
 		Cast: core.CastConfig{
-			DefaultCast: core.Cast{
-				GCD: core.BossGCD,
-			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    ai.Target.NewTimer(),

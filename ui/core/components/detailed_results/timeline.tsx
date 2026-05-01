@@ -713,7 +713,7 @@ export class Timeline extends ResultComponent {
 		hideElem.value!.addEventListener('click', onClickHandler);
 		const tooltip = tippy(hideElem.value!, {
 			theme: 'timeline-tooltip',
-			placement: 'bottom',
+			placement: 'auto-end',
 			content: isHiddenLabel ? 'Show Row' : 'Hide Row',
 		});
 
@@ -1331,7 +1331,7 @@ const auraAsResource: ActionId[] = [
 	ActionId.fromSpellId(120267), // Monk
 
 	// Monk
-	ActionId.fromSpellId(124255), // Stagger
+	ActionId.fromSpellId(124255, 1), // Stagger
 	ActionId.fromSpellId(128938), // Elusive Brew - Stacks
 	ActionId.fromSpellId(115308), // Elusive Brew - Active
 	ActionId.fromSpellId(1247279), // Tiger Eye Brew - Stacks
