@@ -1933,29 +1933,6 @@ export class ReforgeOptimizer {
 		return updatedGear;
 	}
 
-	private getOptimisticUnitStatUpperBound(unitStat: UnitStat, variables: YalpsVariables): number {
-		const statKey = unitStat.getKey();
-		const maxByGroup = new Map<string, number>();
-
-		for (const [variableKey, coefficients] of variables.entries()) {
-			const splitKey = variableKey.split('_');
-			const groupKey = splitKey.length > 2 ? `${splitKey[0]}_${splitKey[1]}` : (splitKey[0] ?? variableKey);
-			const statContribution = coefficients.get(statKey) || 0;
-			const currentMax = maxByGroup.get(groupKey) ?? Number.NEGATIVE_INFINITY;
-
-			if (statContribution > currentMax) {
-				maxByGroup.set(groupKey, statContribution);
-			}
-		}
-
-		let upperBound = 0;
-		for (const contribution of maxByGroup.values()) {
-			upperBound += Math.max(0, contribution);
-		}
-
-		return upperBound;
-	}
-
 	checkCaps(
 		solution: LPSolution,
 		reforgeCaps: Stats,
@@ -2013,25 +1990,6 @@ export class ReforgeOptimizer {
 			const unitStat = nextSoftCap.unitStat;
 			const statName = unitStat.getKey();
 			const currentValue = reforgeStatContribution.getUnitStat(unitStat);
-
-			const firstBreakpoint = nextSoftCap.breakpoints[0];
-			if (firstBreakpoint !== undefined && currentValue < firstBreakpoint && !updatedConstraints.has(statName)) {
-				const optimisticUpperBound = this.getOptimisticUnitStatUpperBound(unitStat, variables);
-
-				if (optimisticUpperBound >= firstBreakpoint) {
-					updatedConstraints.set(statName, greaterEq(firstBreakpoint));
-					anyCapsExceeded = true;
-					if (isDevMode()) console.log('Soft cap target not met, enforcing floor for: %s', statName);
-					break;
-				} else if (isDevMode()) {
-					console.log(
-						'Soft cap target is unreachable for %s (needed: %s, optimistic max: %s); skipping floor constraint.',
-						statName,
-						firstBreakpoint,
-						optimisticUpperBound,
-					);
-				}
-			}
 
 			let idx = 0;
 			for (const breakpoint of nextSoftCap.breakpoints) {
