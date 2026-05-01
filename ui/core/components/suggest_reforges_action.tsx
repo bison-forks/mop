@@ -251,6 +251,7 @@ export class ReforgeOptimizer {
 	protected pendingWorker: ReforgeWorkerPool | null = null;
 	protected previousGear: Gear | null = null;
 	protected previousReforges = new Map<ItemSlot, ReforgeData>();
+	protected updatedGear: Gear | null = null;
 	protected currentReforges = new Map<ItemSlot, ReforgeData>();
 	relativeStatCapStat: number = -1;
 	relativeStatCap: RelativeStatCap | null = null;
@@ -348,7 +349,8 @@ export class ReforgeOptimizer {
 					if (this.wasCM) {
 						simUI.player.setChallengeModeEnabled(TypedEvent.nextEventID(), false);
 					}
-					await this.optimizeReforges();
+					const gear = await this.optimizeReforges();
+					await this.player.setGearAsync(TypedEvent.nextEventID(), gear);
 					this.onReforgeDone();
 				} catch (error) {
 					if (this.isCancelling) return;
@@ -1276,7 +1278,7 @@ export class ReforgeOptimizer {
 		return statCaps;
 	}
 
-	async optimizeReforges(batchRun?: boolean) {
+	async optimizeReforges(gear?: Gear, batchRun?: boolean) {
 		if (isDevMode()) console.log('Starting Reforge optimization...');
 
 		// First, clear all existing Reforges
@@ -1285,16 +1287,16 @@ export class ReforgeOptimizer {
 			console.log('The following slots will not be cleared:');
 			console.log(Array.from(this.frozenItemSlots.keys()).filter(key => this.getFrozenItemSlot(key)));
 		}
-		this.previousGear = this.player.getGear();
+		this.previousGear = gear || this.player.getGear();
 
 		this.previousReforges = this.previousGear.getAllReforges();
-		let baseGear = this.previousGear.withoutReforges(this.player.canDualWield2H(), this.frozenItemSlots);
+		this.updatedGear = this.previousGear.withoutReforges(this.player.canDualWield2H(), this.frozenItemSlots);
 
 		if (this.includeGems) {
-			baseGear = baseGear.withoutGems(this.player.canDualWield2H(), this.frozenItemSlots, true);
+			this.updatedGear = this.updatedGear.withoutGems(this.player.canDualWield2H(), this.frozenItemSlots, true);
 		}
 
-		const baseStats = await this.updateGear(baseGear);
+		const baseStats = await this.updateGear(this.updatedGear);
 
 		// Compute effective stat caps for just the Reforge contribution
 		let reforgeCaps = baseStats.computeStatCapsDelta(this.processedStatCaps);
@@ -1321,8 +1323,8 @@ export class ReforgeOptimizer {
 		}
 
 		// Set up YALPS model
-		const variables = this.buildYalpsVariables(baseGear, validatedWeights, reforgeCaps, reforgeSoftCaps);
-		const constraints = this.buildYalpsConstraints(baseGear, baseStats);
+		const variables = this.buildYalpsVariables(this.updatedGear!, validatedWeights, reforgeCaps, reforgeSoftCaps);
+		const constraints = this.buildYalpsConstraints(this.updatedGear!, baseStats);
 
 		// After building variables and constraints we check for
 		// SocketBonusLink constraints for the all-or-nothing socket bonus variables.
@@ -1336,7 +1338,6 @@ export class ReforgeOptimizer {
 
 		// Solve in multiple passes to enforce caps
 		await this.solveModel(
-			baseGear,
 			validatedWeights,
 			reforgeCaps,
 			reforgeSoftCaps,
@@ -1345,11 +1346,13 @@ export class ReforgeOptimizer {
 			(this.includeTimeout ? (this.relativeStatCap ? 120 : 30) : 3600) / (batchRun ? 4 : 1),
 		);
 		this.currentReforges = this.player.getGear().getAllReforges();
+
+		return this.updatedGear!;
 	}
 
 	async updateGear(gear: Gear): Promise<Stats> {
-		await this.player.setGearAsync(TypedEvent.nextEventID(), gear);
-		let baseStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
+		const currentStats = await this.sim.getCharacterStatsForGear(TypedEvent.nextEventID(), gear);
+		let baseStats = Stats.fromProto(currentStats.finalStats);
 		baseStats = baseStats.addStat(Stat.StatMasteryRating, this.player.getBaseMastery() * Mechanics.MASTERY_RATING_PER_MASTERY_POINT);
 		if (this.updateGearStatsModifier) baseStats = this.updateGearStatsModifier(baseStats);
 		return baseStats;
@@ -1785,7 +1788,6 @@ export class ReforgeOptimizer {
 	}
 
 	async solveModel(
-		gear: Gear,
 		weights: Stats,
 		reforgeCaps: Stats,
 		reforgeSoftCaps: StatCap[],
@@ -1837,7 +1839,7 @@ export class ReforgeOptimizer {
 		}
 
 		// Apply the current solution
-		const updatedGear = await this.applyLPSolution(gear, solution);
+		this.updatedGear = await this.applyLPSolution(this.updatedGear!, solution);
 
 		// Check if any unconstrained stats exceeded their specified cap.
 		// If so, add these stats to the constraint list and re-run the solver.
@@ -1855,15 +1857,7 @@ export class ReforgeOptimizer {
 			return solution.result;
 		} else {
 			await sleep(100);
-			return await this.solveModel(
-				updatedGear,
-				updatedWeights,
-				reforgeCaps,
-				reforgeSoftCaps,
-				updatedVariables,
-				updatedConstraints,
-				maxSeconds - elapsedSeconds,
-			);
+			return await this.solveModel(updatedWeights, reforgeCaps, reforgeSoftCaps, updatedVariables, updatedConstraints, maxSeconds - elapsedSeconds);
 		}
 	}
 

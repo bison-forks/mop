@@ -18,7 +18,7 @@ import { canEquipItem, getEligibleItemSlots, isSecondaryItemSlot } from '../../p
 import { RequestTypes } from '../../sim_signal_manager';
 import { RelativeStatCap } from '../suggest_reforges_action';
 import { TypedEvent } from '../../typed_event';
-import { getEnumValues, isExternal } from '../../utils';
+import { getEnumValues, isExternal, noop } from '../../utils';
 import { ItemData } from '../gear_picker/item_list';
 import SelectorModal from '../gear_picker/selector_modal';
 import { ResultsViewer } from '../results_viewer';
@@ -40,7 +40,7 @@ import { BulkGearJsonImporter } from './importers';
 import { BooleanPicker } from '../pickers/boolean_picker';
 import { trackEvent } from '../../../tracking/utils';
 import { EnumPicker } from '../pickers/enum_picker';
-import { t } from 'i18next';
+import { translateBulkSlotName } from '../../../i18n/localization';
 
 const WEB_DEFAULT_ITERATIONS = 1000;
 const WEB_ITERATIONS_LIMIT = 50_000;
@@ -576,7 +576,7 @@ export class BulkTab extends SimTab {
 
 			if ([BulkSimItemSlot.ItemSlotFinger, BulkSimItemSlot.ItemSlotTrinket].includes(bulkItemSlot)) {
 				if (numOptions < 2) {
-					throw 'At least 2 items must be selected for ' + BulkSimItemSlot[bulkItemSlot];
+					throw `At least 2 items must be selected for ${translateBulkSlotName(bulkItemSlot)}`;
 				}
 
 				let pairsForSlot = getAllPairs(optionsForSlot);
@@ -603,7 +603,7 @@ export class BulkTab extends SimTab {
 		return itemsForCombo;
 	}
 
-	protected async calculateBulkCombinations() {
+	protected calculateBulkCombinations() {
 		try {
 			let numCombinations: number = this.getAllWeaponCombos().length;
 
@@ -776,12 +776,17 @@ export class BulkTab extends SimTab {
 				let simStart = new Date().getTime();
 
 				this.resetResultsTabContent();
-				await this.calculateBulkCombinations();
-				await this.simUI.runSim((progressMetrics: ProgressMetrics) => {
+				this.calculateBulkCombinations();
+				const response = await this.simUI.runSimLightweight(this.originalGear, (progressMetrics: ProgressMetrics) => {
 					const msSinceStart = new Date().getTime() - simStart;
 					this.setSimProgress(progressMetrics, msSinceStart / 1000, 0, this.combinations);
 				});
-				const referenceDpsMetrics = this.simUI.raidSimResultsManager!.currentData!.simResult!.getFirstPlayer()!.dps;
+				if (!response || (response && 'type' in response)) {
+					throw new Error(response?.message);
+				}
+
+				const [_, result] = response;
+				const referenceDpsMetrics = result!.raidMetrics!.dps!;
 
 				const allItemCombos: Map<ItemSlot, EquippedItem>[] = [];
 
@@ -830,7 +835,7 @@ export class BulkTab extends SimTab {
 						}
 					}
 
-					await this.simUI.player.setGearAsync(TypedEvent.nextEventID(), updatedGear);
+					updatedGear = (await this.simUI.reforger?.optimizeReforges(updatedGear, true).catch(noop)) || updatedGear;
 
 					if (this.simUI.reforger) {
 						this.simUI.reforger.setIncludeGems(TypedEvent.nextEventID(), true);
@@ -845,7 +850,7 @@ export class BulkTab extends SimTab {
 						}
 
 						try {
-							await this.simUI.reforger.optimizeReforges(true);
+							updatedGear = await this.simUI.reforger.optimizeReforges(updatedGear, true);
 						} catch (error) {
 							await this.simUI.player.setGearAsync(TypedEvent.nextEventID(), updatedGear);
 							this.simUI.reforger.setIncludeGems(TypedEvent.nextEventID(), false);
@@ -858,32 +863,34 @@ export class BulkTab extends SimTab {
 							}
 
 							try {
-								await this.simUI.reforger.optimizeReforges(true);
+								updatedGear = await this.simUI.reforger.optimizeReforges(updatedGear, true);
 							} catch (error) {
 								continue;
 							}
 						}
 					}
 
-					const result = await this.simUI.runSim(
-						(progressMetrics: ProgressMetrics) => {
-							const msSinceStart = new Date().getTime() - simStart;
-							this.setSimProgress(progressMetrics, msSinceStart / 1000, comboIdx + 1, this.combinations);
-						},
-						{ silent: true },
-					);
+					const response = await this.simUI.runSimLightweight(updatedGear, (progressMetrics: ProgressMetrics) => {
+						const msSinceStart = new Date().getTime() - simStart;
+						this.setSimProgress(progressMetrics, msSinceStart / 1000, comboIdx + 1, this.combinations);
+					});
 
-					if (result && 'type' in result) {
-						throw new Error(result.message);
+					if (!response || (response && 'type' in response)) {
+						throw new Error(response?.message);
 					}
 
-					updatedGear = this.simUI.player.getGear();
+					const [_, result] = response;
+
 					const isOriginalGear = this.originalGear.equals(updatedGear);
-					if (!isOriginalGear)
+					if (!isOriginalGear) {
+						const dpsMetrics = result!.raidMetrics!.dps!;
+						dpsMetrics.hist = [];
+						dpsMetrics.allValues = [];
 						topGearResults.push({
 							gear: updatedGear,
-							dpsMetrics: result!.getFirstPlayer()!.dps,
+							dpsMetrics,
 						});
+					}
 
 					topGearResults.sort((a, b) => b.dpsMetrics.avg - a.dpsMetrics.avg);
 					if (topGearResults.length > 5) topGearResults.pop();
@@ -904,6 +911,12 @@ export class BulkTab extends SimTab {
 				this.buildResultsTabContent();
 			} catch (error) {
 				console.error(error);
+				if (!isAborted && typeof error === 'string') {
+					new Toast({
+						variant: 'error',
+						body: error,
+					});
+				}
 				await this.simUI.player.setGearAsync(TypedEvent.nextEventID(), this.originalGear!);
 			} finally {
 				this.isRunning = false;
