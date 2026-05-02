@@ -1037,7 +1037,6 @@ export class BulkTab extends SimTab {
 			await this.simUI.sim.signalManager.abortType(RequestTypes.All);
 			this.simStart = new Date().getTime();
 			this.originalGear = this.simUI.player.getGear();
-			let updatedGear: Gear = this.originalGear;
 			let topGearResults: TopGearResult[] = [];
 
 			this.resetResultsTabContent();
@@ -1068,7 +1067,7 @@ export class BulkTab extends SimTab {
 
 				this.setReforgeProgress(comboIdx + 1, this.combinations);
 
-				updatedGear = this.originalGear;
+				let reforgeGear = this.originalGear;
 
 				for (const [itemSlot, equippedItem] of allItemCombos[comboIdx].entries()) {
 					const equippedItemInSlot = this.originalGear.getEquippedItem(itemSlot);
@@ -1083,16 +1082,16 @@ export class BulkTab extends SimTab {
 						updatedItem = updatedItem.withUpgrade(equippedItem._upgrade);
 					}
 
-					updatedGear = updatedGear.withEquippedItem(itemSlot, updatedItem, this.playerIsFuryWarrior);
+					reforgeGear = reforgeGear.withEquippedItem(itemSlot, updatedItem, this.playerIsFuryWarrior);
 
 					for (const [socketIdx, socketColor] of equippedItem.curSocketColors(hasBlacksmithing).entries()) {
 						if (defaultGemsByColor.get(socketColor)) {
-							updatedGear = updatedGear.withGem(itemSlot, socketIdx, defaultGemsByColor.get(socketColor)!);
+							reforgeGear = reforgeGear.withGem(itemSlot, socketIdx, defaultGemsByColor.get(socketColor)!);
 						}
 					}
 				}
 
-				const reforgedGear = await this.optimizeReforges(updatedGear, playerPhase);
+				const reforgedGear = await this.optimizeReforges(reforgeGear, playerPhase);
 				if (!reforgedGear) {
 					continue;
 				}
@@ -1100,6 +1099,7 @@ export class BulkTab extends SimTab {
 				reforgedGearSets.push(reforgedGear);
 			}
 
+			this.simStart = new Date().getTime();
 			const totalSimRounds = reforgedGearSets.length + 1;
 			const result = await this.runSingleGearSim(this.originalGear, 1, totalSimRounds);
 			const referenceDpsMetrics = result!.raidMetrics!.dps!;
@@ -1112,13 +1112,13 @@ export class BulkTab extends SimTab {
 				const reforgedGear = reforgedGearSets[comboIdx];
 				const result = await this.runSingleGearSim(reforgedGear, comboIdx + 2, totalSimRounds);
 
-				const isOriginalGear = this.originalGear.equals(updatedGear);
+				const isOriginalGear = this.originalGear.equals(reforgedGear);
 				if (!isOriginalGear) {
 					const dpsMetrics = result!.raidMetrics!.dps!;
 					dpsMetrics.hist = [];
 					dpsMetrics.allValues = [];
 					topGearResults.push({
-						gear: updatedGear,
+						gear: reforgedGear,
 						dpsMetrics,
 					});
 				}

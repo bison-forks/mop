@@ -1345,7 +1345,7 @@ export class ReforgeOptimizer {
 			constraints,
 			(this.includeTimeout ? (this.relativeStatCap ? 120 : 30) : 3600) / (batchRun ? 4 : 1),
 		);
-		this.currentReforges = this.player.getGear().getAllReforges();
+		this.currentReforges = this.updatedGear.getAllReforges();
 
 		return this.updatedGear!;
 	}
