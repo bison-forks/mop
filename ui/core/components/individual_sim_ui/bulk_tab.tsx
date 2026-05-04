@@ -43,8 +43,8 @@ import { translateBulkSlotName } from '../../../i18n/localization';
 import { ProgressTrackerModal } from '../progress_tracker_modal';
 
 const WEB_DEFAULT_ITERATIONS = 1000;
-const WEB_ITERATIONS_LIMIT = 50_000;
-const LOCAL_ITERATIONS_LIMIT = 1_000_000;
+const WEB_ITERATIONS_LIMIT = 100_000;
+const LOCAL_ITERATIONS_LIMIT = 5_000_000;
 
 export interface TopGearResult {
 	gear: Gear;
@@ -925,7 +925,7 @@ export class BulkTab extends SimTab {
 
 		if (warningRef.value) {
 			tippy(warningRef.value, {
-				content: i18n.t('bulk_tab.warning.iterations_limit', { limit: WEB_ITERATIONS_LIMIT }),
+				content: i18n.t('bulk_tab.warning.iterations_limit', { limit: this.getIterationsLimit() }),
 				placement: 'left',
 				popperOptions: {
 					modifiers: [

@@ -830,7 +830,7 @@
             "failed_to_remove_item": "Échec de la suppression de l'objet, veuillez signaler ce problème."
         },
         "warning": {
-            "iterations_limit": "Simuler plus de {{limit}} itérations dans le simulateur web prendra beaucoup de temps ou ne fonctionnera peut-être pas du tout. Pour les simulations par lot plus importantes, nous recommandons d'utiliser le mode rapide ou de télécharger l'exécutable et de l'exécuter sur votre machine."
+			"iterations_limit": "Simuler plus de {{limit}} itérations dans le simulateur prendra beaucoup de temps ou ne fonctionnera peut-être pas du tout. Pour les simulations par lot plus importantes, nous recommandons de télécharger l'exécutable et de l'exécuter sur votre machine."
         },
         "picker": {
             "no_items": "Aucun objet sélectionné.",
