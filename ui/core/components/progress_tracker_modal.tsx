@@ -7,7 +7,7 @@ import i18n from '../../i18n/config.js';
 export interface ProgressTrackerModalState {
 	stage: 'initializing' | 'complete' | 'error' | string;
 	title?: string;
-	message?: string | Element;
+	message?: string | Element | DocumentFragment;
 	current?: number;
 	total?: number;
 }
@@ -18,7 +18,7 @@ interface ProgressTrackerModalOptions {
 	onComplete?: () => void;
 	title: string;
 	warning?: string | Element;
-	initializingMessage?: string | Element;
+	initializingMessage?: string | Element | DocumentFragment;
 	hasProgressBar?: boolean;
 }
 
@@ -150,7 +150,7 @@ export class ProgressTrackerModal extends Component {
 
 		this.messageElement.classList[message ? 'remove' : 'add']('d-none');
 
-		if (message instanceof Element) {
+		if (message instanceof Element || message instanceof DocumentFragment) {
 			this.messageElement.replaceChildren(message);
 		} else if (typeof message === 'string') {
 			this.messageElement.textContent = message;

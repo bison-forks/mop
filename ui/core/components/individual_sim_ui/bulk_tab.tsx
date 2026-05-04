@@ -18,10 +18,9 @@ import { canEquipItem, getEligibleItemSlots, isSecondaryItemSlot } from '../../p
 import { RequestTypes } from '../../sim_signal_manager';
 import { RelativeStatCap } from '../suggest_reforges_action';
 import { TypedEvent } from '../../typed_event';
-import { getEnumValues, isDevMode, isExternal, noop } from '../../utils';
+import { getEnumValues, isExternal } from '../../utils';
 import { ItemData } from '../gear_picker/item_list';
 import SelectorModal from '../gear_picker/selector_modal';
-import { ResultsViewer } from '../results_viewer';
 import { SimTab } from '../sim_tab';
 import Toast from '../toast';
 import BulkItemPickerGroup from './bulk/bulk_item_picker_group';
@@ -66,8 +65,6 @@ export class BulkTab extends SimTab {
 	private readonly bulkSimButton: HTMLButtonElement;
 	private readonly settingsContainer: HTMLElement;
 
-	private pendingDiv: HTMLDivElement;
-
 	private setupTab: Tab;
 	private resultsTab: Tab;
 	protected progressTrackerModal: ProgressTrackerModal;
@@ -83,6 +80,7 @@ export class BulkTab extends SimTab {
 	protected iterations = 0;
 	protected isRunning: boolean = false;
 	protected isCancelling = false;
+	protected bulkSimAbortController: AbortController | null = null;
 
 	inheritUpgrades: boolean;
 	frozenItems: Map<BulkSimItemSlot, EquippedItem | null> = new Map([
@@ -176,7 +174,6 @@ export class BulkTab extends SimTab {
 
 		this.setupTabElem = setupTabRef.value!;
 		this.resultsTabElem = resultsTabRef.value!;
-		this.pendingDiv = (<div className="results-pending-overlay" />) as HTMLDivElement;
 
 		this.combinationsElem = combinationsElemRef.value!;
 		this.bulkSimButton = bulkSimBtnRef.value!;
@@ -193,16 +190,8 @@ export class BulkTab extends SimTab {
 			id: 'bulk-sim-progress-tracker',
 			title: 'Bulk Sim',
 			hasProgressBar: true,
-			onCancel: async () => {
-				if (this.isCancelling) return;
-
-				try {
-					this.isCancelling = true;
-					await this.simUI.sim.signalManager.abortType(RequestTypes.All);
-				} catch (error) {
-					console.error('Error on bulk sim abort!');
-					console.error(error);
-				}
+			onCancel: () => {
+				this.abortBulkSim();
 			},
 		});
 
@@ -968,6 +957,7 @@ export class BulkTab extends SimTab {
 			title: i18n.t('bulk_tab.progress.reforging_rounds'),
 			current: currentRound - 1,
 			total: rounds,
+			message: undefined,
 		});
 	}
 
@@ -1024,6 +1014,8 @@ export class BulkTab extends SimTab {
 
 		this.isRunning = true;
 		this.isCancelling = false;
+		this.bulkSimAbortController = new AbortController();
+		const abortSignal = this.bulkSimAbortController.signal;
 		this.bulkSimButton.disabled = true;
 		this.topGearResults = null;
 		this.originalGearResults = null;
@@ -1031,6 +1023,7 @@ export class BulkTab extends SimTab {
 		const playerPhase = this.simUI.sim.getPhase() >= 2;
 		const challengeModeEnabled = this.simUI.player.getChallengeModeEnabled();
 		const hasBlacksmithing = this.simUI.player.isBlacksmithing();
+		const candidateGearSets: Gear[] = [];
 		const reforgedGearSets: Gear[] = [];
 
 		try {
@@ -1061,11 +1054,7 @@ export class BulkTab extends SimTab {
 			}
 
 			for (let comboIdx = 0; comboIdx < this.combinations; comboIdx++) {
-				if (this.isCancelling) {
-					throw new Error('Bulk Sim Aborted');
-				}
-
-				this.setReforgeProgress(comboIdx + 1, this.combinations);
+				this.throwIfBulkAborted(abortSignal);
 
 				let reforgeGear = this.originalGear;
 
@@ -1091,26 +1080,32 @@ export class BulkTab extends SimTab {
 					}
 				}
 
-				const reforgedGear = await this.optimizeReforges(reforgeGear, playerPhase);
-				if (!reforgedGear) {
-					continue;
-				}
-
-				reforgedGearSets.push(reforgedGear);
+				candidateGearSets.push(reforgeGear);
 			}
 
+			let completedReforges = 1;
+			this.setReforgeProgress(completedReforges, candidateGearSets.length);
+			const reforgeResults = await Promise.all(
+				candidateGearSets.map(async reforgeGear => {
+					const reforgedGear = await this.optimizeReforges(reforgeGear, playerPhase, abortSignal);
+					this.throwIfBulkAborted(abortSignal);
+					completedReforges += 1;
+					this.setReforgeProgress(completedReforges, candidateGearSets.length);
+					return reforgedGear;
+				}),
+			);
+
+			reforgedGearSets.push(...reforgeResults.filter((gear): gear is Gear => !!gear));
 			this.simStart = new Date().getTime();
 			const totalSimRounds = reforgedGearSets.length + 1;
-			const result = await this.runSingleGearSim(this.originalGear, 1, totalSimRounds);
+			const result = await this.runWithBulkAbort(this.runSingleGearSim(this.originalGear, 1, totalSimRounds), abortSignal);
 			const referenceDpsMetrics = result!.raidMetrics!.dps!;
 
 			for (let comboIdx = 0; comboIdx < reforgedGearSets.length; comboIdx++) {
-				if (this.isCancelling) {
-					throw new Error('Bulk Sim Aborted');
-				}
+				this.throwIfBulkAborted(abortSignal);
 
 				const reforgedGear = reforgedGearSets[comboIdx];
-				const result = await this.runSingleGearSim(reforgedGear, comboIdx + 2, totalSimRounds);
+				const result = await this.runWithBulkAbort(this.runSingleGearSim(reforgedGear, comboIdx + 2, totalSimRounds), abortSignal);
 
 				const isOriginalGear = this.originalGear.equals(reforgedGear);
 				if (!isOriginalGear) {
@@ -1173,24 +1168,28 @@ export class BulkTab extends SimTab {
 		return result;
 	}
 
-	private async optimizeReforges(gear: Gear, playerPhase: boolean): Promise<Gear | null> {
+	private async optimizeReforges(gear: Gear, playerPhase: boolean, signal: AbortSignal): Promise<Gear | null> {
 		if (!this.simUI.reforger) {
 			return gear;
 		}
+
+		this.throwIfBulkAborted(signal);
 
 		this.simUI.reforger.setIncludeGems(TypedEvent.nextEventID(), true);
 		this.simUI.reforger.setIncludeEOTBPGemSocket(TypedEvent.nextEventID(), playerPhase);
 		this.updateRelativeStatCapReforges();
 
 		try {
-			return await this.simUI.reforger.optimizeReforges(gear, true);
+			return this.runWithBulkAbort(this.simUI.reforger.optimizeReforges(gear, true), signal);
 		} catch {
+			this.throwIfBulkAborted(signal);
 			this.simUI.reforger.setIncludeGems(TypedEvent.nextEventID(), false);
 			this.updateRelativeStatCapReforges();
 
 			try {
-				return await this.simUI.reforger.optimizeReforges(gear, true);
+				return this.runWithBulkAbort(this.simUI.reforger.optimizeReforges(gear, true), signal);
 			} catch {
+				this.throwIfBulkAborted(signal);
 				return gear;
 			}
 		}
@@ -1199,5 +1198,44 @@ export class BulkTab extends SimTab {
 	private setInheritUpgrades(newValue: boolean) {
 		this.inheritUpgrades = newValue;
 		this.settingsChangedEmitter.emit(TypedEvent.nextEventID());
+	}
+
+	private async abortBulkSim() {
+		if (this.isCancelling) return;
+
+		try {
+			this.isCancelling = true;
+			await Promise.all([this.simUI.reforger?.abortReforgeOptimization(), this.simUI.sim.signalManager.abortType(RequestTypes.All)]);
+			if (!this.bulkSimAbortController?.signal.aborted) {
+				this.bulkSimAbortController?.abort();
+				this.bulkSimAbortController = null;
+			}
+		} finally {
+			this.bulkSimButton.disabled = false;
+		}
+	}
+
+	private throwIfBulkAborted(signal: AbortSignal) {
+		if (signal.aborted || this.isCancelling) {
+			throw new Error('Bulk Sim Aborted');
+		}
+	}
+
+	private async runWithBulkAbort<T>(promise: Promise<T>, signal: AbortSignal): Promise<T> {
+		this.throwIfBulkAborted(signal);
+
+		let abortHandler: (() => void) | null = null;
+		const abortPromise = new Promise<never>((_, reject) => {
+			abortHandler = () => reject(new Error('Bulk Sim Aborted'));
+			signal.addEventListener('abort', abortHandler, { once: true });
+		});
+
+		try {
+			return Promise.race([promise, abortPromise]);
+		} finally {
+			if (abortHandler) {
+				signal.removeEventListener('abort', abortHandler);
+			}
+		}
 	}
 }
