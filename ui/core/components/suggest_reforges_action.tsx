@@ -248,9 +248,10 @@ export class ReforgeOptimizer {
 	protected undershootCaps = new Stats();
 	protected wasCM: boolean = false;
 	protected isCancelling: boolean = false;
-	protected pendingWorker: ReforgeWorkerPool | null = null;
+	protected workers: ReforgeWorkerPool | null = null;
 	protected previousGear: Gear | null = null;
 	protected previousReforges = new Map<ItemSlot, ReforgeData>();
+	protected updatedGear: Gear | null = null;
 	protected currentReforges = new Map<ItemSlot, ReforgeData>();
 	relativeStatCapStat: number = -1;
 	relativeStatCap: RelativeStatCap | null = null;
@@ -301,13 +302,13 @@ export class ReforgeOptimizer {
 					<p className="mb-0">You may cancel this operation at any time using the button below.</p>
 				</>
 			),
-			onCancel: () => {
+			onCancel: async () => {
 				this.isCancelling = true;
 				if (isDevMode()) {
 					console.log('User cancelled reforge optimization');
 				}
 				try {
-					this.pendingWorker?.terminate();
+					await this.abortReforgeOptimization();
 				} catch {}
 				if (this.previousGear) this.player.setGear(TypedEvent.nextEventID(), this.previousGear);
 				this.progressTrackerModal.hide();
@@ -324,6 +325,18 @@ export class ReforgeOptimizer {
 				});
 			},
 		});
+
+		const syncReforgeWorkerPoolConcurrency = async () => {
+			const isWasm = await this.sim.isWasm();
+			let workerCount = navigator.hardwareConcurrency || 4;
+			if (isWasm) {
+				workerCount = Math.min(this.sim.getWasmConcurrency(), workerCount);
+			}
+			getReforgeWorkerPool().setNumWorkers(workerCount);
+		};
+
+		syncReforgeWorkerPoolConcurrency();
+		this.sim.wasmConcurrencyChangeEmitter.on(() => syncReforgeWorkerPoolConcurrency());
 
 		// Pre-warm the worker pool
 		getReforgeWorkerPool().warmUp();
@@ -348,7 +361,8 @@ export class ReforgeOptimizer {
 					if (this.wasCM) {
 						simUI.player.setChallengeModeEnabled(TypedEvent.nextEventID(), false);
 					}
-					await this.optimizeReforges();
+					const gear = await this.optimizeReforges();
+					await this.player.setGearAsync(TypedEvent.nextEventID(), gear);
 					this.onReforgeDone();
 				} catch (error) {
 					if (this.isCancelling) return;
@@ -1276,7 +1290,7 @@ export class ReforgeOptimizer {
 		return statCaps;
 	}
 
-	async optimizeReforges(batchRun?: boolean) {
+	async optimizeReforges(gear?: Gear, batchRun?: boolean) {
 		if (isDevMode()) console.log('Starting Reforge optimization...');
 
 		// First, clear all existing Reforges
@@ -1285,16 +1299,16 @@ export class ReforgeOptimizer {
 			console.log('The following slots will not be cleared:');
 			console.log(Array.from(this.frozenItemSlots.keys()).filter(key => this.getFrozenItemSlot(key)));
 		}
-		this.previousGear = this.player.getGear();
+		const previousGear = gear || this.player.getGear();
 
-		this.previousReforges = this.previousGear.getAllReforges();
-		let baseGear = this.previousGear.withoutReforges(this.player.canDualWield2H(), this.frozenItemSlots);
+		const previousReforges = previousGear.getAllReforges();
+		let updatedGear = previousGear.withoutReforges(this.player.canDualWield2H(), this.frozenItemSlots);
 
 		if (this.includeGems) {
-			baseGear = baseGear.withoutGems(this.player.canDualWield2H(), this.frozenItemSlots, true);
+			updatedGear = updatedGear.withoutGems(this.player.canDualWield2H(), this.frozenItemSlots, true);
 		}
 
-		const baseStats = await this.updateGear(baseGear);
+		const baseStats = await this.updateGear(updatedGear);
 
 		// Compute effective stat caps for just the Reforge contribution
 		let reforgeCaps = baseStats.computeStatCapsDelta(this.processedStatCaps);
@@ -1321,8 +1335,8 @@ export class ReforgeOptimizer {
 		}
 
 		// Set up YALPS model
-		const variables = this.buildYalpsVariables(baseGear, validatedWeights, reforgeCaps, reforgeSoftCaps);
-		const constraints = this.buildYalpsConstraints(baseGear, baseStats);
+		const variables = this.buildYalpsVariables(updatedGear, validatedWeights, reforgeCaps, reforgeSoftCaps);
+		const constraints = this.buildYalpsConstraints(updatedGear, baseStats);
 
 		// After building variables and constraints we check for
 		// SocketBonusLink constraints for the all-or-nothing socket bonus variables.
@@ -1335,21 +1349,31 @@ export class ReforgeOptimizer {
 		}
 
 		// Solve in multiple passes to enforce caps
-		await this.solveModel(
-			baseGear,
+		const optimized = await this.solveModel(
 			validatedWeights,
 			reforgeCaps,
 			reforgeSoftCaps,
 			variables,
 			constraints,
+			updatedGear,
 			(this.includeTimeout ? (this.relativeStatCap ? 120 : 30) : 3600) / (batchRun ? 4 : 1),
 		);
-		this.currentReforges = this.player.getGear().getAllReforges();
+
+		updatedGear = optimized.gear;
+
+		if (!batchRun) {
+			this.previousGear = previousGear;
+			this.previousReforges = previousReforges;
+			this.updatedGear = updatedGear;
+			this.currentReforges = updatedGear.getAllReforges();
+		}
+
+		return updatedGear;
 	}
 
 	async updateGear(gear: Gear): Promise<Stats> {
-		await this.player.setGearAsync(TypedEvent.nextEventID(), gear);
-		let baseStats = Stats.fromProto(this.player.getCurrentStats().finalStats);
+		const currentStats = await this.sim.getCharacterStatsForGear(TypedEvent.nextEventID(), gear);
+		let baseStats = Stats.fromProto(currentStats.finalStats);
 		baseStats = baseStats.addStat(Stat.StatMasteryRating, this.player.getBaseMastery() * Mechanics.MASTERY_RATING_PER_MASTERY_POINT);
 		if (this.updateGearStatsModifier) baseStats = this.updateGearStatsModifier(baseStats);
 		return baseStats;
@@ -1785,14 +1809,14 @@ export class ReforgeOptimizer {
 	}
 
 	async solveModel(
-		gear: Gear,
 		weights: Stats,
 		reforgeCaps: Stats,
 		reforgeSoftCaps: StatCap[],
 		variables: YalpsVariables,
 		constraints: YalpsConstraints,
+		currentGear: Gear,
 		maxSeconds: number,
-	): Promise<number> {
+	): Promise<{ result: number; gear: Gear }> {
 		// Calculate EP scores for each Reforge option
 		if (isDevMode()) {
 			console.log('Stat weights for this iteration:');
@@ -1815,8 +1839,8 @@ export class ReforgeOptimizer {
 
 		const startTimeMs: number = Date.now();
 
-		this.pendingWorker = getReforgeWorkerPool();
-		const solution: LPSolution = await this.pendingWorker.solve(model, {
+		this.workers = getReforgeWorkerPool();
+		const solution: LPSolution = await this.workers.solve(model, {
 			timeout: maxSeconds * 1000,
 			tolerance: 0.005, // unused currently
 		});
@@ -1837,7 +1861,7 @@ export class ReforgeOptimizer {
 		}
 
 		// Apply the current solution
-		const updatedGear = await this.applyLPSolution(gear, solution);
+		const solvedGear = await this.applyLPSolution(currentGear, solution);
 
 		// Check if any unconstrained stats exceeded their specified cap.
 		// If so, add these stats to the constraint list and re-run the solver.
@@ -1852,16 +1876,16 @@ export class ReforgeOptimizer {
 		);
 
 		if (!anyCapsExceeded) {
-			return solution.result;
+			return { result: solution.result, gear: solvedGear };
 		} else {
 			await sleep(100);
 			return await this.solveModel(
-				updatedGear,
 				updatedWeights,
 				reforgeCaps,
 				reforgeSoftCaps,
 				updatedVariables,
 				updatedConstraints,
+				solvedGear,
 				maxSeconds - elapsedSeconds,
 			);
 		}
@@ -1933,29 +1957,6 @@ export class ReforgeOptimizer {
 		return updatedGear;
 	}
 
-	private getOptimisticUnitStatUpperBound(unitStat: UnitStat, variables: YalpsVariables): number {
-		const statKey = unitStat.getKey();
-		const maxByGroup = new Map<string, number>();
-
-		for (const [variableKey, coefficients] of variables.entries()) {
-			const splitKey = variableKey.split('_');
-			const groupKey = splitKey.length > 2 ? `${splitKey[0]}_${splitKey[1]}` : (splitKey[0] ?? variableKey);
-			const statContribution = coefficients.get(statKey) || 0;
-			const currentMax = maxByGroup.get(groupKey) ?? Number.NEGATIVE_INFINITY;
-
-			if (statContribution > currentMax) {
-				maxByGroup.set(groupKey, statContribution);
-			}
-		}
-
-		let upperBound = 0;
-		for (const contribution of maxByGroup.values()) {
-			upperBound += Math.max(0, contribution);
-		}
-
-		return upperBound;
-	}
-
 	checkCaps(
 		solution: LPSolution,
 		reforgeCaps: Stats,
@@ -2013,25 +2014,6 @@ export class ReforgeOptimizer {
 			const unitStat = nextSoftCap.unitStat;
 			const statName = unitStat.getKey();
 			const currentValue = reforgeStatContribution.getUnitStat(unitStat);
-
-			const firstBreakpoint = nextSoftCap.breakpoints[0];
-			if (firstBreakpoint !== undefined && currentValue < firstBreakpoint && !updatedConstraints.has(statName)) {
-				const optimisticUpperBound = this.getOptimisticUnitStatUpperBound(unitStat, variables);
-
-				if (optimisticUpperBound >= firstBreakpoint) {
-					updatedConstraints.set(statName, greaterEq(firstBreakpoint));
-					anyCapsExceeded = true;
-					if (isDevMode()) console.log('Soft cap target not met, enforcing floor for: %s', statName);
-					break;
-				} else if (isDevMode()) {
-					console.log(
-						'Soft cap target is unreachable for %s (needed: %s, optimistic max: %s); skipping floor constraint.',
-						statName,
-						firstBreakpoint,
-						optimisticUpperBound,
-					);
-				}
-			}
 
 			let idx = 0;
 			for (const breakpoint of nextSoftCap.breakpoints) {
@@ -2363,6 +2345,10 @@ export class ReforgeOptimizer {
 		});
 	}
 
+	async abortReforgeOptimization() {
+		this.workers?.abort();
+	}
+
 	fromProto(eventID: EventID, proto: ReforgeSettings) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setUseCustomEPValues(eventID, proto.useCustomEpValues);
@@ -2379,6 +2365,7 @@ export class ReforgeOptimizer {
 			}
 		});
 	}
+
 	toProto(): ReforgeSettings {
 		return ReforgeSettings.create({
 			useCustomEpValues: this.useCustomEPValues,
@@ -2393,6 +2380,7 @@ export class ReforgeOptimizer {
 			statCaps: this.statCaps.toProto(),
 		});
 	}
+
 	applyDefaults(eventID: EventID) {
 		TypedEvent.freezeAllAndDo(() => {
 			this.setUseCustomEPValues(eventID, false);

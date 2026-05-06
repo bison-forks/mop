@@ -35,15 +35,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecArmsWarrior, {
 	epReferenceStat: Stat.StatStrength,
 	// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 	displayStats: UnitStat.createDisplayStatArray(
-		[
-			Stat.StatHealth,
-			Stat.StatStamina,
-			Stat.StatStrength,
-			Stat.StatAgility,
-			Stat.StatAttackPower,
-			Stat.StatExpertiseRating,
-			Stat.StatMasteryRating,
-		],
+		[Stat.StatHealth, Stat.StatStamina, Stat.StatStrength, Stat.StatAgility, Stat.StatAttackPower, Stat.StatExpertiseRating, Stat.StatMasteryRating],
 		[PseudoStat.PseudoStatPhysicalHitPercent, PseudoStat.PseudoStatPhysicalCritPercent, PseudoStat.PseudoStatMeleeHastePercent],
 	),
 	// modifyDisplayStats: (player: Player<Spec.SpecArmsWarrior>) => {
@@ -191,7 +183,10 @@ export class ArmsWarriorSimUI extends IndividualSimUI<Spec.SpecArmsWarrior> {
 						StatCap.fromPseudoStat(PseudoStat.PseudoStatPhysicalCritPercent, {
 							breakpoints: [hasT154P ? 43 : 49],
 							capType: StatCapType.TypeSoftCap,
-							postCapEPs: [(epWeights.getStat(Stat.StatMasteryRating) - 0.02) * Mechanics.CRIT_RATING_PER_CRIT_PERCENT],
+							postCapEPs: [
+								(epWeights.getStat(Stat.StatMasteryRating) * player.getTotalAmplificationTrinketStatModifier() - 0.02) *
+									Mechanics.CRIT_RATING_PER_CRIT_PERCENT,
+							],
 						}),
 					);
 				}
