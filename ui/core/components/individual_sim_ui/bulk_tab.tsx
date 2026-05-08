@@ -1106,8 +1106,8 @@ export class BulkTab extends SimTab {
 				.map(result => result.value);
 
 			reforgedGearSets.push(...reforgeResults.filter((gear): gear is Gear => !!gear));
-			this.simStart = new Date().getTime();
 
+			this.simStart = new Date().getTime();
 			const totalSimRounds = reforgedGearSets.length + 1;
 			const result = await this.runWithBulkAbort(this.runSingleGearSim(this.originalGear, 1, totalSimRounds), abortSignal);
 			const referenceDpsMetrics = result!.raidMetrics!.dps!;
