@@ -1585,9 +1585,9 @@ dps_results: {
 dps_results: {
  key: "TestAffliction-AllItems-RegaliaoftheHornedNightmare"
  value: {
-  dps: 213321.15468
-  tps: 145318.8793
-  hps: 2689.2976
+  dps: 215452.4499
+  tps: 147126.7846
+  hps: 2699.37654
  }
 }
 dps_results: {

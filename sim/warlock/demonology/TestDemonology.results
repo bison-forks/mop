@@ -1392,8 +1392,8 @@ dps_results: {
 dps_results: {
  key: "TestDemonology-AllItems-RegaliaoftheHornedNightmare"
  value: {
-  dps: 236465.46286
-  tps: 135076.19452
+  dps: 239926.11649
+  tps: 137609.19834
  }
 }
 dps_results: {
