@@ -4,18 +4,14 @@ import { ConsumesSpec, Glyphs, Profession, PseudoStat, Race, Spec, Stat } from '
 import { HunterMajorGlyph as MajorGlyph, HunterOptions_PetType as PetType, SurvivalHunter_Options as HunterOptions } from '../../core/proto/hunter';
 import { SavedTalents } from '../../core/proto/ui';
 import { Stats } from '../../core/proto_utils/stats';
-import P4Build from './builds/p4.build.json';
-import P4Gear from './gear_sets/p4.gear.json';
+import P5Build from './builds/p5.build.json';
 import P5Gear from './gear_sets/p5.gear.json';
 import PreRaidGear from './gear_sets/preraid.gear.json';
-import AoeApl from './apls/aoe.apl.json';
 import SvApl from './apls/sv.apl.json';
 
 export const PRERAID_PRESET_GEAR = PresetUtils.makePresetGear('Pre-raid', PreRaidGear);
-export const P4_PRESET_GEAR = PresetUtils.makePresetGear('P4', P4Gear);
-export const P5_PRESET_GEAR = PresetUtils.makePresetGear('P5 (WiP)', P5Gear);
+export const P5_PRESET_GEAR = PresetUtils.makePresetGear('P5', P5Gear);
 export const ROTATION_PRESET_SV = PresetUtils.makePresetAPLRotation('Single Target', SvApl);
-export const ROTATION_PRESET_AOE = PresetUtils.makePresetAPLRotation('AOE', AoeApl);
 export const DefaultTalents = {
 	name: 'Default',
 	data: SavedTalents.create({
@@ -28,8 +24,8 @@ export const DefaultTalents = {
 	}),
 };
 
-export const P4_FERVOR_EP_PRESET = PresetUtils.makePresetEpWeights(
-	'P4 (Fervor)',
+export const P5_FERVOR_EP_PRESET = PresetUtils.makePresetEpWeights(
+	'P5 (Fervor)',
 	Stats.fromMap(
 		{
 			[Stat.StatAgility]: 1,
@@ -46,8 +42,8 @@ export const P4_FERVOR_EP_PRESET = PresetUtils.makePresetEpWeights(
 	),
 );
 
-export const P4_DB_EP_PRESET = PresetUtils.makePresetEpWeights(
-	'P4 (Dire Beast)',
+export const P5_DB_EP_PRESET = PresetUtils.makePresetEpWeights(
+	'P5 (Dire Beast)',
 	Stats.fromMap(
 		{
 			[Stat.StatAgility]: 1,
@@ -64,8 +60,8 @@ export const P4_DB_EP_PRESET = PresetUtils.makePresetEpWeights(
 	),
 );
 
-export const P4_PRESET = PresetUtils.makePresetBuildFromJSON('P4', Spec.SpecSurvivalHunter, P4Build, {
-	epWeights: P4_FERVOR_EP_PRESET,
+export const P5_PRESET = PresetUtils.makePresetBuildFromJSON('P5', Spec.SpecSurvivalHunter, P5Build, {
+	epWeights: P5_DB_EP_PRESET,
 	rotationType: APLRotationType.TypeAuto,
 });
 
