@@ -51,7 +51,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecSurvivalHunter, {
 		// Default equipped gear.
 		gear: Presets.P5_PRESET_GEAR.gear,
 		// Default EP weights for sorting gear in the gear picker.
-		epWeights: Presets.P5_DB_EP_PRESET.epWeights,
+		epWeights: Presets.P5_EP_PRESET.epWeights,
 		// Default stat caps for the Reforge Optimizer
 		statCaps: Stats.fromMap(
 			{
@@ -111,7 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecSurvivalHunter, {
 	},
 
 	presets: {
-		epWeights: [Presets.P5_FERVOR_EP_PRESET, Presets.P5_DB_EP_PRESET],
+		epWeights: [Presets.P5_EP_PRESET],
 		// Preset talents that the user can quickly select.
 		talents: [Presets.DefaultTalents],
 		// Preset rotations that the user can quickly select.
@@ -133,23 +133,12 @@ export class SurvivalHunterSimUI extends IndividualSimUI<Spec.SpecSurvivalHunter
 		super(parentElem, player, SPEC_CONFIG);
 
 		this.reforger = new ReforgeOptimizer(this, {
-			getEPDefaults: (player: Player<Spec.SpecSurvivalHunter>) => {
-				if (player.getTalents().direBeast) {
-					return Presets.P5_DB_EP_PRESET.epWeights;
-				} else {
-					return Presets.P5_FERVOR_EP_PRESET.epWeights;
-				}
-			},
 			updateSoftCaps: softCaps => {
 				const hasteCap = softCaps.find(v => v.unitStat.equalsPseudoStat(PseudoStat.PseudoStatRangedHastePercent));
 				if (hasteCap) {
-					if (player.getTalents().direBeast) {
-						const critWeights = player.getEpWeights().getStat(Stat.StatCritRating);
-						const baseCritEP = critWeights * Mechanics.HASTE_RATING_PER_HASTE_PERCENT;
-						hasteCap.postCapEPs = [baseCritEP - 0.01 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
-					} else {
-						return softCaps.slice(1);
-					}
+					const critWeights = player.getEpWeights().getStat(Stat.StatCritRating);
+					const baseCritEP = critWeights * Mechanics.HASTE_RATING_PER_HASTE_PERCENT;
+					hasteCap.postCapEPs = [baseCritEP - 0.01 * Mechanics.HASTE_RATING_PER_HASTE_PERCENT];
 				}
 				return softCaps;
 			},

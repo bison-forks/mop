@@ -15,7 +15,7 @@ export const ROTATION_PRESET_SV = PresetUtils.makePresetAPLRotation('Single Targ
 export const DefaultTalents = {
 	name: 'Default',
 	data: SavedTalents.create({
-		talentsString: '312213',
+		talentsString: '312113',
 		glyphs: Glyphs.create({
 			major1: MajorGlyph.GlyphOfAnimalBond,
 			major2: MajorGlyph.GlyphOfDeterrence,
@@ -24,25 +24,7 @@ export const DefaultTalents = {
 	}),
 };
 
-export const P5_FERVOR_EP_PRESET = PresetUtils.makePresetEpWeights(
-	'P5 (Fervor)',
-	Stats.fromMap(
-		{
-			[Stat.StatAgility]: 1,
-			[Stat.StatHitRating]: 0.37,
-			[Stat.StatExpertiseRating]: 0.37,
-			[Stat.StatRangedAttackPower]: 0.36,
-			[Stat.StatCritRating]: 0.36,
-			[Stat.StatHasteRating]: 0.32,
-			[Stat.StatMasteryRating]: 0.26,
-		},
-		{
-			[PseudoStat.PseudoStatRangedDps]: 0.67,
-		},
-	),
-);
-
-export const P5_DB_EP_PRESET = PresetUtils.makePresetEpWeights(
+export const P5_EP_PRESET = PresetUtils.makePresetEpWeights(
 	'P5 (Dire Beast)',
 	Stats.fromMap(
 		{
@@ -61,7 +43,7 @@ export const P5_DB_EP_PRESET = PresetUtils.makePresetEpWeights(
 );
 
 export const P5_PRESET = PresetUtils.makePresetBuildFromJSON('P5', Spec.SpecSurvivalHunter, P5Build, {
-	epWeights: P5_DB_EP_PRESET,
+	epWeights: P5_EP_PRESET,
 	rotationType: APLRotationType.TypeAuto,
 });
 
