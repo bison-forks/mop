@@ -160,7 +160,7 @@ var BattlegearOfTheUnblinkingVigil = core.NewItemSet(core.ItemSet{
 			}
 
 			setBonusAura.AttachProcTrigger(core.ProcTrigger{
-				Callback:       core.CallbackOnSpellHitDealt,
+				Callback:       core.CallbackOnCastComplete,
 				ClassSpellMask: HunterSpellAimedShot | HunterSpellArcaneShot | HunterSpellMultiShot,
 
 				Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

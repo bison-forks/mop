@@ -2015,15 +2015,15 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Average-Default"
  value: {
-  dps: 468731.32138
-  tps: 374373.64909
+  dps: 468731.84538
+  tps: 374374.11423
  }
 }
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-DefaultTalents-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.79895883643e+06
-  tps: 1.38940353831e+06
+  dps: 1.68312268926e+06
+  tps: 1.32180908894e+06
  }
 }
 dps_results: {
@@ -2043,8 +2043,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-DefaultTalents-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.37722213311e+06
-  tps: 1.09110271415e+06
+  dps: 1.2799796952e+06
+  tps: 1.03210631028e+06
  }
 }
 dps_results: {
@@ -2064,8 +2064,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row4_Talent1-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.90028586508e+06
-  tps: 1.45368926188e+06
+  dps: 1.79613669403e+06
+  tps: 1.39337206795e+06
  }
 }
 dps_results: {
@@ -2085,8 +2085,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row4_Talent1-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.44454400133e+06
-  tps: 1.12838452874e+06
+  dps: 1.35415096361e+06
+  tps: 1.07119339192e+06
  }
 }
 dps_results: {
@@ -2106,8 +2106,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row4_Talent3-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.92309081425e+06
-  tps: 1.4582305717e+06
+  dps: 1.78846215654e+06
+  tps: 1.383494145e+06
  }
 }
 dps_results: {
@@ -2127,8 +2127,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row4_Talent3-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.46257554237e+06
-  tps: 1.13173331603e+06
+  dps: 1.35394704139e+06
+  tps: 1.06814785097e+06
  }
 }
 dps_results: {
@@ -2148,8 +2148,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row5_Talent2-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.86494598815e+06
-  tps: 1.42254286187e+06
+  dps: 1.74212227598e+06
+  tps: 1.34778243251e+06
  }
 }
 dps_results: {
@@ -2169,8 +2169,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row5_Talent2-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.41284147016e+06
-  tps: 1.10491154288e+06
+  dps: 1.31384457713e+06
+  tps: 1.04544388269e+06
  }
 }
 dps_results: {
@@ -2190,8 +2190,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row5_Talent3-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.8489640222e+06
-  tps: 1.41759699232e+06
+  dps: 1.73866238611e+06
+  tps: 1.35273161706e+06
  }
 }
 dps_results: {
@@ -2211,8 +2211,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row5_Talent3-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.38853916523e+06
-  tps: 1.08883882695e+06
+  dps: 1.30004955452e+06
+  tps: 1.03844875908e+06
  }
 }
 dps_results: {
@@ -2232,8 +2232,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row6_Talent1-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.65634955542e+06
-  tps: 1.25538316026e+06
+  dps: 1.5396110724e+06
+  tps: 1.18469730395e+06
  }
 }
 dps_results: {
@@ -2253,8 +2253,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row6_Talent1-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.26889694233e+06
-  tps: 980966.57923
+  dps: 1.17575623613e+06
+  tps: 922001.78953
  }
 }
 dps_results: {
@@ -2274,8 +2274,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row6_Talent2-Basic-sv-FullBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.69334701239e+06
-  tps: 1.2711899305e+06
+  dps: 1.58977567244e+06
+  tps: 1.21017995224e+06
  }
 }
 dps_results: {
@@ -2295,8 +2295,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Settings-Orc-p5-Row6_Talent2-Basic-sv-NoBuffs-24.0yards-LongMultiTarget"
  value: {
-  dps: 1.28389543322e+06
-  tps: 979958.22699
+  dps: 1.18206160139e+06
+  tps: 917273.40455
  }
 }
 dps_results: {
