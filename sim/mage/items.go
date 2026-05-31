@@ -213,16 +213,14 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 			// Icy Veins split-bolt variant share ClassSpellMask MageSpellFrostbolt,
 			// so OnSpellRegistered would fire twice and add the OnExpire callback
 			// twice, causing a duplicate Frozen Thoughts activation per Brain Freeze.
-			brainFreezeCallbackRegistered2pc := false
+			// Tag != 0 identifies variant spells (e.g. Tag 1 = Icy Veins split-bolt).
 			mage.OnSpellRegistered(func(spell *core.Spell) {
-				if !spell.Matches(MageSpellFrostbolt) || brainFreezeCallbackRegistered2pc {
+				if !spell.Matches(MageSpellFrostbolt) || spell.ActionID.Tag != 0 {
 					return
 				}
 				if mage.BrainFreezeAura == nil {
 					return
-
 				}
-				brainFreezeCallbackRegistered2pc = true
 				mage.BrainFreezeAura.ApplyOnExpire(func(_ *core.Aura, sim *core.Simulation) {
 					if setBonusAura.IsActive() {
 						frostAura.Activate(sim)
@@ -272,17 +270,15 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 				},
 			})
 
-			// Same guard as T16 2pc: prevent double registration from the Icy Veins
-			// Frostbolt variant which shares the MageSpellFrostbolt ClassSpellMask.
-			brainFreezeCallbackRegistered4pc := false
+			// Same guard as T16 2pc: Tag != 0 skips the Icy Veins split-bolt variant
+			// which shares the MageSpellFrostbolt ClassSpellMask but uses Tag 1.
 			mage.OnSpellRegistered(func(spell *core.Spell) {
-				if !spell.Matches(MageSpellFrostbolt) || brainFreezeCallbackRegistered4pc {
+				if !spell.Matches(MageSpellFrostbolt) || spell.ActionID.Tag != 0 {
 					return
 				}
 				if mage.BrainFreezeAura == nil {
 					return
 				}
-				brainFreezeCallbackRegistered4pc = true
 				mage.BrainFreezeAura.ApplyOnExpire(func(_ *core.Aura, sim *core.Simulation) {
 					if setBonusAura.IsActive() && sim.Proc(0.30, "Item - Mage T16 4P Bonus - Frigid Blast") {
 						frigidBlast.Cast(sim, mage.CurrentTarget)
