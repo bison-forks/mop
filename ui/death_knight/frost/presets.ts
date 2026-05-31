@@ -66,7 +66,7 @@ export const DefaultTalents = {
 	data: SavedTalents.create({
 		talentsString: '221111',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfAntiMagicShell,
+			major1: DeathKnightMajorGlyph.GlyphOfRegenerativeMagic,
 			major2: DeathKnightMajorGlyph.GlyphOfDeathGrip,
 			major3: DeathKnightMajorGlyph.GlyphOfLoudHorn,
 			minor1: DeathKnightMinorGlyph.GlyphOfArmyOfTheDead,

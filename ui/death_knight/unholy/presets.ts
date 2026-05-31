@@ -59,7 +59,7 @@ export const DefaultTalents = {
 	data: SavedTalents.create({
 		talentsString: '221111',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfAntiMagicShell,
+			major1: DeathKnightMajorGlyph.GlyphOfRegenerativeMagic,
 			major2: DeathKnightMajorGlyph.GlyphOfPestilence,
 			major3: DeathKnightMajorGlyph.GlyphOfLoudHorn,
 			minor1: DeathKnightMinorGlyph.GlyphOfArmyOfTheDead,
@@ -74,7 +74,7 @@ export const FesterblightTalents = {
 	data: SavedTalents.create({
 		talentsString: '321111',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfAntiMagicShell,
+			major1: DeathKnightMajorGlyph.GlyphOfRegenerativeMagic,
 			major2: DeathKnightMajorGlyph.GlyphOfPestilence,
 			major3: DeathKnightMajorGlyph.GlyphOfLoudHorn,
 			minor1: DeathKnightMinorGlyph.GlyphOfArmyOfTheDead,

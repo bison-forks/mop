@@ -105,7 +105,7 @@ var OtherTalentSets = []core.TalentsCombo{
 }
 
 var FrostDefaultGlyphs = &proto.Glyphs{
-	Major1: int32(proto.DeathKnightMajorGlyph_GlyphOfAntiMagicShell),
+	Major1: int32(proto.DeathKnightMajorGlyph_GlyphOfRegenerativeMagic),
 	Major2: int32(proto.DeathKnightMajorGlyph_GlyphOfPestilence),
 	Major3: int32(proto.DeathKnightMajorGlyph_GlyphOfLoudHorn),
 	Minor1: int32(proto.DeathKnightMinorGlyph_GlyphOfResilientGrip),
