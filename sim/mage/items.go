@@ -192,10 +192,15 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 				FloatValue: 0.25,
 			})
 
+			// TriggerImmediately is required so the consume fires synchronously during
+			// DealDamage — before BrainFreezeAura.Deactivate re-activates Frozen Thoughts
+			// via its OnExpire chain. Without it the 10ms SpellBatchWindow defers the
+			// Deactivate call until after the new proc is already live, wiping it.
 			setBonusAura.MakeDependentProcTriggerAura(&mage.Unit, core.ProcTrigger{
-				Name:           "Frozen Thoughts - Consume",
-				ClassSpellMask: frostClassMask,
-				Callback:       core.CallbackOnSpellHitDealt,
+				Name:               "Frozen Thoughts - Consume",
+				ClassSpellMask:     frostClassMask,
+				Callback:           core.CallbackOnSpellHitDealt,
+				TriggerImmediately: true,
 				ExtraCondition: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) bool {
 					return frostAura.IsActive()
 				},
@@ -204,13 +209,20 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 				},
 			})
 
+			// Guard against double registration: both the main Frostbolt and the
+			// Icy Veins split-bolt variant share ClassSpellMask MageSpellFrostbolt,
+			// so OnSpellRegistered would fire twice and add the OnExpire callback
+			// twice, causing a duplicate Frozen Thoughts activation per Brain Freeze.
+			brainFreezeCallbackRegistered2pc := false
 			mage.OnSpellRegistered(func(spell *core.Spell) {
-				if !spell.Matches(MageSpellFrostbolt) {
+				if !spell.Matches(MageSpellFrostbolt) || brainFreezeCallbackRegistered2pc {
 					return
 				}
 				if mage.BrainFreezeAura == nil {
 					return
+
 				}
+				brainFreezeCallbackRegistered2pc = true
 				mage.BrainFreezeAura.ApplyOnExpire(func(_ *core.Aura, sim *core.Simulation) {
 					if setBonusAura.IsActive() {
 						frostAura.Activate(sim)
@@ -260,13 +272,17 @@ var ItemSetChronomancerRegalia = core.NewItemSet(core.ItemSet{
 				},
 			})
 
+			// Same guard as T16 2pc: prevent double registration from the Icy Veins
+			// Frostbolt variant which shares the MageSpellFrostbolt ClassSpellMask.
+			brainFreezeCallbackRegistered4pc := false
 			mage.OnSpellRegistered(func(spell *core.Spell) {
-				if !spell.Matches(MageSpellFrostbolt) {
+				if !spell.Matches(MageSpellFrostbolt) || brainFreezeCallbackRegistered4pc {
 					return
 				}
 				if mage.BrainFreezeAura == nil {
 					return
 				}
+				brainFreezeCallbackRegistered4pc = true
 				mage.BrainFreezeAura.ApplyOnExpire(func(_ *core.Aura, sim *core.Simulation) {
 					if setBonusAura.IsActive() && sim.Proc(0.30, "Item - Mage T16 4P Bonus - Frigid Blast") {
 						frigidBlast.Cast(sim, mage.CurrentTarget)
