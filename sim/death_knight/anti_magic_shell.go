@@ -19,11 +19,13 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 	runicPowerMetrics := dk.NewRunicPowerMetrics(core.ActionID{SpellID: 49088})
 	currentShield := 0.0
 	damageReductionMultiplier := 0.75
+	hasRegenerativeMagic := dk.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfRegenerativeMagic)
 
 	if dk.HasMajorGlyph(proto.DeathKnightMajorGlyph_GlyphOfAntiMagicShell) {
 		damageReductionMultiplier += 0.25
 	}
 
+	var antiMagicShellSpell *core.Spell
 	var antiMagicShellAura *core.DamageAbsorptionAura
 	antiMagicShellAura = dk.NewDamageAbsorptionAura(core.AbsorptionAuraConfig{
 		Aura: core.Aura{
@@ -31,8 +33,15 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 			ActionID: actionID,
 			Duration: time.Second * 5,
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				if antiMagicShellAura.ShieldStrength > 0 {
-					// TODO: Reduce CD
+				// Glyph of Regenerative Magic: a depleted shield Deactivate()s early with
+				// ShieldStrength <= 0, so ShieldStrength > 0 here means AMS reached its full
+				// duration with shield left. Reduce the *remaining* cooldown by up to 50%,
+				// scaled by the fraction of shield remaining. Reducing the remaining cooldown
+				// (rather than a flat number of seconds) makes it compose with cooldown-recovery
+				// trinkets. Verified vs WCL KXBHYQLWj6hDr8mb.
+				if hasRegenerativeMagic && antiMagicShellAura.ShieldStrength > 0 {
+					remainingFraction := antiMagicShellAura.ShieldStrength / currentShield
+					antiMagicShellSpell.CD.Reduce(time.Duration(0.5 * remainingFraction * float64(antiMagicShellSpell.CD.TimeToReady(sim))))
 				}
 			},
 		},
@@ -53,7 +62,7 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 		},
 	})
 
-	dk.RegisterSpell(core.SpellConfig{
+	antiMagicShellSpell = dk.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		ProcMask:    core.ProcMaskSpellHealing,
 		SpellSchool: core.SpellSchoolShadow,
