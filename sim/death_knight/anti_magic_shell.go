@@ -16,7 +16,7 @@ Lasts 5 sec.
 func (dk *DeathKnight) registerAntiMagicShell() {
 	actionID := core.ActionID{SpellID: 48707}
 
-	// runicPowerMetrics := dk.NewRunicPowerMetrics(core.ActionID{SpellID: 49088})
+	runicPowerMetrics := dk.NewRunicPowerMetrics(core.ActionID{SpellID: 49088})
 	currentShield := 0.0
 	damageReductionMultiplier := 0.75
 
@@ -40,7 +40,10 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 		DamageMultiplier: damageReductionMultiplier,
 
 		OnDamageAbsorbed: func(sim *core.Simulation, aura *core.DamageAbsorptionAura, result *core.SpellResult, absorbedDamage float64) {
-			// TODO: RP return
+			// result.Damage has already had absorbedDamage subtracted, so it holds the
+			// leftover AMS did not absorb. RP is based on the total damage AMS was exposed
+			// to (absorbed + leftover).
+			dk.AddRunicPower(sim, antiMagicShellRunicPower(absorbedDamage, result.Damage), runicPowerMetrics)
 		},
 		ShouldApplyToResult: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult, isPeriodic bool) bool {
 			return !spell.SpellSchool.Matches(core.SpellSchoolPhysical)
@@ -71,4 +74,18 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 			antiMagicShellAura.Activate(sim)
 		},
 	})
+}
+
+// antiMagicShellRunicPowerCoefficient is the base Runic Power generated per point of
+// magic damage Anti-Magic Shell is exposed to. Derived empirically from MoP-Classic WCL
+// logs (flat, independent of max health and of the absorb percentage).
+const antiMagicShellRunicPowerCoefficient = 0.0007
+
+// antiMagicShellRunicPower returns the base Runic Power Anti-Magic Shell generates from a
+// single absorbed hit. RP is based on the magic damage AMS was exposed to before its own
+// reduction, i.e. the amount it absorbed plus any leftover it could not absorb when the
+// shield caps mid-hit. Frost Presence's +20% is applied by AddRunicPower (runic-regen
+// multiplier), not here.
+func antiMagicShellRunicPower(absorbedDamage, leftoverDamage float64) float64 {
+	return (absorbedDamage + leftoverDamage) * antiMagicShellRunicPowerCoefficient
 }
