@@ -95,6 +95,8 @@ export const P5_PRESET = PresetUtils.makePresetBuildFromJSON('P5', Spec.SpecUnho
 
 export const DefaultOptions = UnholyDeathKnight_Options.create({
 	classOptions: {},
+	avgAmsHit: 170000,
+	avgAmsSuccessRate: 1,
 });
 
 export const OtherDefaults = {

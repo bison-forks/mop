@@ -42,7 +42,9 @@ func TestUnholy(t *testing.T) {
 			SpecOptions: core.SpecOptionsCombo{Label: "Basic", SpecOptions: &proto.Player_UnholyDeathKnight{
 				UnholyDeathKnight: &proto.UnholyDeathKnight{
 					Options: &proto.UnholyDeathKnight_Options{
-						ClassOptions: &proto.DeathKnightOptions{},
+						ClassOptions:      &proto.DeathKnightOptions{},
+						AvgAmsHit:         170000,
+						AvgAmsSuccessRate: 1,
 					},
 				},
 			}},
