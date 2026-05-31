@@ -25,6 +25,15 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 		damageReductionMultiplier += 0.25
 	}
 
+	// Simulated incoming magic damage, used to model the Runic Power gained from
+	// absorbing spells while the shell is up. targetDummySpell is a metrics-free
+	// vehicle (registered lazily on the current target on first use) whose damage
+	// flows through the normal absorption -> OnDamageAbsorbed -> AddRunicPower path,
+	// so RP generation reuses the already-correct formula. simulatedDamagePA is the
+	// single scheduled hit; it is cancelled if the shell ends before it lands.
+	var targetDummySpell *core.Spell
+	var simulatedDamagePA *core.PendingAction
+
 	var antiMagicShellSpell *core.Spell
 	var antiMagicShellAura *core.DamageAbsorptionAura
 	antiMagicShellAura = dk.NewDamageAbsorptionAura(core.AbsorptionAuraConfig{
@@ -32,7 +41,55 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 			Label:    "Anti-Magic Shell" + dk.Label,
 			ActionID: actionID,
 			Duration: time.Second * 5,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				// Only model incoming damage when the user has configured an average
+				// AMS hit. The option exists for Frost/Unholy only, so this also keeps
+				// the simulated self-damage out of the Blood (tank) sim.
+				if dk.Inputs.AvgAMSHit <= 0 {
+					return
+				}
+
+				if targetDummySpell == nil && dk.CurrentTarget != nil {
+					targetDummySpell = dk.CurrentTarget.RegisterSpell(core.SpellConfig{
+						ActionID:         core.ActionID{SpellID: 49375},
+						SpellSchool:      core.SpellSchoolShadow,
+						ProcMask:         core.ProcMaskSpellDamage,
+						Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics,
+						DamageMultiplier: 1,
+
+						ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+							baseDamage := dk.Inputs.AvgAMSHit * sim.Roll(0.9, 1.1)
+							spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeAlwaysHit)
+						},
+					})
+				}
+
+				if targetDummySpell == nil {
+					return
+				}
+
+				// Land a single hit at a random point within the shell's window.
+				simulatedDamagePA = &core.PendingAction{
+					Priority:     core.ActionPriorityAuto,
+					NextActionAt: sim.CurrentTime + time.Duration(sim.RandomFloat("AMS Induced Damage")*float64(aura.Duration)),
+					OnAction: func(sim *core.Simulation) {
+						if sim.RandomFloat("AMS Trigger Chance") < min(dk.Inputs.AvgAMSSuccessRate, 1.0) {
+							targetDummySpell.Cast(sim, aura.Unit)
+						}
+					},
+				}
+				sim.AddPendingAction(simulatedDamagePA)
+			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				// Cancel the pending simulated hit if the shell ends before it lands —
+				// e.g. the shield is fully depleted or the aura is cancelled via the APL.
+				// Without this the PendingAction would still fire after the aura is gone,
+				// dealing unabsorbed damage and generating no Runic Power.
+				if simulatedDamagePA != nil {
+					simulatedDamagePA.Cancel(sim)
+					simulatedDamagePA = nil
+				}
+
 				// Glyph of Regenerative Magic: a depleted shield Deactivate()s early with
 				// ShieldStrength <= 0, so ShieldStrength > 0 here means AMS reached its full
 				// duration with shield left. Reduce the *remaining* cooldown by up to 50%,
@@ -83,6 +140,19 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 			antiMagicShellAura.Activate(sim)
 		},
 	})
+
+	// When the user models AMS damage intake, autocast the shell as a low-priority DPS
+	// cooldown once Runic Power is nearly empty, so the RP from the absorbed magic damage
+	// tops the bar back up without overcapping. Registered only when intake is configured,
+	// so the shell stays out of the rotation entirely when the feature is disabled. It is
+	// cast through the autocastOtherCooldowns action present in every DPS preset.
+	if dk.Inputs.AvgAMSHit > 0 {
+		dk.AddMajorCooldown(core.MajorCooldown{
+			Spell:    antiMagicShellSpell,
+			Type:     core.CooldownTypeDPS,
+			Priority: core.CooldownPriorityLow,
+		})
+	}
 }
 
 // antiMagicShellRunicPowerCoefficient is the base Runic Power generated per point of
