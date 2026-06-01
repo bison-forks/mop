@@ -69,6 +69,9 @@ func (affliction *AfflictionWarlock) registerMaleficEffect() {
 			proc.BonusSpellPower = calculateDoTBaseTickDamage(dot, target) * dot.PeriodicDamageMultiplier * coeff
 			procDot = dot
 			proc.Cast(sim, target)
+			if proc == agonyProc {
+				dot.Aura.AddStack(sim)
+			}
 		}
 	}
 }
