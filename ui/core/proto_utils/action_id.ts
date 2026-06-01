@@ -971,6 +971,11 @@ export class ActionId {
 					name += ' (DoT)';
 				}
 				break;
+			case 'Frenzied Regeneration':
+				if (tag == 1) {
+					name += ' - Druid T16 Guardian 2P Bonus';
+				}
+				break;
 			default:
 				if (tag) {
 					name += ' (??)';
