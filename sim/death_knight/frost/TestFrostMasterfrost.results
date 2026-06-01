@@ -41,9 +41,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-AlacrityofXuen-103989"
  value: {
-  dps: 402558.40713
-  tps: 373782.87741
-  hps: 3107.8755
+  dps: 401720.18562
+  tps: 373096.77153
+  hps: 3107.81394
  }
 }
 dps_results: {
@@ -457,9 +457,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-DarkmistVortex-87172"
  value: {
-  dps: 396774.87296
-  tps: 369385.16767
-  hps: 3112.69062
+  dps: 395997.77029
+  tps: 368174.02268
+  hps: 3058.48943
  }
 }
 dps_results: {
@@ -737,9 +737,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-EssenceofTerror-87175"
  value: {
-  dps: 386184.34158
-  tps: 359992.9215
-  hps: 3072.74884
+  dps: 385773.03141
+  tps: 359361.75921
+  hps: 3061.83047
  }
 }
 dps_results: {
@@ -1721,9 +1721,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-RuneofRe-Origination-96918"
  value: {
-  dps: 403372.35648
-  tps: 380394.94044
-  hps: 2935.6206
+  dps: 403628.51535
+  tps: 380586.47924
+  hps: 2950.71368
  }
 }
 dps_results: {
@@ -2105,9 +2105,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-TalismanofBloodlust-96864"
  value: {
-  dps: 388799.84628
-  tps: 363099.98983
-  hps: 3106.72258
+  dps: 388410.3593
+  tps: 362589.24283
+  hps: 3110.43919
  }
 }
 dps_results: {
@@ -2137,9 +2137,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-Thousand-YearPickledEgg-257881"
  value: {
-  dps: 383576.64071
-  tps: 358311.99006
-  hps: 2999.93176
+  dps: 383933.57904
+  tps: 358529.15965
+  hps: 3002.16172
  }
 }
 dps_results: {
@@ -2313,9 +2313,9 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-VolatileTalismanoftheShado-PanAssault-94510"
  value: {
-  dps: 386529.32133
-  tps: 360913.4672
-  hps: 3079.8479
+  dps: 386511.86925
+  tps: 360775.42135
+  hps: 3073.17516
  }
 }
 dps_results: {
