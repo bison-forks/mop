@@ -198,6 +198,10 @@ var ItemSetArmorOfTheShatteredVale = core.NewItemSet(core.ItemSet{
 // 2PT16 : Free Frenzied Regeneration cast by the T16 2P bonus when Barkskin fades. 
 // Always uses the unglyphed heal formula with a fixed 20-rage cost, regardless of glyph.
 func (bear *GuardianDruid) registerT162PFreeFrenziedRegen(_ *core.Aura) {
+	const triggeredRageCost = 20.0
+	const maxRageCost = 60.0
+	const rageFraction = triggeredRageCost / maxRageCost
+
 	bear.T16FreeFrenziedRegen = bear.RegisterSpell(druid.Bear, core.SpellConfig{
 		ActionID:         core.ActionID{SpellID: 22842}.WithTag(1),
 		SpellSchool:      core.SpellSchoolPhysical,
@@ -209,15 +213,13 @@ func (bear *GuardianDruid) registerT162PFreeFrenziedRegen(_ *core.Aura) {
 		ClassSpellMask:   druid.DruidSpellFrenziedRegeneration,
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			const triggeredRageCost = 20.0
-			const maxRageCost = 60.0
 			healthGained := max(
 				(bear.GetStat(stats.AttackPower)-2*bear.GetStat(stats.Agility))*2.2,
 				bear.GetStat(stats.Stamina)*2.5,
-			) * triggeredRageCost / maxRageCost
+			) * rageFraction
 			spell.CalcAndDealHealing(sim, spell.Unit, healthGained, spell.OutcomeHealing)
 			if bear.OnFrenziedRegenCast != nil {
-				bear.OnFrenziedRegenCast(triggeredRageCost / maxRageCost)
+				bear.OnFrenziedRegenCast(rageFraction)
 			}
 		},
 	})
