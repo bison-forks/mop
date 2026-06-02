@@ -7,11 +7,8 @@ import { SavedTalents } from '../../core/proto/ui';
 import { Stats } from '../../core/proto_utils/stats';
 import DefaultApl from '../../death_knight/unholy/apls/default.apl.json';
 import FesterblightApl from '../../death_knight/unholy/apls/festerblight.apl.json';
-import P3Build from '../../death_knight/unholy/builds/p3.build.json';
-import P4Build from '../../death_knight/unholy/builds/p4.build.json';
+import P5Build from '../../death_knight/unholy/builds/p5.build.json';
 import PrebisBuild from '../../death_knight/unholy/builds/prebis.build.json';
-import P3Gear from '../../death_knight/unholy/gear_sets/p3.gear.json';
-import P4Gear from '../../death_knight/unholy/gear_sets/p4.gear.json';
 import P5Gear from '../../death_knight/unholy/gear_sets/p5.gear.json';
 import PrebisGear from '../../death_knight/unholy/gear_sets/prebis.gear.json';
 
@@ -19,9 +16,7 @@ import PrebisGear from '../../death_knight/unholy/gear_sets/prebis.gear.json';
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
 export const PREBIS_GEAR_PRESET = PresetUtils.makePresetGear('Prebis', PrebisGear);
-export const P3_BIS_GEAR_PRESET = PresetUtils.makePresetGear('P3', P3Gear);
-export const P4_BIS_GEAR_PRESET = PresetUtils.makePresetGear('P4', P4Gear);
-export const P5_BIS_GEAR_PRESET = PresetUtils.makePresetGear('P5 (WiP)', P5Gear);
+export const P5_BIS_GEAR_PRESET = PresetUtils.makePresetGear('P5', P5Gear);
 
 export const DEFAULT_ROTATION_PRESET = PresetUtils.makePresetAPLRotation('Default', DefaultApl);
 export const FESTERBLIGHT_ROTATION_PRESET = PresetUtils.makePresetAPLRotation('Festerblight', FesterblightApl, {
@@ -29,10 +24,8 @@ export const FESTERBLIGHT_ROTATION_PRESET = PresetUtils.makePresetAPLRotation('F
 		PresetUtils.makeSpecChangeWarningToast(
 			[
 				{
-					condition: (player: Player<Spec.SpecUnholyDeathKnight>) =>
-						!player.getGear().hasTrinketFromOptions([95726, 94515, 96470, 96098, 96842]),
-					message:
-						'You have selected a rotation that requires Fabled Feather of Ji-Kun to be equipped.',
+					condition: (player: Player<Spec.SpecUnholyDeathKnight>) => player.sim.encounter.targets.length > 1,
+					message: 'Festerblight is a single-target rotation. Use the Default rotation for multiple targets.',
 				},
 			],
 			player,
@@ -47,13 +40,13 @@ export const DEFAULT_UNHOLY_EP_PRESET = PresetUtils.makePresetEpWeights(
 			[Stat.StatStrength]: 1.0,
 			[Stat.StatHitRating]: 0.73,
 			[Stat.StatExpertiseRating]: 0.73,
-			[Stat.StatCritRating]: 0.51,
-			[Stat.StatHasteRating]: 0.43,
-			[Stat.StatMasteryRating]: 0.4,
+			[Stat.StatCritRating]: 0.65,
+			[Stat.StatHasteRating]: 0.52,
+			[Stat.StatMasteryRating]: 0.51,
 			[Stat.StatAttackPower]: 0.3,
 		},
 		{
-			[PseudoStat.PseudoStatMainHandDps]: 0.8,
+			[PseudoStat.PseudoStatMainHandDps]: 0.67,
 		},
 	),
 );
@@ -66,9 +59,9 @@ export const DefaultTalents = {
 	data: SavedTalents.create({
 		talentsString: '221111',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfAntiMagicShell,
+			major1: DeathKnightMajorGlyph.GlyphOfRegenerativeMagic,
 			major2: DeathKnightMajorGlyph.GlyphOfPestilence,
-			major3: DeathKnightMajorGlyph.GlyphOfFesteringBlood,
+			major3: DeathKnightMajorGlyph.GlyphOfLoudHorn,
 			minor1: DeathKnightMinorGlyph.GlyphOfArmyOfTheDead,
 			minor2: DeathKnightMinorGlyph.GlyphOfTranquilGrip,
 			minor3: DeathKnightMinorGlyph.GlyphOfDeathsEmbrace,
@@ -81,9 +74,9 @@ export const FesterblightTalents = {
 	data: SavedTalents.create({
 		talentsString: '321111',
 		glyphs: Glyphs.create({
-			major1: DeathKnightMajorGlyph.GlyphOfAntiMagicShell,
+			major1: DeathKnightMajorGlyph.GlyphOfRegenerativeMagic,
 			major2: DeathKnightMajorGlyph.GlyphOfPestilence,
-			major3: DeathKnightMajorGlyph.GlyphOfFesteringBlood,
+			major3: DeathKnightMajorGlyph.GlyphOfLoudHorn,
 			minor1: DeathKnightMinorGlyph.GlyphOfArmyOfTheDead,
 			minor2: DeathKnightMinorGlyph.GlyphOfTranquilGrip,
 			minor3: DeathKnightMinorGlyph.GlyphOfDeathsEmbrace,
@@ -95,17 +88,15 @@ export const PREBIS_PRESET = PresetUtils.makePresetBuildFromJSON('Prebis', Spec.
 	epWeights: DEFAULT_UNHOLY_EP_PRESET,
 	rotationType: APLRotation_Type.TypeAuto,
 });
-export const P3_PRESET = PresetUtils.makePresetBuildFromJSON('P3', Spec.SpecUnholyDeathKnight, P3Build, {
-	epWeights: DEFAULT_UNHOLY_EP_PRESET,
-	rotationType: APLRotation_Type.TypeAuto,
-});
-export const P4_PRESET = PresetUtils.makePresetBuildFromJSON('P4', Spec.SpecUnholyDeathKnight, P4Build, {
+export const P5_PRESET = PresetUtils.makePresetBuildFromJSON('P5', Spec.SpecUnholyDeathKnight, P5Build, {
 	epWeights: DEFAULT_UNHOLY_EP_PRESET,
 	rotationType: APLRotation_Type.TypeAuto,
 });
 
 export const DefaultOptions = UnholyDeathKnight_Options.create({
 	classOptions: {},
+	avgAmsHit: 170000,
+	avgAmsSuccessRate: 1,
 });
 
 export const OtherDefaults = {
