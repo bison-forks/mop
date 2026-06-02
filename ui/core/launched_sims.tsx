@@ -138,11 +138,11 @@ export const simLaunchStatuses: Record<Spec, SimStatus> = {
 	},
 	// Shaman
 	[Spec.SpecElementalShaman]: {
-		phase: Phase.Phase4,
+		phase: Phase.Phase5,
 		status: LaunchStatus.Launched,
 	},
 	[Spec.SpecEnhancementShaman]: {
-		phase: Phase.Phase4,
+		phase: Phase.Phase5,
 		status: LaunchStatus.Launched,
 	},
 	[Spec.SpecRestorationShaman]: {
