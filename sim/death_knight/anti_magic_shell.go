@@ -52,7 +52,7 @@ func (dk *DeathKnight) registerAntiMagicShell() {
 				if targetDummySpell == nil && dk.CurrentTarget != nil {
 					targetDummySpell = dk.CurrentTarget.RegisterSpell(core.SpellConfig{
 						ActionID:         core.ActionID{SpellID: 49375},
-						SpellSchool:      core.SpellSchoolShadow,
+						SpellSchool:      core.SpellSchoolChaos,
 						ProcMask:         core.ProcMaskSpellDamage,
 						Flags:            core.SpellFlagNoOnCastComplete | core.SpellFlagNoMetrics,
 						DamageMultiplier: 1,
