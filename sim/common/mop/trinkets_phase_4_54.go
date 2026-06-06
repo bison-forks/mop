@@ -211,7 +211,7 @@ func init() {
 			ActionID:    core.ActionID{SpellID: spellID},
 			SpellSchool: spellSchool,
 			ProcMask:    core.ProcMaskEmpty,
-			Flags:       core.SpellFlagIgnoreArmor | core.SpellFlagIgnoreModifiers | core.SpellFlagPassiveSpell | core.SpellFlagNoSpellMods,
+			Flags:       core.SpellFlagIgnoreArmor | core.SpellFlagIgnoreModifiers | core.SpellFlagPassiveSpell | core.SpellFlagNoSpellMods | core.SpellFlagNoOnDamageDealt,
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,

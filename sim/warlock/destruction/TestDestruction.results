@@ -921,9 +921,9 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Haromm'sTalisman-105527"
  value: {
-  dps: 413051.18936
-  tps: 329249.71527
-  hps: 2041.18469
+  dps: 408921.47555
+  tps: 325863.97487
+  hps: 2033.7568
  }
 }
 dps_results: {
@@ -1105,9 +1105,9 @@ dps_results: {
 dps_results: {
  key: "TestDestruction-AllItems-Kardris'ToxicTotem-105540"
  value: {
-  dps: 445919.08375
-  tps: 355688.40816
-  hps: 2023.35775
+  dps: 440661.98685
+  tps: 350904.6055
+  hps: 2031.52843
  }
 }
 dps_results: {
