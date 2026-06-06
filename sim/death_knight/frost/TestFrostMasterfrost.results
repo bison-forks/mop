@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostMasterfrost-AllItems-EnchantWeapon-ElementalForce-4443"
  value: {
-  dps: 410884.0534
-  tps: 381851.96414
+  dps: 410928.98263
+  tps: 381893.14055
   hps: 16.87674
  }
 }

@@ -689,8 +689,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostTwoHand-AllItems-EnchantWeapon-ElementalForce-4443"
  value: {
-  dps: 394517.37198
-  tps: 358779.08877
+  dps: 394626.8867
+  tps: 358868.29543
   hps: 19.51284
  }
 }
