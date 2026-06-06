@@ -769,9 +769,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Fen-Yu,FuryofXuen-102248"
  value: {
-  dps: 464396.76022
-  tps: 461289.37998
-  hps: 44371.26861
+  dps: 465395.77756
+  tps: 462309.78118
+  hps: 44017.76369
  }
 }
 dps_results: {
@@ -857,9 +857,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-Gong-Lu,StrengthofXuen-102249"
  value: {
-  dps: 464396.76022
-  tps: 461289.37998
-  hps: 44371.26861
+  dps: 465395.77756
+  tps: 462309.78118
+  hps: 44017.76369
  }
 }
 dps_results: {
@@ -1433,9 +1433,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-PhaseFingers-4697"
  value: {
-  dps: 507868.06215
-  tps: 504329.05727
-  hps: 45899.63595
+  dps: 504548.63685
+  tps: 501335.69319
+  hps: 46139.50685
  }
 }
 dps_results: {
@@ -1593,9 +1593,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-RegaliaoftheShatteredVale"
  value: {
-  dps: 353778.26703
-  tps: 352187.61929
-  hps: 36182.54976
+  dps: 352204.38185
+  tps: 350521.68756
+  hps: 35945.12664
  }
 }
 dps_results: {
@@ -2009,9 +2009,9 @@ dps_results: {
 dps_results: {
  key: "TestBalance-AllItems-SynapseSprings(MarkII)-4898"
  value: {
-  dps: 509506.50474
-  tps: 505869.70912
-  hps: 46202.60584
+  dps: 510650.62778
+  tps: 507323.27636
+  hps: 45663.14157
  }
 }
 dps_results: {

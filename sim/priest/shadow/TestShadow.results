@@ -769,9 +769,9 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Fen-Yu,FuryofXuen-102248"
  value: {
-  dps: 398728.02609
-  tps: 366221.05006
-  hps: 4676.25852
+  dps: 402333.5018
+  tps: 369638.9031
+  hps: 4706.30558
  }
 }
 dps_results: {
@@ -849,9 +849,9 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-Gong-Lu,StrengthofXuen-102249"
  value: {
-  dps: 398728.02609
-  tps: 366221.05006
-  hps: 4676.25852
+  dps: 402333.5018
+  tps: 369638.9031
+  hps: 4706.30558
  }
 }
 dps_results: {
@@ -1561,9 +1561,9 @@ dps_results: {
 dps_results: {
  key: "TestShadow-AllItems-RegaliaofTernionGlory"
  value: {
-  dps: 317556.31777
-  tps: 292823.48312
-  hps: 3473.70753
+  dps: 320423.01208
+  tps: 295488.06155
+  hps: 3494.1629
  }
 }
 dps_results: {

@@ -961,8 +961,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Haromm'sTalisman-105527"
  value: {
-  dps: 280785.60625
-  tps: 423748.65223
+  dps: 280514.66639
+  tps: 423968.97918
   hps: 16221.03927
  }
 }
@@ -1145,8 +1145,8 @@ dps_results: {
 dps_results: {
  key: "TestFeral-AllItems-Kardris'ToxicTotem-105540"
  value: {
-  dps: 247454.87005
-  tps: 372502.26501
+  dps: 247054.58062
+  tps: 372078.53001
   hps: 16110.19552
  }
 }
