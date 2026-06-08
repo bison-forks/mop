@@ -103,8 +103,8 @@ dps_results: {
 dps_results: {
  key: "TestArms-AllItems-BattleplateofthePrehistoricMarauder"
  value: {
-  dps: 238919.11297
-  tps: 162613.40108
+  dps: 241761.49272
+  tps: 164447.82235
  }
 }
 dps_results: {
