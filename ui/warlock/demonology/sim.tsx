@@ -10,7 +10,7 @@ import { ItemSlot, PartyBuffs, PseudoStat, Spec, Stat } from '../../core/proto/c
 import { DEFAULT_CASTER_GEM_STATS, StatCap, Stats, UnitStat } from '../../core/proto_utils/stats';
 import * as WarlockInputs from '../inputs';
 import * as Presets from './presets';
-import { StatCapType } from '../../core/proto/api';
+import { StatCapType } from '../../core/proto/ui';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecDemonologyWarlock, {
 	cssClass: 'demonology-warlock-sim-ui',
