@@ -1713,16 +1713,16 @@ dps_results: {
 dps_results: {
  key: "TestFrostTwoHand-AllItems-RuneofCinderglacier-3369"
  value: {
-  dps: 397848.05051
-  tps: 362196.80841
+  dps: 396404.13682
+  tps: 360752.89472
   hps: 19.33643
  }
 }
 dps_results: {
  key: "TestFrostTwoHand-AllItems-RuneofRazorice-3370"
  value: {
-  dps: 411774.73368
-  tps: 376123.49158
+  dps: 412765.35584
+  tps: 377114.11374
   hps: 19.33643
  }
 }
