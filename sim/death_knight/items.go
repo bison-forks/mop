@@ -268,7 +268,7 @@ var ItemSetBattleplateOfCyclopeanDread = core.NewItemSet(core.ItemSet{
 					ActionID:       core.ActionID{SpellID: 147620},
 					SpellSchool:    core.SpellSchoolFrost,
 					ProcMask:       core.ProcMaskEmpty,
-					Flags:          core.SpellFlagPassiveSpell,
+					Flags:          core.SpellFlagPassiveSpell | core.SpellFlagNoOnCastComplete | core.SpellFlagNoOnDamageDealt,
 					ClassSpellMask: DeathKnightSpellFrozenPower,
 
 					DamageMultiplier: 1,
