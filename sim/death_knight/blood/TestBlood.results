@@ -1932,8 +1932,8 @@ dps_results: {
 dps_results: {
  key: "TestBlood-AllItems-RuneofRazorice-3370"
  value: {
-  dps: 386914.78126
-  tps: 1.95547620115e+06
+  dps: 386914.55402
+  tps: 1.95547461042e+06
   dtps: 155997.43194
   hps: 171551.06885
  }

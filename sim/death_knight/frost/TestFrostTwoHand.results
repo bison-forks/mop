@@ -1721,8 +1721,8 @@ dps_results: {
 dps_results: {
  key: "TestFrostTwoHand-AllItems-RuneofRazorice-3370"
  value: {
-  dps: 418305.36868
-  tps: 381782.90402
+  dps: 417513.93978
+  tps: 380991.47511
   hps: 18.92445
  }
 }
